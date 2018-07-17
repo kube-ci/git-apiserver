@@ -21,36 +21,29 @@ import (
 )
 
 const (
-	ResourceKindSnapshot     = "Snapshot"
-	ResourcePluralSnapshot   = "snapshots"
-	ResourceSingularSnapshot = "snapshot"
+	ResourceKindBranch = "Branch"
+	ResourceBranches   = "branches"
 )
 
 // +genclient
-// +genclient:skipVerbs=create,update,patch,deleteCollection,watch
+// +genclient:skipVerbs=create,update,patch,delete,deleteCollection
 // +k8s:openapi-gen=true
 // +k8s:deepcopy-gen:interfaces=k8s.io/apimachinery/pkg/runtime.Object
 
-type Snapshot struct {
-	metav1.TypeMeta   `json:",inline,omitempty"`
+type Branch struct {
+	metav1.TypeMeta   `json:",inline"`
 	metav1.ObjectMeta `json:"metadata,omitempty"`
-	Status            SnapshotStatus `json:"status,omitempty"`
+	Status            BranchStatus `json:"status,omitempty"`
 }
 
-type SnapshotStatus struct {
-	Tree     string   `json:"tree"`
-	Paths    []string `json:"paths"`
-	Hostname string   `json:"hostname"`
-	Username string   `json:"username"`
-	UID      int      `json:"uid"`
-	Gid      int      `json:"gid"`
-	Tags     []string `json:",omitempty"`
+type BranchStatus struct {
+	LastCommitHash string `json:"lastCommitHash,omitempty"`
 }
 
 // +k8s:deepcopy-gen:interfaces=k8s.io/apimachinery/pkg/runtime.Object
 
-type SnapshotList struct {
+type BranchList struct {
 	metav1.TypeMeta `json:",inline"`
 	metav1.ListMeta `json:"metadata,omitempty"`
-	Items           []Snapshot `json:"items"`
+	Items           []Branch `json:"items,omitempty"`
 }

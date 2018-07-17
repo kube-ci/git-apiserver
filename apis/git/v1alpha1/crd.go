@@ -12,8 +12,7 @@ var (
 func (c Repository) CustomResourceDefinition() *apiextensions.CustomResourceDefinition {
 	return crdutils.NewCustomResourceDefinition(crdutils.Config{
 		Group:         SchemeGroupVersion.Group,
-		Plural:        ResourcePluralRepository,
-		Singular:      ResourceSingularRepository,
+		Plural:        ResourceRepositories,
 		Kind:          ResourceKindRepository,
 		ShortNames:    []string{"repo"},
 		ResourceScope: string(apiextensions.NamespaceScoped),
@@ -31,23 +30,5 @@ func (c Repository) CustomResourceDefinition() *apiextensions.CustomResourceDefi
 		EnableValidation:        true,
 		GetOpenAPIDefinitions:   GetOpenAPIDefinitions,
 		EnableStatusSubresource: EnableStatusSubresource,
-		AdditionalPrinterColumns: []apiextensions.CustomResourceColumnDefinition{
-			{
-				Name:     "BackupCount",
-				Type:     "integer",
-				JSONPath: ".status.backupCount",
-			},
-			{
-				Name:     "LastSuccessfulBackup",
-				Type:     "date",
-				JSONPath: ".status.lastSuccessfulBackupTime",
-				Format:   "date-time",
-			},
-			{
-				Name:     "Age",
-				Type:     "date",
-				JSONPath: ".metadata.creationTimestamp",
-			},
-		},
 	})
 }

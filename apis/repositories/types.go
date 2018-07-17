@@ -1,5 +1,5 @@
 /*
-Copyright 2018 The Stash Authors.
+Copyright 2018 The Kubeci Authors.
 
 Licensed under the Apache License, Version 2.0 (the "License");
 you may not use this file except in compliance with the License.
@@ -21,29 +21,23 @@ import (
 )
 
 // +genclient
-// +genclient:skipVerbs=create,update,patch,deleteCollection,watch
+// +genclient:skipVerbs=create,update,patch,delete,deleteCollection
 // +k8s:deepcopy-gen:interfaces=k8s.io/apimachinery/pkg/runtime.Object
 
-type Snapshot struct {
+type Branch struct {
 	metav1.TypeMeta
 	metav1.ObjectMeta
-	Status SnapshotStatus
+	Status BranchStatus
 }
 
-type SnapshotStatus struct {
-	Tree     string
-	Paths    []string
-	Hostname string
-	Username string
-	UID      int
-	Gid      int
-	Tags     []string
+type BranchStatus struct {
+	LastCommitHash string
 }
 
 // +k8s:deepcopy-gen:interfaces=k8s.io/apimachinery/pkg/runtime.Object
 
-type SnapshotList struct {
+type BranchList struct {
 	metav1.TypeMeta
 	metav1.ListMeta
-	Items []Snapshot
+	Items []Branch
 }
