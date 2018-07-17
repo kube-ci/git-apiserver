@@ -30,6 +30,7 @@ import (
 	versioned "kube.ci/git-apiserver/client/clientset/versioned"
 	git "kube.ci/git-apiserver/client/informers/externalversions/git"
 	internalinterfaces "kube.ci/git-apiserver/client/informers/externalversions/internalinterfaces"
+	repositories "kube.ci/git-apiserver/client/informers/externalversions/repositories"
 )
 
 // SharedInformerOption defines the functional option type for SharedInformerFactory.
@@ -173,8 +174,13 @@ type SharedInformerFactory interface {
 	WaitForCacheSync(stopCh <-chan struct{}) map[reflect.Type]bool
 
 	Git() git.Interface
+	Repositories() repositories.Interface
 }
 
 func (f *sharedInformerFactory) Git() git.Interface {
 	return git.New(f, f.namespace, f.tweakListOptions)
+}
+
+func (f *sharedInformerFactory) Repositories() repositories.Interface {
+	return repositories.New(f, f.namespace, f.tweakListOptions)
 }

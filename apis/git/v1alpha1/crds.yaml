@@ -7,24 +7,12 @@ metadata:
     app: kubeci
   name: repositories.git.kube.ci
 spec:
-  additionalPrinterColumns:
-  - JSONPath: .status.backupCount
-    name: BackupCount
-    type: integer
-  - JSONPath: .status.lastSuccessfulBackupTime
-    format: date-time
-    name: LastSuccessfulBackup
-    type: date
-  - JSONPath: .metadata.creationTimestamp
-    name: Age
-    type: date
   group: git.kube.ci
   names:
     kind: Repository
     plural: repositories
     shortNames:
     - repo
-    singular: repository
   scope: Namespaced
   validation:
     openAPIV3Schema:
@@ -312,26 +300,11 @@ spec:
               type: string
         spec:
           properties:
-            backend: {}
-            wipeOut:
-              description: If true, delete respective restic repository
-              type: boolean
-        status:
-          properties:
-            backupCount:
-              format: int64
-              type: integer
-            firstBackupTime:
-              format: date-time
+            secret:
               type: string
-            lastBackupDuration:
+            url:
               type: string
-            lastBackupTime:
-              format: date-time
-              type: string
-            lastSuccessfulBackupTime:
-              format: date-time
-              type: string
+        status: {}
   version: v1alpha1
   versions:
   - name: v1alpha1

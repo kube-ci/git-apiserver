@@ -27,7 +27,7 @@ import (
 
 type RepositoriesV1alpha1Interface interface {
 	RESTClient() rest.Interface
-	SnapshotsGetter
+	BranchesGetter
 }
 
 // RepositoriesV1alpha1Client is used to interact with features provided by the repositories.git.kube.ci group.
@@ -35,8 +35,8 @@ type RepositoriesV1alpha1Client struct {
 	restClient rest.Interface
 }
 
-func (c *RepositoriesV1alpha1Client) Snapshots(namespace string) SnapshotInterface {
-	return newSnapshots(c, namespace)
+func (c *RepositoriesV1alpha1Client) Branches(namespace string) BranchInterface {
+	return newBranches(c, namespace)
 }
 
 // NewForConfig creates a new RepositoriesV1alpha1Client for the given config.

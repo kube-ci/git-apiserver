@@ -10712,45 +10712,6 @@ func GetOpenAPIDefinitions(ref common.ReferenceCallback) map[string]common.OpenA
 			},
 			Dependencies: []string{},
 		},
-		"kube.ci/git-apiserver/apis/git/v1alpha1.Backend": {
-			Schema: spec.Schema{
-				SchemaProps: spec.SchemaProps{
-					Properties: map[string]spec.Schema{},
-				},
-			},
-			Dependencies: []string{},
-		},
-		"kube.ci/git-apiserver/apis/git/v1alpha1.LocalTypedReference": {
-			Schema: spec.Schema{
-				SchemaProps: spec.SchemaProps{
-					Description: "LocalTypedReference contains enough information to let you inspect or modify the referred object.",
-					Properties: map[string]spec.Schema{
-						"kind": {
-							SchemaProps: spec.SchemaProps{
-								Description: "Kind of the referent. More info: https://git.k8s.io/community/contributors/devel/api-conventions.md#types-kinds",
-								Type:        []string{"string"},
-								Format:      "",
-							},
-						},
-						"name": {
-							SchemaProps: spec.SchemaProps{
-								Description: "Name of the referent. More info: https://kubernetes.io/docs/concepts/overview/working-with-objects/names/#names",
-								Type:        []string{"string"},
-								Format:      "",
-							},
-						},
-						"apiVersion": {
-							SchemaProps: spec.SchemaProps{
-								Description: "API version of the referent.",
-								Type:        []string{"string"},
-								Format:      "",
-							},
-						},
-					},
-				},
-			},
-			Dependencies: []string{},
-		},
 		"kube.ci/git-apiserver/apis/git/v1alpha1.Repository": {
 			Schema: spec.Schema{
 				SchemaProps: spec.SchemaProps{
@@ -10835,60 +10796,30 @@ func GetOpenAPIDefinitions(ref common.ReferenceCallback) map[string]common.OpenA
 			Schema: spec.Schema{
 				SchemaProps: spec.SchemaProps{
 					Properties: map[string]spec.Schema{
-						"backend": {
-							SchemaProps: spec.SchemaProps{
-								Ref: ref("kube.ci/git-apiserver/apis/git/v1alpha1.Backend"),
-							},
-						},
-						"wipeOut": {
-							SchemaProps: spec.SchemaProps{
-								Description: "If true, delete respective restic repository",
-								Type:        []string{"boolean"},
-								Format:      "",
-							},
-						},
-					},
-				},
-			},
-			Dependencies: []string{
-				"kube.ci/git-apiserver/apis/git/v1alpha1.Backend"},
-		},
-		"kube.ci/git-apiserver/apis/git/v1alpha1.RepositoryStatus": {
-			Schema: spec.Schema{
-				SchemaProps: spec.SchemaProps{
-					Properties: map[string]spec.Schema{
-						"firstBackupTime": {
-							SchemaProps: spec.SchemaProps{
-								Ref: ref("k8s.io/apimachinery/pkg/apis/meta/v1.Time"),
-							},
-						},
-						"lastBackupTime": {
-							SchemaProps: spec.SchemaProps{
-								Ref: ref("k8s.io/apimachinery/pkg/apis/meta/v1.Time"),
-							},
-						},
-						"lastSuccessfulBackupTime": {
-							SchemaProps: spec.SchemaProps{
-								Ref: ref("k8s.io/apimachinery/pkg/apis/meta/v1.Time"),
-							},
-						},
-						"lastBackupDuration": {
+						"url": {
 							SchemaProps: spec.SchemaProps{
 								Type:   []string{"string"},
 								Format: "",
 							},
 						},
-						"backupCount": {
+						"secret": {
 							SchemaProps: spec.SchemaProps{
-								Type:   []string{"integer"},
-								Format: "int64",
+								Type:   []string{"string"},
+								Format: "",
 							},
 						},
 					},
 				},
 			},
-			Dependencies: []string{
-				"k8s.io/apimachinery/pkg/apis/meta/v1.Time"},
+			Dependencies: []string{},
+		},
+		"kube.ci/git-apiserver/apis/git/v1alpha1.RepositoryStatus": {
+			Schema: spec.Schema{
+				SchemaProps: spec.SchemaProps{
+					Properties: map[string]spec.Schema{},
+				},
+			},
+			Dependencies: []string{},
 		},
 	}
 }

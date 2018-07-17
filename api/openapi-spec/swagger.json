@@ -1,7 +1,7 @@
 {
   "swagger": "2.0",
   "info": {
-    "title": "Stash",
+    "title": "Kubeci",
     "contact": {
       "name": "AppsCode Inc.",
       "url": "https://appscode.com",
@@ -11,7 +11,7 @@
       "name": "Apache 2.0",
       "url": "https://www.apache.org/licenses/LICENSE-2.0.html"
     },
-    "version": "v0.7.0"
+    "version": "v0.1.0"
   },
   "paths": {
     "/apis/": {
@@ -1061,9 +1061,9 @@
         }
       }
     },
-    "/apis/repositories.git.kube.ci/v1alpha1/namespaces/{namespace}/snapshots": {
+    "/apis/repositories.git.kube.ci/v1alpha1/branches": {
       "get": {
-        "description": "list objects of kind Snapshot",
+        "description": "list objects of kind Branch",
         "consumes": [
           "*/*"
         ],
@@ -1080,12 +1080,12 @@
         "tags": [
           "repositoriesGitKubeCi_v1alpha1"
         ],
-        "operationId": "listRepositoriesGitKubeCiV1alpha1NamespacedSnapshot",
+        "operationId": "listRepositoriesGitKubeCiV1alpha1BranchForAllNamespaces",
         "responses": {
           "200": {
             "description": "OK",
             "schema": {
-              "$ref": "#/definitions/ci.kube.git-apiserver.apis.repositories.v1alpha1.SnapshotList"
+              "$ref": "#/definitions/ci.kube.git-apiserver.apis.repositories.v1alpha1.BranchList"
             }
           }
         },
@@ -1093,7 +1093,108 @@
         "x-kubernetes-group-version-kind": {
           "group": "repositories.git.kube.ci",
           "version": "v1alpha1",
-          "kind": "Snapshot"
+          "kind": "Branch"
+        }
+      },
+      "parameters": [
+        {
+          "uniqueItems": true,
+          "type": "string",
+          "description": "The continue option should be set when retrieving more results from the server. Since this value is server defined, clients may only use the continue value from a previous query result with identical query parameters (except for the value of continue) and the server may reject a continue value it does not recognize. If the specified continue value is no longer valid whether due to expiration (generally five to fifteen minutes) or a configuration change on the server the server will respond with a 410 ResourceExpired error indicating the client must restart their list without the continue field. This field is not supported when watch is true. Clients may start a watch from the last resourceVersion value returned by the server and not miss any modifications.",
+          "name": "continue",
+          "in": "query"
+        },
+        {
+          "uniqueItems": true,
+          "type": "string",
+          "description": "A selector to restrict the list of returned objects by their fields. Defaults to everything.",
+          "name": "fieldSelector",
+          "in": "query"
+        },
+        {
+          "uniqueItems": true,
+          "type": "boolean",
+          "description": "If true, partially initialized resources are included in the response.",
+          "name": "includeUninitialized",
+          "in": "query"
+        },
+        {
+          "uniqueItems": true,
+          "type": "string",
+          "description": "A selector to restrict the list of returned objects by their labels. Defaults to everything.",
+          "name": "labelSelector",
+          "in": "query"
+        },
+        {
+          "uniqueItems": true,
+          "type": "integer",
+          "description": "limit is a maximum number of responses to return for a list call. If more items exist, the server will set the `continue` field on the list metadata to a value that can be used with the same initial query to retrieve the next set of results. Setting a limit may return fewer than the requested amount of items (up to zero items) in the event all requested objects are filtered out and clients should only use the presence of the continue field to determine whether more results are available. Servers may choose not to support the limit argument and will return all of the available results. If limit is specified and the continue field is empty, clients may assume that no more results are available. This field is not supported if watch is true.\n\nThe server guarantees that the objects returned when using continue will be identical to issuing a single list call without a limit - that is, no objects created, modified, or deleted after the first request is issued will be included in any subsequent continued requests. This is sometimes referred to as a consistent snapshot, and ensures that a client that is using limit to receive smaller chunks of a very large result can ensure they see all possible objects. If objects are updated during a chunked list the version of the object that was present at the time the first list result was calculated is returned.",
+          "name": "limit",
+          "in": "query"
+        },
+        {
+          "uniqueItems": true,
+          "type": "string",
+          "description": "If 'true', then the output is pretty printed.",
+          "name": "pretty",
+          "in": "query"
+        },
+        {
+          "uniqueItems": true,
+          "type": "string",
+          "description": "When specified with a watch call, shows changes that occur after that particular version of a resource. Defaults to changes from the beginning of history. When specified for list: - if unset, then the result is returned from remote storage based on quorum-read flag; - if it's 0, then we simply return what we currently have in cache, no guarantee; - if set to non zero, then the result is at least as fresh as given rv.",
+          "name": "resourceVersion",
+          "in": "query"
+        },
+        {
+          "uniqueItems": true,
+          "type": "integer",
+          "description": "Timeout for the list/watch call. This limits the duration of the call, regardless of any activity or inactivity.",
+          "name": "timeoutSeconds",
+          "in": "query"
+        },
+        {
+          "uniqueItems": true,
+          "type": "boolean",
+          "description": "Watch for changes to the described resources and return them as a stream of add, update, and remove notifications. Specify resourceVersion.",
+          "name": "watch",
+          "in": "query"
+        }
+      ]
+    },
+    "/apis/repositories.git.kube.ci/v1alpha1/namespaces/{namespace}/branches": {
+      "get": {
+        "description": "list objects of kind Branch",
+        "consumes": [
+          "*/*"
+        ],
+        "produces": [
+          "application/json",
+          "application/yaml",
+          "application/vnd.kubernetes.protobuf",
+          "application/json;stream=watch",
+          "application/vnd.kubernetes.protobuf;stream=watch"
+        ],
+        "schemes": [
+          "https"
+        ],
+        "tags": [
+          "repositoriesGitKubeCi_v1alpha1"
+        ],
+        "operationId": "listRepositoriesGitKubeCiV1alpha1NamespacedBranch",
+        "responses": {
+          "200": {
+            "description": "OK",
+            "schema": {
+              "$ref": "#/definitions/ci.kube.git-apiserver.apis.repositories.v1alpha1.BranchList"
+            }
+          }
+        },
+        "x-kubernetes-action": "list",
+        "x-kubernetes-group-version-kind": {
+          "group": "repositories.git.kube.ci",
+          "version": "v1alpha1",
+          "kind": "Branch"
         }
       },
       "parameters": [
@@ -1170,9 +1271,9 @@
         }
       ]
     },
-    "/apis/repositories.git.kube.ci/v1alpha1/namespaces/{namespace}/snapshots/{name}": {
+    "/apis/repositories.git.kube.ci/v1alpha1/namespaces/{namespace}/branches/{name}": {
       "get": {
-        "description": "read the specified Snapshot",
+        "description": "read the specified Branch",
         "consumes": [
           "*/*"
         ],
@@ -1187,12 +1288,12 @@
         "tags": [
           "repositoriesGitKubeCi_v1alpha1"
         ],
-        "operationId": "readRepositoriesGitKubeCiV1alpha1NamespacedSnapshot",
+        "operationId": "readRepositoriesGitKubeCiV1alpha1NamespacedBranch",
         "responses": {
           "200": {
             "description": "OK",
             "schema": {
-              "$ref": "#/definitions/ci.kube.git-apiserver.apis.repositories.v1alpha1.Snapshot"
+              "$ref": "#/definitions/ci.kube.git-apiserver.apis.repositories.v1alpha1.Branch"
             }
           }
         },
@@ -1200,11 +1301,11 @@
         "x-kubernetes-group-version-kind": {
           "group": "repositories.git.kube.ci",
           "version": "v1alpha1",
-          "kind": "Snapshot"
+          "kind": "Branch"
         }
       },
       "delete": {
-        "description": "delete a Snapshot",
+        "description": "delete a Branch",
         "consumes": [
           "*/*"
         ],
@@ -1219,7 +1320,7 @@
         "tags": [
           "repositoriesGitKubeCi_v1alpha1"
         ],
-        "operationId": "deleteRepositoriesGitKubeCiV1alpha1NamespacedSnapshot",
+        "operationId": "deleteRepositoriesGitKubeCiV1alpha1NamespacedBranch",
         "parameters": [
           {
             "name": "body",
@@ -1263,14 +1364,14 @@
         "x-kubernetes-group-version-kind": {
           "group": "repositories.git.kube.ci",
           "version": "v1alpha1",
-          "kind": "Snapshot"
+          "kind": "Branch"
         }
       },
       "parameters": [
         {
           "uniqueItems": true,
           "type": "string",
-          "description": "name of the Snapshot",
+          "description": "name of the Branch",
           "name": "name",
           "in": "path",
           "required": true
@@ -1291,111 +1392,9 @@
           "in": "query"
         }
       ]
-    },
-    "/apis/repositories.git.kube.ci/v1alpha1/snapshots": {
-      "get": {
-        "description": "list objects of kind Snapshot",
-        "consumes": [
-          "*/*"
-        ],
-        "produces": [
-          "application/json",
-          "application/yaml",
-          "application/vnd.kubernetes.protobuf",
-          "application/json;stream=watch",
-          "application/vnd.kubernetes.protobuf;stream=watch"
-        ],
-        "schemes": [
-          "https"
-        ],
-        "tags": [
-          "repositoriesGitKubeCi_v1alpha1"
-        ],
-        "operationId": "listRepositoriesGitKubeCiV1alpha1SnapshotForAllNamespaces",
-        "responses": {
-          "200": {
-            "description": "OK",
-            "schema": {
-              "$ref": "#/definitions/ci.kube.git-apiserver.apis.repositories.v1alpha1.SnapshotList"
-            }
-          }
-        },
-        "x-kubernetes-action": "list",
-        "x-kubernetes-group-version-kind": {
-          "group": "repositories.git.kube.ci",
-          "version": "v1alpha1",
-          "kind": "Snapshot"
-        }
-      },
-      "parameters": [
-        {
-          "uniqueItems": true,
-          "type": "string",
-          "description": "The continue option should be set when retrieving more results from the server. Since this value is server defined, clients may only use the continue value from a previous query result with identical query parameters (except for the value of continue) and the server may reject a continue value it does not recognize. If the specified continue value is no longer valid whether due to expiration (generally five to fifteen minutes) or a configuration change on the server the server will respond with a 410 ResourceExpired error indicating the client must restart their list without the continue field. This field is not supported when watch is true. Clients may start a watch from the last resourceVersion value returned by the server and not miss any modifications.",
-          "name": "continue",
-          "in": "query"
-        },
-        {
-          "uniqueItems": true,
-          "type": "string",
-          "description": "A selector to restrict the list of returned objects by their fields. Defaults to everything.",
-          "name": "fieldSelector",
-          "in": "query"
-        },
-        {
-          "uniqueItems": true,
-          "type": "boolean",
-          "description": "If true, partially initialized resources are included in the response.",
-          "name": "includeUninitialized",
-          "in": "query"
-        },
-        {
-          "uniqueItems": true,
-          "type": "string",
-          "description": "A selector to restrict the list of returned objects by their labels. Defaults to everything.",
-          "name": "labelSelector",
-          "in": "query"
-        },
-        {
-          "uniqueItems": true,
-          "type": "integer",
-          "description": "limit is a maximum number of responses to return for a list call. If more items exist, the server will set the `continue` field on the list metadata to a value that can be used with the same initial query to retrieve the next set of results. Setting a limit may return fewer than the requested amount of items (up to zero items) in the event all requested objects are filtered out and clients should only use the presence of the continue field to determine whether more results are available. Servers may choose not to support the limit argument and will return all of the available results. If limit is specified and the continue field is empty, clients may assume that no more results are available. This field is not supported if watch is true.\n\nThe server guarantees that the objects returned when using continue will be identical to issuing a single list call without a limit - that is, no objects created, modified, or deleted after the first request is issued will be included in any subsequent continued requests. This is sometimes referred to as a consistent snapshot, and ensures that a client that is using limit to receive smaller chunks of a very large result can ensure they see all possible objects. If objects are updated during a chunked list the version of the object that was present at the time the first list result was calculated is returned.",
-          "name": "limit",
-          "in": "query"
-        },
-        {
-          "uniqueItems": true,
-          "type": "string",
-          "description": "If 'true', then the output is pretty printed.",
-          "name": "pretty",
-          "in": "query"
-        },
-        {
-          "uniqueItems": true,
-          "type": "string",
-          "description": "When specified with a watch call, shows changes that occur after that particular version of a resource. Defaults to changes from the beginning of history. When specified for list: - if unset, then the result is returned from remote storage based on quorum-read flag; - if it's 0, then we simply return what we currently have in cache, no guarantee; - if set to non zero, then the result is at least as fresh as given rv.",
-          "name": "resourceVersion",
-          "in": "query"
-        },
-        {
-          "uniqueItems": true,
-          "type": "integer",
-          "description": "Timeout for the list/watch call. This limits the duration of the call, regardless of any activity or inactivity.",
-          "name": "timeoutSeconds",
-          "in": "query"
-        },
-        {
-          "uniqueItems": true,
-          "type": "boolean",
-          "description": "Watch for changes to the described resources and return them as a stream of add, update, and remove notifications. Specify resourceVersion.",
-          "name": "watch",
-          "in": "query"
-        }
-      ]
     }
   },
   "definitions": {
-    "ci.kube.git-apiserver.apis.git.v1alpha1.Backend": {},
     "ci.kube.git-apiserver.apis.git.v1alpha1.Repository": {
       "properties": {
         "apiVersion": {
@@ -1454,36 +1453,16 @@
     },
     "ci.kube.git-apiserver.apis.git.v1alpha1.RepositorySpec": {
       "properties": {
-        "backend": {
-          "$ref": "#/definitions/ci.kube.git-apiserver.apis.git.v1alpha1.Backend"
-        },
-        "wipeOut": {
-          "description": "If true, delete respective restic repository",
-          "type": "boolean"
-        }
-      }
-    },
-    "ci.kube.git-apiserver.apis.git.v1alpha1.RepositoryStatus": {
-      "properties": {
-        "backupCount": {
-          "type": "integer",
-          "format": "int64"
-        },
-        "firstBackupTime": {
-          "$ref": "#/definitions/io.k8s.apimachinery.pkg.apis.meta.v1.Time"
-        },
-        "lastBackupDuration": {
+        "secret": {
           "type": "string"
         },
-        "lastBackupTime": {
-          "$ref": "#/definitions/io.k8s.apimachinery.pkg.apis.meta.v1.Time"
-        },
-        "lastSuccessfulBackupTime": {
-          "$ref": "#/definitions/io.k8s.apimachinery.pkg.apis.meta.v1.Time"
+        "url": {
+          "type": "string"
         }
       }
     },
-    "ci.kube.git-apiserver.apis.repositories.v1alpha1.Snapshot": {
+    "ci.kube.git-apiserver.apis.git.v1alpha1.RepositoryStatus": {},
+    "ci.kube.git-apiserver.apis.repositories.v1alpha1.Branch": {
       "properties": {
         "apiVersion": {
           "description": "APIVersion defines the versioned schema of this representation of an object. Servers should convert recognized schemas to the latest internal value, and may reject unrecognized values. More info: https://git.k8s.io/community/contributors/devel/api-conventions.md#resources",
@@ -1497,21 +1476,18 @@
           "$ref": "#/definitions/io.k8s.apimachinery.pkg.apis.meta.v1.ObjectMeta"
         },
         "status": {
-          "$ref": "#/definitions/ci.kube.git-apiserver.apis.repositories.v1alpha1.SnapshotStatus"
+          "$ref": "#/definitions/ci.kube.git-apiserver.apis.repositories.v1alpha1.BranchStatus"
         }
       },
       "x-kubernetes-group-version-kind": [
         {
           "group": "repositories.git.kube.ci",
           "version": "v1alpha1",
-          "kind": "Snapshot"
+          "kind": "Branch"
         }
       ]
     },
-    "ci.kube.git-apiserver.apis.repositories.v1alpha1.SnapshotList": {
-      "required": [
-        "items"
-      ],
+    "ci.kube.git-apiserver.apis.repositories.v1alpha1.BranchList": {
       "properties": {
         "apiVersion": {
           "description": "APIVersion defines the versioned schema of this representation of an object. Servers should convert recognized schemas to the latest internal value, and may reject unrecognized values. More info: https://git.k8s.io/community/contributors/devel/api-conventions.md#resources",
@@ -1520,7 +1496,7 @@
         "items": {
           "type": "array",
           "items": {
-            "$ref": "#/definitions/ci.kube.git-apiserver.apis.repositories.v1alpha1.Snapshot"
+            "$ref": "#/definitions/ci.kube.git-apiserver.apis.repositories.v1alpha1.Branch"
           }
         },
         "kind": {
@@ -1535,41 +1511,13 @@
         {
           "group": "repositories.git.kube.ci",
           "version": "v1alpha1",
-          "kind": "SnapshotList"
+          "kind": "BranchList"
         }
       ]
     },
-    "ci.kube.git-apiserver.apis.repositories.v1alpha1.SnapshotStatus": {
-      "required": [
-        "tree",
-        "paths",
-        "hostname",
-        "username",
-        "uid",
-        "gid"
-      ],
+    "ci.kube.git-apiserver.apis.repositories.v1alpha1.BranchStatus": {
       "properties": {
-        "gid": {
-          "type": "integer",
-          "format": "int32"
-        },
-        "hostname": {
-          "type": "string"
-        },
-        "paths": {
-          "type": "array",
-          "items": {
-            "type": "string"
-          }
-        },
-        "tree": {
-          "type": "string"
-        },
-        "uid": {
-          "type": "integer",
-          "format": "int32"
-        },
-        "username": {
+        "lastCommitHash": {
           "type": "string"
         }
       }

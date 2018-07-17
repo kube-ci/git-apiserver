@@ -10712,7 +10712,7 @@ func GetOpenAPIDefinitions(ref common.ReferenceCallback) map[string]common.OpenA
 			},
 			Dependencies: []string{},
 		},
-		"kube.ci/git-apiserver/apis/repositories/v1alpha1.Snapshot": {
+		"kube.ci/git-apiserver/apis/repositories/v1alpha1.Branch": {
 			Schema: spec.Schema{
 				SchemaProps: spec.SchemaProps{
 					Properties: map[string]spec.Schema{
@@ -10737,16 +10737,16 @@ func GetOpenAPIDefinitions(ref common.ReferenceCallback) map[string]common.OpenA
 						},
 						"status": {
 							SchemaProps: spec.SchemaProps{
-								Ref: ref("kube.ci/git-apiserver/apis/repositories/v1alpha1.SnapshotStatus"),
+								Ref: ref("kube.ci/git-apiserver/apis/repositories/v1alpha1.BranchStatus"),
 							},
 						},
 					},
 				},
 			},
 			Dependencies: []string{
-				"k8s.io/apimachinery/pkg/apis/meta/v1.ObjectMeta", "kube.ci/git-apiserver/apis/repositories/v1alpha1.SnapshotStatus"},
+				"k8s.io/apimachinery/pkg/apis/meta/v1.ObjectMeta", "kube.ci/git-apiserver/apis/repositories/v1alpha1.BranchStatus"},
 		},
-		"kube.ci/git-apiserver/apis/repositories/v1alpha1.SnapshotList": {
+		"kube.ci/git-apiserver/apis/repositories/v1alpha1.BranchList": {
 			Schema: spec.Schema{
 				SchemaProps: spec.SchemaProps{
 					Properties: map[string]spec.Schema{
@@ -10775,68 +10775,29 @@ func GetOpenAPIDefinitions(ref common.ReferenceCallback) map[string]common.OpenA
 								Items: &spec.SchemaOrArray{
 									Schema: &spec.Schema{
 										SchemaProps: spec.SchemaProps{
-											Ref: ref("kube.ci/git-apiserver/apis/repositories/v1alpha1.Snapshot"),
+											Ref: ref("kube.ci/git-apiserver/apis/repositories/v1alpha1.Branch"),
 										},
 									},
 								},
 							},
 						},
 					},
-					Required: []string{"items"},
 				},
 			},
 			Dependencies: []string{
-				"k8s.io/apimachinery/pkg/apis/meta/v1.ListMeta", "kube.ci/git-apiserver/apis/repositories/v1alpha1.Snapshot"},
+				"k8s.io/apimachinery/pkg/apis/meta/v1.ListMeta", "kube.ci/git-apiserver/apis/repositories/v1alpha1.Branch"},
 		},
-		"kube.ci/git-apiserver/apis/repositories/v1alpha1.SnapshotStatus": {
+		"kube.ci/git-apiserver/apis/repositories/v1alpha1.BranchStatus": {
 			Schema: spec.Schema{
 				SchemaProps: spec.SchemaProps{
 					Properties: map[string]spec.Schema{
-						"tree": {
+						"lastCommitHash": {
 							SchemaProps: spec.SchemaProps{
 								Type:   []string{"string"},
 								Format: "",
-							},
-						},
-						"paths": {
-							SchemaProps: spec.SchemaProps{
-								Type: []string{"array"},
-								Items: &spec.SchemaOrArray{
-									Schema: &spec.Schema{
-										SchemaProps: spec.SchemaProps{
-											Type:   []string{"string"},
-											Format: "",
-										},
-									},
-								},
-							},
-						},
-						"hostname": {
-							SchemaProps: spec.SchemaProps{
-								Type:   []string{"string"},
-								Format: "",
-							},
-						},
-						"username": {
-							SchemaProps: spec.SchemaProps{
-								Type:   []string{"string"},
-								Format: "",
-							},
-						},
-						"uid": {
-							SchemaProps: spec.SchemaProps{
-								Type:   []string{"integer"},
-								Format: "int32",
-							},
-						},
-						"gid": {
-							SchemaProps: spec.SchemaProps{
-								Type:   []string{"integer"},
-								Format: "int32",
 							},
 						},
 					},
-					Required: []string{"tree", "paths", "hostname", "username", "uid", "gid"},
 				},
 			},
 			Dependencies: []string{},

@@ -28,8 +28,8 @@ type FakeRepositoriesV1alpha1 struct {
 	*testing.Fake
 }
 
-func (c *FakeRepositoriesV1alpha1) Snapshots(namespace string) v1alpha1.SnapshotInterface {
-	return &FakeSnapshots{c, namespace}
+func (c *FakeRepositoriesV1alpha1) Branches(namespace string) v1alpha1.BranchInterface {
+	return &FakeBranches{c, namespace}
 }
 
 // RESTClient returns a RESTClient that is used to communicate
