@@ -10,14 +10,14 @@ import (
 	openapinamer "k8s.io/apiserver/pkg/endpoints/openapi"
 	genericapiserver "k8s.io/apiserver/pkg/server"
 	genericoptions "k8s.io/apiserver/pkg/server/options"
-	"kube.ci/git-apiserver/apis/repositories/v1alpha1"
+	"kube.ci/git-apiserver/apis/git/v1alpha1"
 	"kube.ci/git-apiserver/pkg/controller"
 	"kube.ci/git-apiserver/pkg/server"
 )
 
 const defaultEtcdPathPrefix = "/registry/git.kube.ci"
 
-type StashOptions struct {
+type GitAPIServerOptions struct {
 	RecommendedOptions *genericoptions.RecommendedOptions
 	ExtraOptions       *ExtraOptions
 
@@ -25,8 +25,8 @@ type StashOptions struct {
 	StdErr io.Writer
 }
 
-func NewStashOptions(out, errOut io.Writer) *StashOptions {
-	o := &StashOptions{
+func NewGitAPIServerOptions(out, errOut io.Writer) *GitAPIServerOptions {
+	o := &GitAPIServerOptions{
 		// TODO we will nil out the etcd storage options.  This requires a later level of k8s.io/apiserver
 		RecommendedOptions: genericoptions.NewRecommendedOptions(defaultEtcdPathPrefix, server.Codecs.LegacyCodec(admissionv1beta1.SchemeGroupVersion)),
 		ExtraOptions:       NewExtraOptions(),
@@ -39,20 +39,20 @@ func NewStashOptions(out, errOut io.Writer) *StashOptions {
 	return o
 }
 
-func (o StashOptions) AddFlags(fs *pflag.FlagSet) {
+func (o GitAPIServerOptions) AddFlags(fs *pflag.FlagSet) {
 	o.RecommendedOptions.AddFlags(fs)
 	o.ExtraOptions.AddFlags(fs)
 }
 
-func (o StashOptions) Validate(args []string) error {
+func (o GitAPIServerOptions) Validate(args []string) error {
 	return nil
 }
 
-func (o *StashOptions) Complete() error {
+func (o *GitAPIServerOptions) Complete() error {
 	return nil
 }
 
-func (o StashOptions) Config() (*server.StashConfig, error) {
+func (o GitAPIServerOptions) Config() (*server.GitAPIServerConfig, error) {
 	// TODO have a "real" external address
 	if err := o.RecommendedOptions.SecureServing.MaybeDefaultWithSelfSignedCerts("localhost", nil, []net.IP{net.ParseIP("127.0.0.1")}); err != nil {
 		return nil, fmt.Errorf("error creating self-signed certificates: %v", err)
@@ -63,18 +63,11 @@ func (o StashOptions) Config() (*server.StashConfig, error) {
 		return nil, err
 	}
 	serverConfig.OpenAPIConfig = genericapiserver.DefaultOpenAPIConfig(v1alpha1.GetOpenAPIDefinitions, openapinamer.NewDefinitionNamer(server.Scheme))
-	serverConfig.OpenAPIConfig.Info.Title = "kubeci-server"
+	serverConfig.OpenAPIConfig.Info.Title = "git-apiserver"
 	serverConfig.OpenAPIConfig.Info.Version = v1alpha1.SchemeGroupVersion.Version
 	serverConfig.OpenAPIConfig.IgnorePrefixes = []string{
 		"/swaggerapi",
-		"/apis/admission.git.kube.ci/v1alpha1/restics",
-		"/apis/admission.git.kube.ci/v1alpha1/recoveries",
 		"/apis/admission.git.kube.ci/v1alpha1/repositories",
-		"/apis/admission.git.kube.ci/v1alpha1/deployments",
-		"/apis/admission.git.kube.ci/v1alpha1/daemonsets",
-		"/apis/admission.git.kube.ci/v1alpha1/statefulsets",
-		"/apis/admission.git.kube.ci/v1alpha1/replicationcontrollers",
-		"/apis/admission.git.kube.ci/v1alpha1/replicasets",
 	}
 
 	extraConfig := controller.NewConfig(serverConfig.ClientConfig)
@@ -82,14 +75,14 @@ func (o StashOptions) Config() (*server.StashConfig, error) {
 		return nil, err
 	}
 
-	config := &server.StashConfig{
+	config := &server.GitAPIServerConfig{
 		GenericConfig: serverConfig,
 		ExtraConfig:   extraConfig,
 	}
 	return config, nil
 }
 
-func (o StashOptions) Run(stopCh <-chan struct{}) error {
+func (o GitAPIServerOptions) Run(stopCh <-chan struct{}) error {
 	config, err := o.Config()
 	if err != nil {
 		return err

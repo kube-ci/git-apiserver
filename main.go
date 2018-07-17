@@ -21,8 +21,8 @@ func main() {
 	}
 
 	if err := cmds.NewRootCmd().Execute(); err != nil {
-		log.Fatalln("Error in Stash Main:", err)
+		log.Fatalln("Error in git-apiserver Main:", err)
 	}
-	log.Infoln("Exiting Stash Main")
+	log.Infoln("Exiting git-apiserver Main")
 	os.Exit(0)
 }

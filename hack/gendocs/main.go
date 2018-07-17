@@ -22,7 +22,7 @@ const (
 var (
 	tplFrontMatter = template.Must(template.New("index").Parse(`---
 title: Reference
-description: Stash CLI Reference
+description: Kubeci CLI Reference
 menu:
   product_kubeci_{{ .Version }}:
     identifier: reference

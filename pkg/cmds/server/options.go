@@ -16,34 +16,34 @@ import (
 )
 
 type ExtraOptions struct {
-	EnableRBAC     bool
-	StashImageTag  string
-	DockerRegistry string
-	MaxNumRequeues int
-	NumThreads     int
-	ScratchDir     string
-	QPS            float64
-	Burst          int
-	ResyncPeriod   time.Duration
+	EnableRBAC           bool
+	GitAPIServerImageTag string
+	DockerRegistry       string
+	MaxNumRequeues       int
+	NumThreads           int
+	ScratchDir           string
+	QPS                  float64
+	Burst                int
+	ResyncPeriod         time.Duration
 }
 
 func NewExtraOptions() *ExtraOptions {
 	return &ExtraOptions{
-		DockerRegistry: docker.ACRegistry,
-		StashImageTag:  stringz.Val(v.Version.Version, "canary"),
-		MaxNumRequeues: 5,
-		NumThreads:     2,
-		ScratchDir:     "/tmp",
-		QPS:            100,
-		Burst:          100,
-		ResyncPeriod:   10 * time.Minute,
+		DockerRegistry:       docker.ACRegistry,
+		GitAPIServerImageTag: stringz.Val(v.Version.Version, "canary"),
+		MaxNumRequeues:       5,
+		NumThreads:           2,
+		ScratchDir:           "/tmp",
+		QPS:                  100,
+		Burst:                100,
+		ResyncPeriod:         10 * time.Minute,
 	}
 }
 
 func (s *ExtraOptions) AddGoFlags(fs *flag.FlagSet) {
 	fs.BoolVar(&s.EnableRBAC, "rbac", s.EnableRBAC, "Enable RBAC for operator")
 	fs.StringVar(&s.ScratchDir, "scratch-dir", s.ScratchDir, "Directory used to store temporary files. Use an `emptyDir` in Kubernetes.")
-	fs.StringVar(&s.StashImageTag, "image-tag", s.StashImageTag, "Image tag for sidecar, init-container, check-job and recovery-job")
+	fs.StringVar(&s.GitAPIServerImageTag, "image-tag", s.GitAPIServerImageTag, "Image tag for sidecar, init-container, check-job and recovery-job")
 	fs.StringVar(&s.DockerRegistry, "docker-registry", s.DockerRegistry, "Docker image registry for sidecar, init-container, check-job, recovery-job and kubectl-job")
 
 	fs.Float64Var(&s.QPS, "qps", s.QPS, "The maximum QPS to the master from this client")
@@ -63,7 +63,7 @@ func (s *ExtraOptions) ApplyTo(cfg *controller.Config) error {
 	var err error
 
 	cfg.EnableRBAC = s.EnableRBAC
-	cfg.StashImageTag = s.StashImageTag
+	cfg.GitAPIServerImageTag = s.GitAPIServerImageTag
 	cfg.DockerRegistry = s.DockerRegistry
 	cfg.MaxNumRequeues = s.MaxNumRequeues
 	cfg.NumThreads = s.NumThreads
@@ -75,7 +75,7 @@ func (s *ExtraOptions) ApplyTo(cfg *controller.Config) error {
 	if cfg.KubeClient, err = kubernetes.NewForConfig(cfg.ClientConfig); err != nil {
 		return err
 	}
-	if cfg.StashClient, err = cs.NewForConfig(cfg.ClientConfig); err != nil {
+	if cfg.GitAPIServerClient, err = cs.NewForConfig(cfg.ClientConfig); err != nil {
 		return err
 	}
 	if cfg.CRDClient, err = crd_cs.NewForConfig(cfg.ClientConfig); err != nil {

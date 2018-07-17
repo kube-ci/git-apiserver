@@ -25,9 +25,8 @@ const (
 
 func NewRootCmd() *cobra.Command {
 	var rootCmd = &cobra.Command{
-		Use:               "kubeci",
-		Short:             `Stash by AppsCode - Backup your Kubernetes Volumes`,
-		Long:              `Stash is a Kubernetes operator for restic. For more information, visit here: https://appscode.com/products/kubeci`,
+		Use:               "git-apiserver",
+		Short:             `Git apiserver by AppsCode`,
 		DisableAutoGenTag: true,
 		PersistentPreRun: func(c *cobra.Command, args []string) {
 			c.Flags().VisitAll(func(flag *pflag.Flag) {

@@ -3,6 +3,7 @@ package main
 import (
 	"io/ioutil"
 	"os"
+	"path/filepath"
 
 	"github.com/appscode/go/log"
 	gort "github.com/appscode/go/runtime"
@@ -14,11 +15,10 @@ import (
 	"k8s.io/apimachinery/pkg/runtime"
 	"k8s.io/apimachinery/pkg/runtime/serializer"
 	"k8s.io/kube-openapi/pkg/common"
-	kubeciinstall "kube.ci/git-apiserver/apis/git/install"
-	kubeciv1alpha1 "kube.ci/git-apiserver/apis/git/v1alpha1"
-	repoinstall "kube.ci/git-apiserver/apis/repositories/install"
-	repov1alpha1 "kube.ci/git-apiserver/apis/repositories/v1alpha1"
-	"path/filepath"
+	git_install "kube.ci/git-apiserver/apis/git/install"
+	git_v1alpha1 "kube.ci/git-apiserver/apis/git/v1alpha1"
+	repo_install "kube.ci/git-apiserver/apis/repositories/install"
+	repo_v1alpha1 "kube.ci/git-apiserver/apis/repositories/v1alpha1"
 )
 
 func generateCRDDefinitions() {
@@ -31,7 +31,7 @@ func generateCRDDefinitions() {
 	defer f.Close()
 
 	crds := []*crd_api.CustomResourceDefinition{
-		kubeciv1alpha1.Repository{}.CustomResourceDefinition(),
+		git_v1alpha1.Repository{}.CustomResourceDefinition(),
 	}
 	for _, crd := range crds {
 		err = crdutils.MarshallCrd(f, crd, "yaml")
@@ -46,15 +46,15 @@ func generateSwaggerJson() {
 		Codecs = serializer.NewCodecFactory(Scheme)
 	)
 
-	kubeciinstall.Install(Scheme)
-	repoinstall.Install(Scheme)
+	git_install.Install(Scheme)
+	repo_install.Install(Scheme)
 
 	apispec, err := openapi.RenderOpenAPISpec(openapi.Config{
 		Scheme: Scheme,
 		Codecs: Codecs,
 		Info: spec.InfoProps{
-			Title:   "Stash",
-			Version: "v0.7.0",
+			Title:   "Kubeci",
+			Version: "v0.1.0",
 			Contact: &spec.ContactInfo{
 				Name:  "AppsCode Inc.",
 				URL:   "https://appscode.com",
@@ -66,14 +66,14 @@ func generateSwaggerJson() {
 			},
 		},
 		OpenAPIDefinitions: []common.GetOpenAPIDefinitions{
-			kubeciv1alpha1.GetOpenAPIDefinitions,
-			repov1alpha1.GetOpenAPIDefinitions,
+			git_v1alpha1.GetOpenAPIDefinitions,
+			repo_v1alpha1.GetOpenAPIDefinitions,
 		},
 		Resources: []openapi.TypeInfo{
-			{kubeciv1alpha1.SchemeGroupVersion, kubeciv1alpha1.ResourcePluralRepository, kubeciv1alpha1.ResourceKindRepository, true},
+			{git_v1alpha1.SchemeGroupVersion, git_v1alpha1.ResourceRepositories, git_v1alpha1.ResourceKindRepository, true},
 		},
 		RDResources: []openapi.TypeInfo{
-			{repov1alpha1.SchemeGroupVersion, repov1alpha1.ResourcePluralSnapshot, repov1alpha1.ResourceKindSnapshot, true},
+			{repo_v1alpha1.SchemeGroupVersion, repo_v1alpha1.ResourceBranches, repo_v1alpha1.ResourceKindBranch, true},
 		},
 	})
 	if err != nil {

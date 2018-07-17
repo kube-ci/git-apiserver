@@ -10,26 +10,26 @@ import (
 	"k8s.io/client-go/kubernetes"
 	"k8s.io/client-go/rest"
 	cs "kube.ci/git-apiserver/client/clientset/versioned"
-	kubeciinformers "kube.ci/git-apiserver/client/informers/externalversions"
+	git_apiserver_informers "kube.ci/git-apiserver/client/informers/externalversions"
 	"kube.ci/git-apiserver/pkg/eventer"
 )
 
 type config struct {
-	EnableRBAC     bool
-	StashImageTag  string
-	DockerRegistry string
-	MaxNumRequeues int
-	NumThreads     int
-	ResyncPeriod   time.Duration
+	EnableRBAC           bool
+	GitAPIServerImageTag string
+	DockerRegistry       string
+	MaxNumRequeues       int
+	NumThreads           int
+	ResyncPeriod         time.Duration
 }
 
 type Config struct {
 	config
 
-	ClientConfig *rest.Config
-	KubeClient   kubernetes.Interface
-	StashClient  cs.Interface
-	CRDClient    crd_cs.ApiextensionsV1beta1Interface
+	ClientConfig       *rest.Config
+	KubeClient         kubernetes.Interface
+	GitAPIServerClient cs.Interface
+	CRDClient          crd_cs.ApiextensionsV1beta1Interface
 }
 
 func NewConfig(clientConfig *rest.Config) *Config {
@@ -38,18 +38,18 @@ func NewConfig(clientConfig *rest.Config) *Config {
 	}
 }
 
-func (c *Config) New() (*StashController, error) {
+func (c *Config) New() (*RepositoryController, error) {
 	tweakListOptions := func(opt *metav1.ListOptions) {
 		opt.IncludeUninitialized = true
 	}
-	ctrl := &StashController{
-		config:                c.config,
-		kubeClient:            c.KubeClient,
-		kubeciClient:          c.StashClient,
-		crdClient:             c.CRDClient,
-		kubeInformerFactory:   informers.NewFilteredSharedInformerFactory(c.KubeClient, c.ResyncPeriod, core.NamespaceAll, tweakListOptions),
-		kubeciInformerFactory: kubeciinformers.NewSharedInformerFactory(c.StashClient, c.ResyncPeriod),
-		recorder:              eventer.NewEventRecorder(c.KubeClient, "kubeci-controller"),
+	ctrl := &RepositoryController{
+		config:                      c.config,
+		kubeClient:                  c.KubeClient,
+		gitAPIServerClient:          c.GitAPIServerClient,
+		crdClient:                   c.CRDClient,
+		kubeInformerFactory:         informers.NewFilteredSharedInformerFactory(c.KubeClient, c.ResyncPeriod, core.NamespaceAll, tweakListOptions),
+		gitAPIServerInformerFactory: git_apiserver_informers.NewSharedInformerFactory(c.GitAPIServerClient, c.ResyncPeriod),
+		recorder:                    eventer.NewEventRecorder(c.KubeClient, "kubeci-controller"),
 	}
 
 	if err := ctrl.ensureCustomResourceDefinitions(); err != nil {

@@ -15,40 +15,40 @@ import (
 	"k8s.io/client-go/tools/record"
 	api "kube.ci/git-apiserver/apis/git/v1alpha1"
 	cs "kube.ci/git-apiserver/client/clientset/versioned"
-	kubeciinformers "kube.ci/git-apiserver/client/informers/externalversions"
-	kubeci_listers "kube.ci/git-apiserver/client/listers/git/v1alpha1"
+	git_apiserver_informers "kube.ci/git-apiserver/client/informers/externalversions"
+	git_apiserver_listers "kube.ci/git-apiserver/client/listers/git/v1alpha1"
 )
 
-type StashController struct {
+type RepositoryController struct {
 	config
 
-	kubeClient   kubernetes.Interface
-	kubeciClient cs.Interface
-	crdClient    crd_cs.ApiextensionsV1beta1Interface
-	recorder     record.EventRecorder
+	kubeClient         kubernetes.Interface
+	gitAPIServerClient cs.Interface
+	crdClient          crd_cs.ApiextensionsV1beta1Interface
+	recorder           record.EventRecorder
 
-	kubeInformerFactory   informers.SharedInformerFactory
-	kubeciInformerFactory kubeciinformers.SharedInformerFactory
+	kubeInformerFactory         informers.SharedInformerFactory
+	gitAPIServerInformerFactory git_apiserver_informers.SharedInformerFactory
 
 	// Repository
 	repoQueue    *queue.Worker
 	repoInformer cache.SharedIndexInformer
-	repoLister   kubeci_listers.RepositoryLister
+	repoLister   git_apiserver_listers.RepositoryLister
 }
 
-func (c *StashController) ensureCustomResourceDefinitions() error {
+func (c *RepositoryController) ensureCustomResourceDefinitions() error {
 	crds := []*crd_api.CustomResourceDefinition{
 		api.Repository{}.CustomResourceDefinition(),
 	}
 	return crdutils.RegisterCRDs(c.crdClient, crds)
 }
 
-func (c *StashController) RunInformers(stopCh <-chan struct{}) {
+func (c *RepositoryController) RunInformers(stopCh <-chan struct{}) {
 	defer runtime.HandleCrash()
 
-	glog.Info("Starting Stash controller")
+	glog.Info("Starting git apiserver")
 	c.kubeInformerFactory.Start(stopCh)
-	c.kubeciInformerFactory.Start(stopCh)
+	c.gitAPIServerInformerFactory.Start(stopCh)
 
 	// Wait for all involved caches to be synced, before processing items from the queue is started
 	for _, v := range c.kubeInformerFactory.WaitForCacheSync(stopCh) {
@@ -57,7 +57,7 @@ func (c *StashController) RunInformers(stopCh <-chan struct{}) {
 			return
 		}
 	}
-	for _, v := range c.kubeciInformerFactory.WaitForCacheSync(stopCh) {
+	for _, v := range c.gitAPIServerInformerFactory.WaitForCacheSync(stopCh) {
 		if !v {
 			runtime.HandleError(fmt.Errorf("timed out waiting for caches to sync"))
 			return

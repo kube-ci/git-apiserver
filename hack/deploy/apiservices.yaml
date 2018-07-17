@@ -12,7 +12,7 @@ spec:
   versionPriority: 15
   service:
     name: git-apiserver
-    namespace: ${STASH_NAMESPACE}
+    namespace: ${GIT_APISERVER_NAMESPACE}
   version: v1alpha1
 ---
 # register as aggregated apiserver
@@ -29,5 +29,5 @@ spec:
   versionPriority: 15
   service:
     name: git-apiserver
-    namespace: ${STASH_NAMESPACE}
+    namespace: ${GIT_APISERVER_NAMESPACE}
   version: v1alpha1

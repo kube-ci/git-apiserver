@@ -5,42 +5,6 @@ metadata:
   labels:
     app: kubeci
 webhooks:
-- name: restic.admission.git.kube.ci
-  clientConfig:
-    service:
-      namespace: default
-      name: kubernetes
-      path: /apis/admission.git.kube.ci/v1alpha1/restics
-    caBundle: ${KUBE_CA}
-  rules:
-  - operations:
-    - CREATE
-    - UPDATE
-    apiGroups:
-    - git.kube.ci
-    apiVersions:
-    - "*"
-    resources:
-    - restics
-  failurePolicy: Fail
-- name: recovery.admission.git.kube.ci
-  clientConfig:
-    service:
-      namespace: default
-      name: kubernetes
-      path: /apis/admission.git.kube.ci/v1alpha1/recoveries
-    caBundle: ${KUBE_CA}
-  rules:
-  - operations:
-    - CREATE
-    - UPDATE
-    apiGroups:
-    - git.kube.ci
-    apiVersions:
-    - "*"
-    resources:
-    - recoveries
-  failurePolicy: Fail
 - name: repository.admission.git.kube.ci
   clientConfig:
     service:

@@ -1,8 +1,8 @@
 package docker
 
 const (
-	ACRegistry = "appscode"
-	ImageStash = "kubeci"
+	ACRegistry        = "kubeci"
+	ImageGitAPIServer = "git-apiserver"
 )
 
 type Docker struct {

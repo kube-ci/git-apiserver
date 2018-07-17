@@ -1,7 +1,7 @@
 #!/bin/bash
 set -eou pipefail
 
-crds=(restics repositories recoveries)
+crds=(repositories)
 
 echo "checking kubeconfig context"
 kubectl config current-context || {
@@ -91,36 +91,36 @@ fi
 # ref: https://jonalmeida.com/posts/2013/05/26/different-ways-to-implement-flags-in-bash/
 # ref: http://tldp.org/LDP/abs/html/comparison-ops.html
 
-export STASH_NAMESPACE=kube-system
-export STASH_SERVICE_ACCOUNT=git-apiserver
-export STASH_ENABLE_RBAC=true
-export STASH_RUN_ON_MASTER=0
-export STASH_ENABLE_VALIDATING_WEBHOOK=false
-export STASH_ENABLE_MUTATING_WEBHOOK=false
-export STASH_DOCKER_REGISTRY=appscode
-export STASH_IMAGE_TAG=0.7.0
-export STASH_IMAGE_PULL_SECRET=
-export STASH_IMAGE_PULL_POLICY=IfNotPresent
-export STASH_ENABLE_STATUS_SUBRESOURCE=false
-export STASH_ENABLE_ANALYTICS=true
-export STASH_UNINSTALL=0
-export STASH_PURGE=0
+export GIT_APISERVER_NAMESPACE=kube-system
+export GIT_APISERVER_SERVICE_ACCOUNT=git-apiserver
+export GIT_APISERVER_ENABLE_RBAC=true
+export GIT_APISERVER_RUN_ON_MASTER=0
+export GIT_APISERVER_ENABLE_VALIDATING_WEBHOOK=false
+export GIT_APISERVER_ENABLE_MUTATING_WEBHOOK=false
+export GIT_APISERVER_DOCKER_REGISTRY=kubeci
+export GIT_APISERVER_IMAGE_TAG=0.7.0
+export GIT_APISERVER_IMAGE_PULL_SECRET=
+export GIT_APISERVER_IMAGE_PULL_POLICY=IfNotPresent
+export GIT_APISERVER_ENABLE_STATUS_SUBRESOURCE=false
+export GIT_APISERVER_ENABLE_ANALYTICS=true
+export GIT_APISERVER_UNINSTALL=0
+export GIT_APISERVER_PURGE=0
 
 export APPSCODE_ENV=${APPSCODE_ENV:-prod}
 export SCRIPT_LOCATION="curl -fsSL https://raw.githubusercontent.com/appscode/kubeci/0.7.0/"
 if [ "$APPSCODE_ENV" = "dev" ]; then
   detect_tag
   export SCRIPT_LOCATION="cat "
-  export STASH_IMAGE_TAG=$TAG
-  export STASH_IMAGE_PULL_POLICY=Always
+  export GIT_APISERVER_IMAGE_TAG=$TAG
+  export GIT_APISERVER_IMAGE_PULL_POLICY=IfNotPresent
 fi
 
 KUBE_APISERVER_VERSION=$(kubectl version -o=json | $ONESSL jsonpath '{.serverVersion.gitVersion}')
 $ONESSL semver --check='<1.9.0' $KUBE_APISERVER_VERSION || {
-  export STASH_ENABLE_VALIDATING_WEBHOOK=true
-  export STASH_ENABLE_MUTATING_WEBHOOK=true
+  export GIT_APISERVER_ENABLE_VALIDATING_WEBHOOK=true
+  export GIT_APISERVER_ENABLE_MUTATING_WEBHOOK=true
 }
-$ONESSL semver --check='<1.11.0' $KUBE_APISERVER_VERSION || { export STASH_ENABLE_STATUS_SUBRESOURCE=true; }
+$ONESSL semver --check='<1.11.0' $KUBE_APISERVER_VERSION || { export GIT_APISERVER_ENABLE_STATUS_SUBRESOURCE=true; }
 
 show_help() {
   echo "kubeci.sh - install kubeci operator"
@@ -134,7 +134,7 @@ show_help() {
   echo "    --docker-registry              docker registry used to pull kubeci images (default: appscode)"
   echo "    --image-pull-secret            name of secret used to pull kubeci operator images"
   echo "    --run-on-master                run kubeci operator on master"
-  echo "    --enable-validating-webhook    enable/disable validating webhooks for Stash crds"
+  echo "    --enable-validating-webhook    enable/disable validating webhooks for KUBECI crds"
   echo "    --enable-mutating-webhook      enable/disable mutating webhooks for Kubernetes workloads"
   echo "    --enable-status-subresource    If enabled, uses status sub resource for crds"
   echo "    --enable-analytics             send usage events to Google Analytics (default: true)"
@@ -151,7 +151,7 @@ while test $# -gt 0; do
     -n)
       shift
       if test $# -gt 0; then
-        export STASH_NAMESPACE=$1
+        export GIT_APISERVER_NAMESPACE=$1
       else
         echo "no namespace specified"
         exit 1
@@ -159,64 +159,64 @@ while test $# -gt 0; do
       shift
       ;;
     --namespace*)
-      export STASH_NAMESPACE=$(echo $1 | sed -e 's/^[^=]*=//g')
+      export GIT_APISERVER_NAMESPACE=$(echo $1 | sed -e 's/^[^=]*=//g')
       shift
       ;;
     --docker-registry*)
-      export STASH_DOCKER_REGISTRY=$(echo $1 | sed -e 's/^[^=]*=//g')
+      export GIT_APISERVER_DOCKER_REGISTRY=$(echo $1 | sed -e 's/^[^=]*=//g')
       shift
       ;;
     --image-pull-secret*)
       secret=$(echo $1 | sed -e 's/^[^=]*=//g')
-      export STASH_IMAGE_PULL_SECRET="name: '$secret'"
+      export GIT_APISERVER_IMAGE_PULL_SECRET="name: '$secret'"
       shift
       ;;
     --enable-validating-webhook*)
       val=$(echo $1 | sed -e 's/^[^=]*=//g')
       if [ "$val" = "false" ]; then
-        export STASH_ENABLE_VALIDATING_WEBHOOK=false
+        export GIT_APISERVER_ENABLE_VALIDATING_WEBHOOK=false
       fi
       shift
       ;;
     --enable-mutating-webhook*)
       val=$(echo $1 | sed -e 's/^[^=]*=//g')
       if [ "$val" = "false" ]; then
-        export STASH_ENABLE_MUTATING_WEBHOOK=false
+        export GIT_APISERVER_ENABLE_MUTATING_WEBHOOK=false
       fi
       shift
       ;;
     --enable-status-subresource*)
       val=$(echo $1 | sed -e 's/^[^=]*=//g')
       if [ "$val" = "false" ]; then
-        export STASH_ENABLE_STATUS_SUBRESOURCE=false
+        export GIT_APISERVER_ENABLE_STATUS_SUBRESOURCE=false
       fi
       shift
       ;;
     --enable-analytics*)
       val=$(echo $1 | sed -e 's/^[^=]*=//g')
       if [ "$val" = "false" ]; then
-        export STASH_ENABLE_ANALYTICS=false
+        export GIT_APISERVER_ENABLE_ANALYTICS=false
       fi
       shift
       ;;
     --rbac*)
       val=$(echo $1 | sed -e 's/^[^=]*=//g')
       if [ "$val" = "false" ]; then
-        export STASH_SERVICE_ACCOUNT=default
-        export STASH_ENABLE_RBAC=false
+        export GIT_APISERVER_SERVICE_ACCOUNT=default
+        export GIT_APISERVER_ENABLE_RBAC=false
       fi
       shift
       ;;
     --run-on-master)
-      export STASH_RUN_ON_MASTER=1
+      export GIT_APISERVER_RUN_ON_MASTER=1
       shift
       ;;
     --uninstall)
-      export STASH_UNINSTALL=1
+      export GIT_APISERVER_UNINSTALL=1
       shift
       ;;
     --purge)
-      export STASH_PURGE=1
+      export GIT_APISERVER_PURGE=1
       shift
       ;;
     *)
@@ -226,25 +226,25 @@ while test $# -gt 0; do
   esac
 done
 
-if [ "$STASH_UNINSTALL" -eq 1 ]; then
+if [ "$GIT_APISERVER_UNINSTALL" -eq 1 ]; then
   # delete webhooks and apiservices
   kubectl delete validatingwebhookconfiguration -l app=kubeci || true
   kubectl delete mutatingwebhookconfiguration -l app=kubeci || true
   kubectl delete apiservice -l app=kubeci
   # delete kubeci operator
-  kubectl delete deployment -l app=kubeci --namespace $STASH_NAMESPACE
-  kubectl delete service -l app=kubeci --namespace $STASH_NAMESPACE
-  kubectl delete secret -l app=kubeci --namespace $STASH_NAMESPACE
+  kubectl delete deployment -l app=kubeci --namespace $GIT_APISERVER_NAMESPACE
+  kubectl delete service -l app=kubeci --namespace $GIT_APISERVER_NAMESPACE
+  kubectl delete secret -l app=kubeci --namespace $GIT_APISERVER_NAMESPACE
   # delete RBAC objects, if --rbac flag was used.
-  kubectl delete serviceaccount -l app=kubeci --namespace $STASH_NAMESPACE
+  kubectl delete serviceaccount -l app=kubeci --namespace $GIT_APISERVER_NAMESPACE
   kubectl delete clusterrolebindings -l app=kubeci
   kubectl delete clusterrole -l app=kubeci
-  kubectl delete rolebindings -l app=kubeci --namespace $STASH_NAMESPACE
-  kubectl delete role -l app=kubeci --namespace $STASH_NAMESPACE
+  kubectl delete rolebindings -l app=kubeci --namespace $GIT_APISERVER_NAMESPACE
+  kubectl delete role -l app=kubeci --namespace $GIT_APISERVER_NAMESPACE
 
   echo "waiting for kubeci operator pod to stop running"
   for (( ; ; )); do
-    pods=($(kubectl get pods --namespace $STASH_NAMESPACE -l app=kubeci -o jsonpath='{range .items[*]}{.metadata.name} {end}'))
+    pods=($(kubectl get pods --namespace $GIT_APISERVER_NAMESPACE -l app=kubeci -o jsonpath='{range .items[*]}{.metadata.name} {end}'))
     total=${#pods[*]}
     if [ $total -eq 0 ]; then
       break
@@ -253,7 +253,7 @@ if [ "$STASH_UNINSTALL" -eq 1 ]; then
   done
 
   # https://github.com/kubernetes/kubernetes/issues/60538
-  if [ "$STASH_PURGE" -eq 1 ]; then
+  if [ "$GIT_APISERVER_PURGE" -eq 1 ]; then
     for crd in "${crds[@]}"; do
       pairs=($(kubectl get ${crd}.git.kube.ci --all-namespaces -o jsonpath='{range .items[*]}{.metadata.name} {.metadata.namespace} {end}' || true))
       total=${#pairs[*]}
@@ -281,7 +281,7 @@ if [ "$STASH_UNINSTALL" -eq 1 ]; then
   fi
 
   echo
-  echo "Successfully uninstalled Stash!"
+  echo "Successfully uninstalled KUBECI!"
   exit 0
 fi
 
@@ -293,63 +293,63 @@ $ONESSL has-keys configmap --namespace=kube-system --keys=requestheader-client-c
 echo ""
 
 export KUBE_CA=
-export STASH_ENABLE_APISERVER=false
-if [ "$STASH_ENABLE_VALIDATING_WEBHOOK" = true ] || [ "$STASH_ENABLE_MUTATING_WEBHOOK" = true ]; then
+export GIT_APISERVER_ENABLE_APISERVER=false
+if [ "$GIT_APISERVER_ENABLE_VALIDATING_WEBHOOK" = true ] || [ "$GIT_APISERVER_ENABLE_MUTATING_WEBHOOK" = true ]; then
   $ONESSL get kube-ca >/dev/null 2>&1 || {
     echo "Admission webhooks can't be used when kube apiserver is accesible without verifying its TLS certificate (insecure-skip-tls-verify : true)."
     echo
     exit 1
   }
   export KUBE_CA=$($ONESSL get kube-ca | $ONESSL base64)
-  export STASH_ENABLE_APISERVER=true
+  export GIT_APISERVER_ENABLE_APISERVER=true
 fi
 
-env | sort | grep STASH*
+env | sort | grep KUBECI*
 echo ""
 
 # create necessary TLS certificates:
 # - a local CA key and cert
 # - a webhook server key and cert signed by the local CA
 $ONESSL create ca-cert
-$ONESSL create server-cert server --domains=git-apiserver.$STASH_NAMESPACE.svc
+$ONESSL create server-cert server --domains=git-apiserver.$GIT_APISERVER_NAMESPACE.svc
 export SERVICE_SERVING_CERT_CA=$(cat ca.crt | $ONESSL base64)
 export TLS_SERVING_CERT=$(cat server.crt | $ONESSL base64)
 export TLS_SERVING_KEY=$(cat server.key | $ONESSL base64)
 
 ${SCRIPT_LOCATION}hack/deploy/operator.yaml | $ONESSL envsubst | kubectl apply -f -
 
-if [ "$STASH_ENABLE_RBAC" = true ]; then
+if [ "$GIT_APISERVER_ENABLE_RBAC" = true ]; then
   ${SCRIPT_LOCATION}hack/deploy/service-account.yaml | $ONESSL envsubst | kubectl apply -f -
   ${SCRIPT_LOCATION}hack/deploy/rbac-list.yaml | $ONESSL envsubst | kubectl auth reconcile -f -
   ${SCRIPT_LOCATION}hack/deploy/user-roles.yaml | $ONESSL envsubst | kubectl auth reconcile -f -
 fi
 
-if [ "$STASH_RUN_ON_MASTER" -eq 1 ]; then
-  kubectl patch deploy git-apiserver -n $STASH_NAMESPACE \
+if [ "$GIT_APISERVER_RUN_ON_MASTER" -eq 1 ]; then
+  kubectl patch deploy git-apiserver -n $GIT_APISERVER_NAMESPACE \
     --patch="$(${SCRIPT_LOCATION}hack/deploy/run-on-master.yaml)"
 fi
 
-if [ "$STASH_ENABLE_APISERVER" = true ]; then
+if [ "$GIT_APISERVER_ENABLE_APISERVER" = true ]; then
   ${SCRIPT_LOCATION}hack/deploy/apiservices.yaml | $ONESSL envsubst | kubectl apply -f -
 fi
-if [ "$STASH_ENABLE_VALIDATING_WEBHOOK" = true ]; then
+if [ "$GIT_APISERVER_ENABLE_VALIDATING_WEBHOOK" = true ]; then
   ${SCRIPT_LOCATION}hack/deploy/validating-webhook.yaml | $ONESSL envsubst | kubectl apply -f -
 fi
-if [ "$STASH_ENABLE_MUTATING_WEBHOOK" = true ]; then
-  ${SCRIPT_LOCATION}hack/deploy/mutating-webhook.yaml | $ONESSL envsubst | kubectl apply -f -
-fi
+# if [ "$GIT_APISERVER_ENABLE_MUTATING_WEBHOOK" = true ]; then
+#   ${SCRIPT_LOCATION}hack/deploy/mutating-webhook.yaml | $ONESSL envsubst | kubectl apply -f -
+# fi
 
 echo
 echo "waiting until kubeci operator deployment is ready"
-$ONESSL wait-until-ready deployment git-apiserver --namespace $STASH_NAMESPACE || {
-  echo "Stash operator deployment failed to be ready"
+$ONESSL wait-until-ready deployment git-apiserver --namespace $GIT_APISERVER_NAMESPACE || {
+  echo "KUBECI operator deployment failed to be ready"
   exit 1
 }
 
-if [ "$STASH_ENABLE_APISERVER" = true ]; then
+if [ "$GIT_APISERVER_ENABLE_APISERVER" = true ]; then
   echo "waiting until kubeci apiservice is available"
   $ONESSL wait-until-ready apiservice v1alpha1.admission.git.kube.ci || {
-    echo "Stash apiservice failed to be ready"
+    echo "KUBECI apiservice failed to be ready"
     exit 1
   }
 fi
@@ -363,4 +363,4 @@ for crd in "${crds[@]}"; do
 done
 
 echo
-echo "Successfully installed Stash in $STASH_NAMESPACE namespace!"
+echo "Successfully installed KUBECI in $GIT_APISERVER_NAMESPACE namespace!"

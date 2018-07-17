@@ -10,15 +10,15 @@ import (
 )
 
 func NewCmdRun(out, errOut io.Writer, stopCh <-chan struct{}) *cobra.Command {
-	o := server.NewStashOptions(out, errOut)
+	o := server.NewGitAPIServerOptions(out, errOut)
 
 	cmd := &cobra.Command{
 		Use:               "run",
-		Short:             "Launch Stash Controller",
-		Long:              "Launch Stash Controller",
+		Short:             "Launch git apiserver",
+		Long:              "Launch git apiserver",
 		DisableAutoGenTag: true,
 		RunE: func(cmd *cobra.Command, args []string) error {
-			log.Infof("Starting operator version %s+%s ...", v.Version.Version, v.Version.CommitHash)
+			log.Infof("Starting server version %s+%s ...", v.Version.Version, v.Version.CommitHash)
 
 			if err := o.Complete(); err != nil {
 				return err
