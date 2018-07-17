@@ -18,7 +18,8 @@ import (
 	"kube.ci/git-apiserver/apis/repositories/install"
 	"kube.ci/git-apiserver/apis/repositories/v1alpha1"
 	"kube.ci/git-apiserver/pkg/controller"
-	snapregistry "kube.ci/git-apiserver/pkg/registry/snapshot"
+	"kube.ci/git-apiserver/pkg/producer"
+	"kube.ci/git-apiserver/pkg/registry/branch"
 )
 
 var (
@@ -45,18 +46,18 @@ func init() {
 	)
 }
 
-type StashConfig struct {
+type GitAPIServerConfig struct {
 	GenericConfig *genericapiserver.RecommendedConfig
 	ExtraConfig   *controller.Config
 }
 
-// StashServer contains state for a Kubernetes cluster master/api server.
-type StashServer struct {
+// GitAPIServer contains state for a Kubernetes cluster master/api server.
+type GitAPIServer struct {
 	GenericAPIServer *genericapiserver.GenericAPIServer
-	Controller       *controller.StashController
+	Controller       *controller.RepositoryController
 }
 
-func (op *StashServer) Run(stopCh <-chan struct{}) error {
+func (op *GitAPIServer) Run(stopCh <-chan struct{}) error {
 	// sync cache
 	op.Controller.RunInformers(stopCh)
 	return op.GenericAPIServer.PrepareRun().Run(stopCh)
@@ -73,7 +74,7 @@ type CompletedConfig struct {
 }
 
 // Complete fills in any fields not set that are required to have valid data. It's mutating the receiver.
-func (c *StashConfig) Complete() CompletedConfig {
+func (c *GitAPIServerConfig) Complete() CompletedConfig {
 	completedCfg := completedConfig{
 		c.GenericConfig.Complete(),
 		c.ExtraConfig,
@@ -87,8 +88,8 @@ func (c *StashConfig) Complete() CompletedConfig {
 	return CompletedConfig{&completedCfg}
 }
 
-// New returns a new instance of StashServer from the given config.
-func (c completedConfig) New() (*StashServer, error) {
+// New returns a new instance of GitAPIServer from the given config.
+func (c completedConfig) New() (*GitAPIServer, error) {
 	genericServer, err := c.GenericConfig.New("kubeci-apiserver", genericapiserver.NewEmptyDelegate()) // completion is done in Complete, no need for a second time
 	if err != nil {
 		return nil, err
@@ -101,7 +102,7 @@ func (c completedConfig) New() (*StashServer, error) {
 		ctrl.NewRepositoryWebhook(),
 	}
 
-	s := &StashServer{
+	s := &GitAPIServer{
 		GenericAPIServer: genericServer,
 		Controller:       ctrl,
 	}
@@ -156,9 +157,17 @@ func (c completedConfig) New() (*StashServer, error) {
 	}
 
 	{
+		registryBranch := branch.NewREST()
+		producer := producer.Producer{
+			Repository:     "my-repo",
+			Url:            "github.com/kube.ci/my-repo",
+			BranchRegistry: registryBranch,
+		}
+		go producer.Run()
+
 		apiGroupInfo := genericapiserver.NewDefaultAPIGroupInfo(repositories.GroupName, Scheme, metav1.ParameterCodec, Codecs)
 		v1alpha1storage := map[string]rest.Storage{}
-		v1alpha1storage[v1alpha1.ResourcePluralSnapshot] = snapregistry.NewREST(c.ExtraConfig.ClientConfig)
+		v1alpha1storage[v1alpha1.ResourceBranches] = registryBranch
 		apiGroupInfo.VersionedResourcesStorageMap["v1alpha1"] = v1alpha1storage
 
 		if err := s.GenericAPIServer.InstallAPIGroup(&apiGroupInfo); err != nil {
