@@ -19,7 +19,7 @@ import (
 	"kube.ci/git-apiserver/apis/repositories/v1alpha1"
 	"kube.ci/git-apiserver/pkg/controller"
 	"kube.ci/git-apiserver/pkg/producer"
-	"kube.ci/git-apiserver/pkg/registry/branchTwo"
+	"kube.ci/git-apiserver/pkg/registry/branchThree"
 )
 
 var (
@@ -157,7 +157,10 @@ func (c completedConfig) New() (*GitAPIServer, error) {
 	}
 
 	{
-		registryBranch := branchTwo.NewREST()
+		registryBranch, err := branchThree.NewREST(Scheme, c.GenericConfig.RESTOptionsGetter)
+		if err != nil {
+			return nil, err
+		}
 		producer := producer.Producer{
 			Repository:     "my-repo",
 			Url:            "github.com/kube.ci/my-repo",
