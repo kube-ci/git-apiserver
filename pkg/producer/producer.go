@@ -7,7 +7,7 @@ import (
 
 	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
 	repo_v1alpha1 "kube.ci/git-apiserver/apis/repositories/v1alpha1"
-	"kube.ci/git-apiserver/pkg/registry/branch"
+	"kube.ci/git-apiserver/pkg/registry/branchTwo"
 )
 
 type Producer struct {
@@ -15,7 +15,7 @@ type Producer struct {
 	Url        string
 	Secret     string
 
-	BranchRegistry *branch.REST
+	BranchRegistry *branchTwo.REST
 }
 
 func (p *Producer) Run() {
