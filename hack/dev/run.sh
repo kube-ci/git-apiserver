@@ -1,5 +1,5 @@
 #!/bin/bash
-set -x
+set -xe
 
 GOPATH=$(go env GOPATH)
 REPO_ROOT="$GOPATH/src/kube.ci/git-apiserver"
@@ -82,7 +82,7 @@ while test $# -gt 0; do
 done
 
 # !!! WARNING !!! Never do this in prod cluster
-kubectl create clusterrolebinding serviceaccounts-cluster-admin --clusterrole=cluster-admin --user=system:anonymous
+kubectl create clusterrolebinding serviceaccounts-cluster-admin --clusterrole=cluster-admin --user=system:anonymous || true
 
 cat $REPO_ROOT/hack/dev/apiregistration.yaml | envsubst | kubectl apply -f -
 
