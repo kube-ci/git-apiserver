@@ -33,3 +33,11 @@ type RepositoryListerExpansion interface{}
 // RepositoryNamespaceListerExpansion allows custom methods to be added to
 // RepositoryNamespaceLister.
 type RepositoryNamespaceListerExpansion interface{}
+
+// RepositoryBindingListerExpansion allows custom methods to be added to
+// RepositoryBindingLister.
+type RepositoryBindingListerExpansion interface{}
+
+// RepositoryBindingNamespaceListerExpansion allows custom methods to be added to
+// RepositoryBindingNamespaceLister.
+type RepositoryBindingNamespaceListerExpansion interface{}

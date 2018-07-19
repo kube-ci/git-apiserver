@@ -29,6 +29,7 @@ type GitV1alpha1Interface interface {
 	RESTClient() rest.Interface
 	BranchesGetter
 	RepositoriesGetter
+	RepositoryBindingsGetter
 }
 
 // GitV1alpha1Client is used to interact with features provided by the git.kube.ci group.
@@ -42,6 +43,10 @@ func (c *GitV1alpha1Client) Branches(namespace string) BranchInterface {
 
 func (c *GitV1alpha1Client) Repositories(namespace string) RepositoryInterface {
 	return newRepositories(c, namespace)
+}
+
+func (c *GitV1alpha1Client) RepositoryBindings(namespace string) RepositoryBindingInterface {
+	return newRepositoryBindings(c, namespace)
 }
 
 // NewForConfig creates a new GitV1alpha1Client for the given config.

@@ -21,3 +21,5 @@ package v1alpha1
 type BranchExpansion interface{}
 
 type RepositoryExpansion interface{}
+
+type RepositoryBindingExpansion interface{}

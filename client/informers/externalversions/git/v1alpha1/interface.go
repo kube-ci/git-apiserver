@@ -28,6 +28,8 @@ type Interface interface {
 	Branches() BranchInformer
 	// Repositories returns a RepositoryInformer.
 	Repositories() RepositoryInformer
+	// RepositoryBindings returns a RepositoryBindingInformer.
+	RepositoryBindings() RepositoryBindingInformer
 }
 
 type version struct {
@@ -49,4 +51,9 @@ func (v *version) Branches() BranchInformer {
 // Repositories returns a RepositoryInformer.
 func (v *version) Repositories() RepositoryInformer {
 	return &repositoryInformer{factory: v.factory, namespace: v.namespace, tweakListOptions: v.tweakListOptions}
+}
+
+// RepositoryBindings returns a RepositoryBindingInformer.
+func (v *version) RepositoryBindings() RepositoryBindingInformer {
+	return &repositoryBindingInformer{factory: v.factory, namespace: v.namespace, tweakListOptions: v.tweakListOptions}
 }
