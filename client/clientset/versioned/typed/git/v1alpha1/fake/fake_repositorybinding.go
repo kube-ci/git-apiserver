@@ -36,23 +36,23 @@ type FakeRepositoryBindings struct {
 
 var repositorybindingsResource = schema.GroupVersionResource{Group: "git.kube.ci", Version: "v1alpha1", Resource: "repositorybindings"}
 
-var repositorybindingsKind = schema.GroupVersionKind{Group: "git.kube.ci", Version: "v1alpha1", Kind: "RepositoryBinding"}
+var repositorybindingsKind = schema.GroupVersionKind{Group: "git.kube.ci", Version: "v1alpha1", Kind: "Binding"}
 
 // Get takes name of the repositoryBinding, and returns the corresponding repositoryBinding object, and an error if there is any.
-func (c *FakeRepositoryBindings) Get(name string, options v1.GetOptions) (result *v1alpha1.RepositoryBinding, err error) {
+func (c *FakeRepositoryBindings) Get(name string, options v1.GetOptions) (result *v1alpha1.Binding, err error) {
 	obj, err := c.Fake.
-		Invokes(testing.NewGetAction(repositorybindingsResource, c.ns, name), &v1alpha1.RepositoryBinding{})
+		Invokes(testing.NewGetAction(repositorybindingsResource, c.ns, name), &v1alpha1.Binding{})
 
 	if obj == nil {
 		return nil, err
 	}
-	return obj.(*v1alpha1.RepositoryBinding), err
+	return obj.(*v1alpha1.Binding), err
 }
 
 // List takes label and field selectors, and returns the list of RepositoryBindings that match those selectors.
-func (c *FakeRepositoryBindings) List(opts v1.ListOptions) (result *v1alpha1.RepositoryBindingList, err error) {
+func (c *FakeRepositoryBindings) List(opts v1.ListOptions) (result *v1alpha1.BindingList, err error) {
 	obj, err := c.Fake.
-		Invokes(testing.NewListAction(repositorybindingsResource, repositorybindingsKind, c.ns, opts), &v1alpha1.RepositoryBindingList{})
+		Invokes(testing.NewListAction(repositorybindingsResource, repositorybindingsKind, c.ns, opts), &v1alpha1.BindingList{})
 
 	if obj == nil {
 		return nil, err
@@ -62,8 +62,8 @@ func (c *FakeRepositoryBindings) List(opts v1.ListOptions) (result *v1alpha1.Rep
 	if label == nil {
 		label = labels.Everything()
 	}
-	list := &v1alpha1.RepositoryBindingList{ListMeta: obj.(*v1alpha1.RepositoryBindingList).ListMeta}
-	for _, item := range obj.(*v1alpha1.RepositoryBindingList).Items {
+	list := &v1alpha1.BindingList{ListMeta: obj.(*v1alpha1.BindingList).ListMeta}
+	for _, item := range obj.(*v1alpha1.BindingList).Items {
 		if label.Matches(labels.Set(item.Labels)) {
 			list.Items = append(list.Items, item)
 		}
@@ -79,43 +79,43 @@ func (c *FakeRepositoryBindings) Watch(opts v1.ListOptions) (watch.Interface, er
 }
 
 // Create takes the representation of a repositoryBinding and creates it.  Returns the server's representation of the repositoryBinding, and an error, if there is any.
-func (c *FakeRepositoryBindings) Create(repositoryBinding *v1alpha1.RepositoryBinding) (result *v1alpha1.RepositoryBinding, err error) {
+func (c *FakeRepositoryBindings) Create(repositoryBinding *v1alpha1.Binding) (result *v1alpha1.Binding, err error) {
 	obj, err := c.Fake.
-		Invokes(testing.NewCreateAction(repositorybindingsResource, c.ns, repositoryBinding), &v1alpha1.RepositoryBinding{})
+		Invokes(testing.NewCreateAction(repositorybindingsResource, c.ns, repositoryBinding), &v1alpha1.Binding{})
 
 	if obj == nil {
 		return nil, err
 	}
-	return obj.(*v1alpha1.RepositoryBinding), err
+	return obj.(*v1alpha1.Binding), err
 }
 
 // Update takes the representation of a repositoryBinding and updates it. Returns the server's representation of the repositoryBinding, and an error, if there is any.
-func (c *FakeRepositoryBindings) Update(repositoryBinding *v1alpha1.RepositoryBinding) (result *v1alpha1.RepositoryBinding, err error) {
+func (c *FakeRepositoryBindings) Update(repositoryBinding *v1alpha1.Binding) (result *v1alpha1.Binding, err error) {
 	obj, err := c.Fake.
-		Invokes(testing.NewUpdateAction(repositorybindingsResource, c.ns, repositoryBinding), &v1alpha1.RepositoryBinding{})
+		Invokes(testing.NewUpdateAction(repositorybindingsResource, c.ns, repositoryBinding), &v1alpha1.Binding{})
 
 	if obj == nil {
 		return nil, err
 	}
-	return obj.(*v1alpha1.RepositoryBinding), err
+	return obj.(*v1alpha1.Binding), err
 }
 
 // UpdateStatus was generated because the type contains a Status member.
 // Add a +genclient:noStatus comment above the type to avoid generating UpdateStatus().
-func (c *FakeRepositoryBindings) UpdateStatus(repositoryBinding *v1alpha1.RepositoryBinding) (*v1alpha1.RepositoryBinding, error) {
+func (c *FakeRepositoryBindings) UpdateStatus(repositoryBinding *v1alpha1.Binding) (*v1alpha1.Binding, error) {
 	obj, err := c.Fake.
-		Invokes(testing.NewUpdateSubresourceAction(repositorybindingsResource, "status", c.ns, repositoryBinding), &v1alpha1.RepositoryBinding{})
+		Invokes(testing.NewUpdateSubresourceAction(repositorybindingsResource, "status", c.ns, repositoryBinding), &v1alpha1.Binding{})
 
 	if obj == nil {
 		return nil, err
 	}
-	return obj.(*v1alpha1.RepositoryBinding), err
+	return obj.(*v1alpha1.Binding), err
 }
 
 // Delete takes name of the repositoryBinding and deletes it. Returns an error if one occurs.
 func (c *FakeRepositoryBindings) Delete(name string, options *v1.DeleteOptions) error {
 	_, err := c.Fake.
-		Invokes(testing.NewDeleteAction(repositorybindingsResource, c.ns, name), &v1alpha1.RepositoryBinding{})
+		Invokes(testing.NewDeleteAction(repositorybindingsResource, c.ns, name), &v1alpha1.Binding{})
 
 	return err
 }
@@ -124,17 +124,17 @@ func (c *FakeRepositoryBindings) Delete(name string, options *v1.DeleteOptions) 
 func (c *FakeRepositoryBindings) DeleteCollection(options *v1.DeleteOptions, listOptions v1.ListOptions) error {
 	action := testing.NewDeleteCollectionAction(repositorybindingsResource, c.ns, listOptions)
 
-	_, err := c.Fake.Invokes(action, &v1alpha1.RepositoryBindingList{})
+	_, err := c.Fake.Invokes(action, &v1alpha1.BindingList{})
 	return err
 }
 
 // Patch applies the patch and returns the patched repositoryBinding.
-func (c *FakeRepositoryBindings) Patch(name string, pt types.PatchType, data []byte, subresources ...string) (result *v1alpha1.RepositoryBinding, err error) {
+func (c *FakeRepositoryBindings) Patch(name string, pt types.PatchType, data []byte, subresources ...string) (result *v1alpha1.Binding, err error) {
 	obj, err := c.Fake.
-		Invokes(testing.NewPatchSubresourceAction(repositorybindingsResource, c.ns, name, data, subresources...), &v1alpha1.RepositoryBinding{})
+		Invokes(testing.NewPatchSubresourceAction(repositorybindingsResource, c.ns, name, data, subresources...), &v1alpha1.Binding{})
 
 	if obj == nil {
 		return nil, err
 	}
-	return obj.(*v1alpha1.RepositoryBinding), err
+	return obj.(*v1alpha1.Binding), err
 }

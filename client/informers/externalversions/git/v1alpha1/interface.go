@@ -24,12 +24,12 @@ import (
 
 // Interface provides access to all the informers in this group version.
 type Interface interface {
+	// Bindings returns a BindingInformer.
+	Bindings() BindingInformer
 	// Branches returns a BranchInformer.
 	Branches() BranchInformer
 	// Repositories returns a RepositoryInformer.
 	Repositories() RepositoryInformer
-	// RepositoryBindings returns a RepositoryBindingInformer.
-	RepositoryBindings() RepositoryBindingInformer
 }
 
 type version struct {
@@ -43,6 +43,11 @@ func New(f internalinterfaces.SharedInformerFactory, namespace string, tweakList
 	return &version{factory: f, namespace: namespace, tweakListOptions: tweakListOptions}
 }
 
+// Bindings returns a BindingInformer.
+func (v *version) Bindings() BindingInformer {
+	return &bindingInformer{factory: v.factory, namespace: v.namespace, tweakListOptions: v.tweakListOptions}
+}
+
 // Branches returns a BranchInformer.
 func (v *version) Branches() BranchInformer {
 	return &branchInformer{factory: v.factory, namespace: v.namespace, tweakListOptions: v.tweakListOptions}
@@ -51,9 +56,4 @@ func (v *version) Branches() BranchInformer {
 // Repositories returns a RepositoryInformer.
 func (v *version) Repositories() RepositoryInformer {
 	return &repositoryInformer{factory: v.factory, namespace: v.namespace, tweakListOptions: v.tweakListOptions}
-}
-
-// RepositoryBindings returns a RepositoryBindingInformer.
-func (v *version) RepositoryBindings() RepositoryBindingInformer {
-	return &repositoryBindingInformer{factory: v.factory, namespace: v.namespace, tweakListOptions: v.tweakListOptions}
 }

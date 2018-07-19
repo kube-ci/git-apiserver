@@ -57,11 +57,11 @@ func (c Branch) CustomResourceDefinition() *apiextensions.CustomResourceDefiniti
 	})
 }
 
-func (c RepositoryBinding) CustomResourceDefinition() *apiextensions.CustomResourceDefinition {
+func (c Binding) CustomResourceDefinition() *apiextensions.CustomResourceDefinition {
 	return crdutils.NewCustomResourceDefinition(crdutils.Config{
 		Group:         SchemeGroupVersion.Group,
-		Plural:        ResourceRepositoryBindings,
-		Kind:          ResourceKindRepositoryBinding,
+		Plural:        ResourceBindings,
+		Kind:          ResourceKindBinding,
 		ShortNames:    []string{"repo-binding"},
 		ResourceScope: string(apiextensions.NamespaceScoped),
 		Versions: []apiextensions.CustomResourceDefinitionVersion{
@@ -74,7 +74,7 @@ func (c RepositoryBinding) CustomResourceDefinition() *apiextensions.CustomResou
 		Labels: crdutils.Labels{
 			LabelsMap: map[string]string{"app": "kubeci"},
 		},
-		SpecDefinitionName:      "kube.ci/git-apiserver/apis/git/v1alpha1.RepositoryBinding",
+		SpecDefinitionName:      "kube.ci/git-apiserver/apis/git/v1alpha1.Binding",
 		EnableValidation:        true,
 		GetOpenAPIDefinitions:   GetOpenAPIDefinitions,
 		EnableStatusSubresource: EnableStatusSubresource,

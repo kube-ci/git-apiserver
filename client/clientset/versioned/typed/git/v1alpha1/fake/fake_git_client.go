@@ -28,16 +28,16 @@ type FakeGitV1alpha1 struct {
 	*testing.Fake
 }
 
+func (c *FakeGitV1alpha1) Bindings(namespace string) v1alpha1.BindingInterface {
+	return &FakeBindings{c, namespace}
+}
+
 func (c *FakeGitV1alpha1) Branches(namespace string) v1alpha1.BranchInterface {
 	return &FakeBranches{c, namespace}
 }
 
 func (c *FakeGitV1alpha1) Repositories(namespace string) v1alpha1.RepositoryInterface {
 	return &FakeRepositories{c, namespace}
-}
-
-func (c *FakeGitV1alpha1) RepositoryBindings(namespace string) v1alpha1.RepositoryBindingInterface {
-	return &FakeRepositoryBindings{c, namespace}
 }
 
 // RESTClient returns a RESTClient that is used to communicate

@@ -5,27 +5,27 @@ import (
 )
 
 const (
-	ResourceKindRepositoryBinding = "RepositoryBinding"
-	ResourceRepositoryBindings    = "repositoryBindings"
+	ResourceKindBinding = "Binding"
+	ResourceBindings    = "bindings"
 )
 
 // +genclient
 // +k8s:openapi-gen=true
 // +k8s:deepcopy-gen:interfaces=k8s.io/apimachinery/pkg/runtime.Object
 
-type RepositoryBinding struct {
+type Binding struct {
 	metav1.TypeMeta   `json:",inline"`
 	metav1.ObjectMeta `json:"metadata,omitempty"`
-	Status            RepositoryBindingStatus `json:"status,omitempty"`
+	Status            BindingStatus `json:"status,omitempty"`
 }
 
-type RepositoryBindingStatus struct {
+type BindingStatus struct {
 	LastSynced metav1.Time `json:"lastSynced,omitempty"`
 }
 
 // +k8s:deepcopy-gen:interfaces=k8s.io/apimachinery/pkg/runtime.Object
 
-type RepositoryBindingList struct {
+type BindingList struct {
 	metav1.TypeMeta `json:",inline"`
 	metav1.ListMeta `json:"metadata,omitempty"`
 	Items           []Branch `json:"items,omitempty"`

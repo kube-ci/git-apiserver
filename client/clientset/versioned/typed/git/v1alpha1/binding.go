@@ -27,14 +27,14 @@ import (
 	scheme "kube.ci/git-apiserver/client/clientset/versioned/scheme"
 )
 
-// RepositoryBindingsGetter has a method to return a RepositoryBindingInterface.
+// BindingsGetter has a method to return a BindingInterface.
 // A group's client should implement this interface.
-type RepositoryBindingsGetter interface {
-	RepositoryBindings(namespace string) RepositoryBindingInterface
+type BindingsGetter interface {
+	Bindings(namespace string) BindingInterface
 }
 
-// RepositoryBindingInterface has methods to work with Binding resources.
-type RepositoryBindingInterface interface {
+// BindingInterface has methods to work with Binding resources.
+type BindingInterface interface {
 	Create(*v1alpha1.Binding) (*v1alpha1.Binding, error)
 	Update(*v1alpha1.Binding) (*v1alpha1.Binding, error)
 	UpdateStatus(*v1alpha1.Binding) (*v1alpha1.Binding, error)
@@ -44,29 +44,29 @@ type RepositoryBindingInterface interface {
 	List(opts v1.ListOptions) (*v1alpha1.BindingList, error)
 	Watch(opts v1.ListOptions) (watch.Interface, error)
 	Patch(name string, pt types.PatchType, data []byte, subresources ...string) (result *v1alpha1.Binding, err error)
-	RepositoryBindingExpansion
+	BindingExpansion
 }
 
-// repositoryBindings implements RepositoryBindingInterface
-type repositoryBindings struct {
+// bindings implements BindingInterface
+type bindings struct {
 	client rest.Interface
 	ns     string
 }
 
-// newRepositoryBindings returns a RepositoryBindings
-func newRepositoryBindings(c *GitV1alpha1Client, namespace string) *repositoryBindings {
-	return &repositoryBindings{
+// newBindings returns a Bindings
+func newBindings(c *GitV1alpha1Client, namespace string) *bindings {
+	return &bindings{
 		client: c.RESTClient(),
 		ns:     namespace,
 	}
 }
 
-// Get takes name of the repositoryBinding, and returns the corresponding repositoryBinding object, and an error if there is any.
-func (c *repositoryBindings) Get(name string, options v1.GetOptions) (result *v1alpha1.Binding, err error) {
+// Get takes name of the binding, and returns the corresponding binding object, and an error if there is any.
+func (c *bindings) Get(name string, options v1.GetOptions) (result *v1alpha1.Binding, err error) {
 	result = &v1alpha1.Binding{}
 	err = c.client.Get().
 		Namespace(c.ns).
-		Resource("repositorybindings").
+		Resource("bindings").
 		Name(name).
 		VersionedParams(&options, scheme.ParameterCodec).
 		Do().
@@ -74,48 +74,48 @@ func (c *repositoryBindings) Get(name string, options v1.GetOptions) (result *v1
 	return
 }
 
-// List takes label and field selectors, and returns the list of RepositoryBindings that match those selectors.
-func (c *repositoryBindings) List(opts v1.ListOptions) (result *v1alpha1.BindingList, err error) {
+// List takes label and field selectors, and returns the list of Bindings that match those selectors.
+func (c *bindings) List(opts v1.ListOptions) (result *v1alpha1.BindingList, err error) {
 	result = &v1alpha1.BindingList{}
 	err = c.client.Get().
 		Namespace(c.ns).
-		Resource("repositorybindings").
+		Resource("bindings").
 		VersionedParams(&opts, scheme.ParameterCodec).
 		Do().
 		Into(result)
 	return
 }
 
-// Watch returns a watch.Interface that watches the requested repositoryBindings.
-func (c *repositoryBindings) Watch(opts v1.ListOptions) (watch.Interface, error) {
+// Watch returns a watch.Interface that watches the requested bindings.
+func (c *bindings) Watch(opts v1.ListOptions) (watch.Interface, error) {
 	opts.Watch = true
 	return c.client.Get().
 		Namespace(c.ns).
-		Resource("repositorybindings").
+		Resource("bindings").
 		VersionedParams(&opts, scheme.ParameterCodec).
 		Watch()
 }
 
-// Create takes the representation of a repositoryBinding and creates it.  Returns the server's representation of the repositoryBinding, and an error, if there is any.
-func (c *repositoryBindings) Create(repositoryBinding *v1alpha1.Binding) (result *v1alpha1.Binding, err error) {
+// Create takes the representation of a binding and creates it.  Returns the server's representation of the binding, and an error, if there is any.
+func (c *bindings) Create(binding *v1alpha1.Binding) (result *v1alpha1.Binding, err error) {
 	result = &v1alpha1.Binding{}
 	err = c.client.Post().
 		Namespace(c.ns).
-		Resource("repositorybindings").
-		Body(repositoryBinding).
+		Resource("bindings").
+		Body(binding).
 		Do().
 		Into(result)
 	return
 }
 
-// Update takes the representation of a repositoryBinding and updates it. Returns the server's representation of the repositoryBinding, and an error, if there is any.
-func (c *repositoryBindings) Update(repositoryBinding *v1alpha1.Binding) (result *v1alpha1.Binding, err error) {
+// Update takes the representation of a binding and updates it. Returns the server's representation of the binding, and an error, if there is any.
+func (c *bindings) Update(binding *v1alpha1.Binding) (result *v1alpha1.Binding, err error) {
 	result = &v1alpha1.Binding{}
 	err = c.client.Put().
 		Namespace(c.ns).
-		Resource("repositorybindings").
-		Name(repositoryBinding.Name).
-		Body(repositoryBinding).
+		Resource("bindings").
+		Name(binding.Name).
+		Body(binding).
 		Do().
 		Into(result)
 	return
@@ -124,24 +124,24 @@ func (c *repositoryBindings) Update(repositoryBinding *v1alpha1.Binding) (result
 // UpdateStatus was generated because the type contains a Status member.
 // Add a +genclient:noStatus comment above the type to avoid generating UpdateStatus().
 
-func (c *repositoryBindings) UpdateStatus(repositoryBinding *v1alpha1.Binding) (result *v1alpha1.Binding, err error) {
+func (c *bindings) UpdateStatus(binding *v1alpha1.Binding) (result *v1alpha1.Binding, err error) {
 	result = &v1alpha1.Binding{}
 	err = c.client.Put().
 		Namespace(c.ns).
-		Resource("repositorybindings").
-		Name(repositoryBinding.Name).
+		Resource("bindings").
+		Name(binding.Name).
 		SubResource("status").
-		Body(repositoryBinding).
+		Body(binding).
 		Do().
 		Into(result)
 	return
 }
 
-// Delete takes name of the repositoryBinding and deletes it. Returns an error if one occurs.
-func (c *repositoryBindings) Delete(name string, options *v1.DeleteOptions) error {
+// Delete takes name of the binding and deletes it. Returns an error if one occurs.
+func (c *bindings) Delete(name string, options *v1.DeleteOptions) error {
 	return c.client.Delete().
 		Namespace(c.ns).
-		Resource("repositorybindings").
+		Resource("bindings").
 		Name(name).
 		Body(options).
 		Do().
@@ -149,22 +149,22 @@ func (c *repositoryBindings) Delete(name string, options *v1.DeleteOptions) erro
 }
 
 // DeleteCollection deletes a collection of objects.
-func (c *repositoryBindings) DeleteCollection(options *v1.DeleteOptions, listOptions v1.ListOptions) error {
+func (c *bindings) DeleteCollection(options *v1.DeleteOptions, listOptions v1.ListOptions) error {
 	return c.client.Delete().
 		Namespace(c.ns).
-		Resource("repositorybindings").
+		Resource("bindings").
 		VersionedParams(&listOptions, scheme.ParameterCodec).
 		Body(options).
 		Do().
 		Error()
 }
 
-// Patch applies the patch and returns the patched repositoryBinding.
-func (c *repositoryBindings) Patch(name string, pt types.PatchType, data []byte, subresources ...string) (result *v1alpha1.Binding, err error) {
+// Patch applies the patch and returns the patched binding.
+func (c *bindings) Patch(name string, pt types.PatchType, data []byte, subresources ...string) (result *v1alpha1.Binding, err error) {
 	result = &v1alpha1.Binding{}
 	err = c.client.Patch(pt).
 		Namespace(c.ns).
-		Resource("repositorybindings").
+		Resource("bindings").
 		SubResource(subresources...).
 		Name(name).
 		Body(data).

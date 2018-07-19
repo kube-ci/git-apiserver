@@ -31,43 +31,43 @@ import (
 	v1alpha1 "kube.ci/git-apiserver/client/listers/git/v1alpha1"
 )
 
-// RepositoryBindingInformer provides access to a shared informer and lister for
-// RepositoryBindings.
-type RepositoryBindingInformer interface {
+// BindingInformer provides access to a shared informer and lister for
+// Bindings.
+type BindingInformer interface {
 	Informer() cache.SharedIndexInformer
-	Lister() v1alpha1.RepositoryBindingLister
+	Lister() v1alpha1.BindingLister
 }
 
-type repositoryBindingInformer struct {
+type bindingInformer struct {
 	factory          internalinterfaces.SharedInformerFactory
 	tweakListOptions internalinterfaces.TweakListOptionsFunc
 	namespace        string
 }
 
-// NewRepositoryBindingInformer constructs a new informer for Binding type.
+// NewBindingInformer constructs a new informer for Binding type.
 // Always prefer using an informer factory to get a shared informer instead of getting an independent
 // one. This reduces memory footprint and number of connections to the server.
-func NewRepositoryBindingInformer(client versioned.Interface, namespace string, resyncPeriod time.Duration, indexers cache.Indexers) cache.SharedIndexInformer {
-	return NewFilteredRepositoryBindingInformer(client, namespace, resyncPeriod, indexers, nil)
+func NewBindingInformer(client versioned.Interface, namespace string, resyncPeriod time.Duration, indexers cache.Indexers) cache.SharedIndexInformer {
+	return NewFilteredBindingInformer(client, namespace, resyncPeriod, indexers, nil)
 }
 
-// NewFilteredRepositoryBindingInformer constructs a new informer for Binding type.
+// NewFilteredBindingInformer constructs a new informer for Binding type.
 // Always prefer using an informer factory to get a shared informer instead of getting an independent
 // one. This reduces memory footprint and number of connections to the server.
-func NewFilteredRepositoryBindingInformer(client versioned.Interface, namespace string, resyncPeriod time.Duration, indexers cache.Indexers, tweakListOptions internalinterfaces.TweakListOptionsFunc) cache.SharedIndexInformer {
+func NewFilteredBindingInformer(client versioned.Interface, namespace string, resyncPeriod time.Duration, indexers cache.Indexers, tweakListOptions internalinterfaces.TweakListOptionsFunc) cache.SharedIndexInformer {
 	return cache.NewSharedIndexInformer(
 		&cache.ListWatch{
 			ListFunc: func(options v1.ListOptions) (runtime.Object, error) {
 				if tweakListOptions != nil {
 					tweakListOptions(&options)
 				}
-				return client.GitV1alpha1().RepositoryBindings(namespace).List(options)
+				return client.GitV1alpha1().Bindings(namespace).List(options)
 			},
 			WatchFunc: func(options v1.ListOptions) (watch.Interface, error) {
 				if tweakListOptions != nil {
 					tweakListOptions(&options)
 				}
-				return client.GitV1alpha1().RepositoryBindings(namespace).Watch(options)
+				return client.GitV1alpha1().Bindings(namespace).Watch(options)
 			},
 		},
 		&git_v1alpha1.Binding{},
@@ -76,14 +76,14 @@ func NewFilteredRepositoryBindingInformer(client versioned.Interface, namespace 
 	)
 }
 
-func (f *repositoryBindingInformer) defaultInformer(client versioned.Interface, resyncPeriod time.Duration) cache.SharedIndexInformer {
-	return NewFilteredRepositoryBindingInformer(client, f.namespace, resyncPeriod, cache.Indexers{cache.NamespaceIndex: cache.MetaNamespaceIndexFunc}, f.tweakListOptions)
+func (f *bindingInformer) defaultInformer(client versioned.Interface, resyncPeriod time.Duration) cache.SharedIndexInformer {
+	return NewFilteredBindingInformer(client, f.namespace, resyncPeriod, cache.Indexers{cache.NamespaceIndex: cache.MetaNamespaceIndexFunc}, f.tweakListOptions)
 }
 
-func (f *repositoryBindingInformer) Informer() cache.SharedIndexInformer {
+func (f *bindingInformer) Informer() cache.SharedIndexInformer {
 	return f.factory.InformerFor(&git_v1alpha1.Binding{}, f.defaultInformer)
 }
 
-func (f *repositoryBindingInformer) Lister() v1alpha1.RepositoryBindingLister {
-	return v1alpha1.NewRepositoryBindingLister(f.Informer().GetIndexer())
+func (f *bindingInformer) Lister() v1alpha1.BindingLister {
+	return v1alpha1.NewBindingLister(f.Informer().GetIndexer())
 }

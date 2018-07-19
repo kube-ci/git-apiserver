@@ -68,7 +68,7 @@ func generateSwaggerJson() {
 		Resources: []openapi.TypeInfo{
 			{git_v1alpha1.SchemeGroupVersion, git_v1alpha1.ResourceRepositories, git_v1alpha1.ResourceKindRepository, true},
 			{git_v1alpha1.SchemeGroupVersion, git_v1alpha1.ResourceBranches, git_v1alpha1.ResourceKindBranch, true},
-			{git_v1alpha1.SchemeGroupVersion, git_v1alpha1.ResourceRepositoryBindings, git_v1alpha1.ResourceKindRepositoryBinding, true},
+			{git_v1alpha1.SchemeGroupVersion, git_v1alpha1.ResourceBindings, git_v1alpha1.ResourceKindBinding, true},
 		},
 	})
 	if err != nil {

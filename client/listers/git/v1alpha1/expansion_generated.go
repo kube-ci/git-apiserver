@@ -18,6 +18,14 @@ limitations under the License.
 
 package v1alpha1
 
+// BindingListerExpansion allows custom methods to be added to
+// BindingLister.
+type BindingListerExpansion interface{}
+
+// BindingNamespaceListerExpansion allows custom methods to be added to
+// BindingNamespaceLister.
+type BindingNamespaceListerExpansion interface{}
+
 // BranchListerExpansion allows custom methods to be added to
 // BranchLister.
 type BranchListerExpansion interface{}
@@ -33,11 +41,3 @@ type RepositoryListerExpansion interface{}
 // RepositoryNamespaceListerExpansion allows custom methods to be added to
 // RepositoryNamespaceLister.
 type RepositoryNamespaceListerExpansion interface{}
-
-// RepositoryBindingListerExpansion allows custom methods to be added to
-// RepositoryBindingLister.
-type RepositoryBindingListerExpansion interface{}
-
-// RepositoryBindingNamespaceListerExpansion allows custom methods to be added to
-// RepositoryBindingNamespaceLister.
-type RepositoryBindingNamespaceListerExpansion interface{}

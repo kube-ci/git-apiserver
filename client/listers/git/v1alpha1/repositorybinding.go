@@ -28,7 +28,7 @@ import (
 // RepositoryBindingLister helps list RepositoryBindings.
 type RepositoryBindingLister interface {
 	// List lists all RepositoryBindings in the indexer.
-	List(selector labels.Selector) (ret []*v1alpha1.RepositoryBinding, err error)
+	List(selector labels.Selector) (ret []*v1alpha1.Binding, err error)
 	// RepositoryBindings returns an object that can list and get RepositoryBindings.
 	RepositoryBindings(namespace string) RepositoryBindingNamespaceLister
 	RepositoryBindingListerExpansion
@@ -45,9 +45,9 @@ func NewRepositoryBindingLister(indexer cache.Indexer) RepositoryBindingLister {
 }
 
 // List lists all RepositoryBindings in the indexer.
-func (s *repositoryBindingLister) List(selector labels.Selector) (ret []*v1alpha1.RepositoryBinding, err error) {
+func (s *repositoryBindingLister) List(selector labels.Selector) (ret []*v1alpha1.Binding, err error) {
 	err = cache.ListAll(s.indexer, selector, func(m interface{}) {
-		ret = append(ret, m.(*v1alpha1.RepositoryBinding))
+		ret = append(ret, m.(*v1alpha1.Binding))
 	})
 	return ret, err
 }
@@ -60,9 +60,9 @@ func (s *repositoryBindingLister) RepositoryBindings(namespace string) Repositor
 // RepositoryBindingNamespaceLister helps list and get RepositoryBindings.
 type RepositoryBindingNamespaceLister interface {
 	// List lists all RepositoryBindings in the indexer for a given namespace.
-	List(selector labels.Selector) (ret []*v1alpha1.RepositoryBinding, err error)
-	// Get retrieves the RepositoryBinding from the indexer for a given namespace and name.
-	Get(name string) (*v1alpha1.RepositoryBinding, error)
+	List(selector labels.Selector) (ret []*v1alpha1.Binding, err error)
+	// Get retrieves the Binding from the indexer for a given namespace and name.
+	Get(name string) (*v1alpha1.Binding, error)
 	RepositoryBindingNamespaceListerExpansion
 }
 
@@ -74,15 +74,15 @@ type repositoryBindingNamespaceLister struct {
 }
 
 // List lists all RepositoryBindings in the indexer for a given namespace.
-func (s repositoryBindingNamespaceLister) List(selector labels.Selector) (ret []*v1alpha1.RepositoryBinding, err error) {
+func (s repositoryBindingNamespaceLister) List(selector labels.Selector) (ret []*v1alpha1.Binding, err error) {
 	err = cache.ListAllByNamespace(s.indexer, s.namespace, selector, func(m interface{}) {
-		ret = append(ret, m.(*v1alpha1.RepositoryBinding))
+		ret = append(ret, m.(*v1alpha1.Binding))
 	})
 	return ret, err
 }
 
-// Get retrieves the RepositoryBinding from the indexer for a given namespace and name.
-func (s repositoryBindingNamespaceLister) Get(name string) (*v1alpha1.RepositoryBinding, error) {
+// Get retrieves the Binding from the indexer for a given namespace and name.
+func (s repositoryBindingNamespaceLister) Get(name string) (*v1alpha1.Binding, error) {
 	obj, exists, err := s.indexer.GetByKey(s.namespace + "/" + name)
 	if err != nil {
 		return nil, err
@@ -90,5 +90,5 @@ func (s repositoryBindingNamespaceLister) Get(name string) (*v1alpha1.Repository
 	if !exists {
 		return nil, errors.NewNotFound(v1alpha1.Resource("repositorybinding"), name)
 	}
-	return obj.(*v1alpha1.RepositoryBinding), nil
+	return obj.(*v1alpha1.Binding), nil
 }
