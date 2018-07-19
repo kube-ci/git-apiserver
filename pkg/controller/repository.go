@@ -1,21 +1,20 @@
 package controller
 
 import (
+	"log"
+
 	"github.com/appscode/kubernetes-webhook-util/admission"
 	hooks "github.com/appscode/kubernetes-webhook-util/admission/v1beta1"
 	webhook "github.com/appscode/kubernetes-webhook-util/admission/v1beta1/generic"
-	core_util "github.com/appscode/kutil/core/v1"
 	"github.com/appscode/kutil/tools/queue"
 	"github.com/golang/glog"
 	"k8s.io/apimachinery/pkg/runtime"
 	"k8s.io/apimachinery/pkg/runtime/schema"
 	"kube.ci/git-apiserver/apis/git"
 	api "kube.ci/git-apiserver/apis/git/v1alpha1"
-	git_apiserver_util "kube.ci/git-apiserver/client/clientset/versioned/typed/git/v1alpha1/util"
-	"kube.ci/git-apiserver/pkg/util"
 )
 
-func (c *RepositoryController) NewRepositoryWebhook() hooks.AdmissionHook {
+func (c *Controller) NewRepositoryWebhook() hooks.AdmissionHook {
 	return webhook.NewGenericWebhook(
 		schema.GroupVersionResource{
 			Group:    "admission.git.kube.ci",
@@ -36,14 +35,14 @@ func (c *RepositoryController) NewRepositoryWebhook() hooks.AdmissionHook {
 		},
 	)
 }
-func (c *RepositoryController) initRepositoryWatcher() {
+func (c *Controller) initRepositoryWatcher() {
 	c.repoInformer = c.gitAPIServerInformerFactory.Git().V1alpha1().Repositories().Informer()
 	c.repoQueue = queue.New("Repository", c.MaxNumRequeues, c.NumThreads, c.runRepositoryInjector)
 	c.repoInformer.AddEventHandler(queue.DefaultEventHandler(c.repoQueue.GetQueue()))
 	c.repoLister = c.gitAPIServerInformerFactory.Git().V1alpha1().Repositories().Lister()
 }
 
-func (c *RepositoryController) runRepositoryInjector(key string) error {
+func (c *Controller) runRepositoryInjector(key string) error {
 	obj, exist, err := c.repoInformer.GetIndexer().GetByKey(key)
 	if err != nil {
 		glog.Errorf("Fetching object with key %s from store failed with %v", key, err)
@@ -56,8 +55,10 @@ func (c *RepositoryController) runRepositoryInjector(key string) error {
 		glog.Infof("Sync/Add/Update for Repository %s\n", key)
 
 		repo := obj.(*api.Repository)
+		log.Println(repo)
 
-		if repo.DeletionTimestamp != nil {
+		// finalizer
+		/*if repo.DeletionTimestamp != nil {
 			if core_util.HasFinalizer(repo.ObjectMeta, util.RepositoryFinalizer) {
 				err = c.deleteRepository(repo)
 				if err != nil {
@@ -75,11 +76,11 @@ func (c *RepositoryController) runRepositoryInjector(key string) error {
 				return in
 			})
 			return err
-		}
+		}*/
 	}
 	return nil
 }
 
-func (c *RepositoryController) deleteRepository(repository *api.Repository) error {
+func (c *Controller) deleteRepository(repository *api.Repository) error {
 	return nil
 }

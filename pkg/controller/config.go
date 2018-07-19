@@ -38,11 +38,11 @@ func NewConfig(clientConfig *rest.Config) *Config {
 	}
 }
 
-func (c *Config) New() (*RepositoryController, error) {
+func (c *Config) New() (*Controller, error) {
 	tweakListOptions := func(opt *metav1.ListOptions) {
 		opt.IncludeUninitialized = true
 	}
-	ctrl := &RepositoryController{
+	ctrl := &Controller{
 		config:                      c.config,
 		kubeClient:                  c.KubeClient,
 		gitAPIServerClient:          c.GitAPIServerClient,

@@ -19,7 +19,7 @@ import (
 	git_apiserver_listers "kube.ci/git-apiserver/client/listers/git/v1alpha1"
 )
 
-type RepositoryController struct {
+type Controller struct {
 	config
 
 	kubeClient         kubernetes.Interface
@@ -34,16 +34,21 @@ type RepositoryController struct {
 	repoQueue    *queue.Worker
 	repoInformer cache.SharedIndexInformer
 	repoLister   git_apiserver_listers.RepositoryLister
+
+	// Binding
+	bindingQueue    *queue.Worker
+	bindingInformer cache.SharedIndexInformer
+	bindingLister   git_apiserver_listers.BindingLister
 }
 
-func (c *RepositoryController) ensureCustomResourceDefinitions() error {
+func (c *Controller) ensureCustomResourceDefinitions() error {
 	crds := []*crd_api.CustomResourceDefinition{
 		api.Repository{}.CustomResourceDefinition(),
 	}
 	return crdutils.RegisterCRDs(c.crdClient, crds)
 }
 
-func (c *RepositoryController) RunInformers(stopCh <-chan struct{}) {
+func (c *Controller) RunInformers(stopCh <-chan struct{}) {
 	defer runtime.HandleCrash()
 
 	glog.Info("Starting git apiserver")

@@ -54,7 +54,7 @@ type GitAPIServerConfig struct {
 // GitAPIServer contains state for a Kubernetes cluster master/api server.
 type GitAPIServer struct {
 	GenericAPIServer *genericapiserver.GenericAPIServer
-	Controller       *controller.RepositoryController
+	Controller       *controller.Controller
 }
 
 func (op *GitAPIServer) Run(stopCh <-chan struct{}) error {
