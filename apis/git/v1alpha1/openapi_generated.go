@@ -10735,16 +10735,16 @@ func GetOpenAPIDefinitions(ref common.ReferenceCallback) map[string]common.OpenA
 								Ref: ref("k8s.io/apimachinery/pkg/apis/meta/v1.ObjectMeta"),
 							},
 						},
-						"status": {
+						"spec": {
 							SchemaProps: spec.SchemaProps{
-								Ref: ref("kube.ci/git-apiserver/apis/git/v1alpha1.BranchStatus"),
+								Ref: ref("kube.ci/git-apiserver/apis/git/v1alpha1.BranchSpec"),
 							},
 						},
 					},
 				},
 			},
 			Dependencies: []string{
-				"k8s.io/apimachinery/pkg/apis/meta/v1.ObjectMeta", "kube.ci/git-apiserver/apis/git/v1alpha1.BranchStatus"},
+				"k8s.io/apimachinery/pkg/apis/meta/v1.ObjectMeta", "kube.ci/git-apiserver/apis/git/v1alpha1.BranchSpec"},
 		},
 		"kube.ci/git-apiserver/apis/git/v1alpha1.BranchList": {
 			Schema: spec.Schema{
@@ -10787,7 +10787,7 @@ func GetOpenAPIDefinitions(ref common.ReferenceCallback) map[string]common.OpenA
 			Dependencies: []string{
 				"k8s.io/apimachinery/pkg/apis/meta/v1.ListMeta", "kube.ci/git-apiserver/apis/git/v1alpha1.Branch"},
 		},
-		"kube.ci/git-apiserver/apis/git/v1alpha1.BranchStatus": {
+		"kube.ci/git-apiserver/apis/git/v1alpha1.BranchSpec": {
 			Schema: spec.Schema{
 				SchemaProps: spec.SchemaProps{
 					Properties: map[string]spec.Schema{

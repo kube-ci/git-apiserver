@@ -16,10 +16,10 @@ const (
 type Branch struct {
 	metav1.TypeMeta   `json:",inline"`
 	metav1.ObjectMeta `json:"metadata,omitempty"`
-	Status            BranchStatus `json:"status,omitempty"`
+	Spec              BranchSpec `json:"spec,omitempty"`
 }
 
-type BranchStatus struct {
+type BranchSpec struct {
 	LastCommitHash string `json:"lastCommitHash,omitempty"`
 }
 

@@ -100,18 +100,6 @@ func (c *FakeBranches) Update(branch *v1alpha1.Branch) (result *v1alpha1.Branch,
 	return obj.(*v1alpha1.Branch), err
 }
 
-// UpdateStatus was generated because the type contains a Status member.
-// Add a +genclient:noStatus comment above the type to avoid generating UpdateStatus().
-func (c *FakeBranches) UpdateStatus(branch *v1alpha1.Branch) (*v1alpha1.Branch, error) {
-	obj, err := c.Fake.
-		Invokes(testing.NewUpdateSubresourceAction(branchesResource, "status", c.ns, branch), &v1alpha1.Branch{})
-
-	if obj == nil {
-		return nil, err
-	}
-	return obj.(*v1alpha1.Branch), err
-}
-
 // Delete takes name of the branch and deletes it. Returns an error if one occurs.
 func (c *FakeBranches) Delete(name string, options *v1.DeleteOptions) error {
 	_, err := c.Fake.

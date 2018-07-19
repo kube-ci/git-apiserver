@@ -2810,8 +2810,8 @@
         "metadata": {
           "$ref": "#/definitions/io.k8s.apimachinery.pkg.apis.meta.v1.ObjectMeta"
         },
-        "status": {
-          "$ref": "#/definitions/ci.kube.git-apiserver.apis.git.v1alpha1.BranchStatus"
+        "spec": {
+          "$ref": "#/definitions/ci.kube.git-apiserver.apis.git.v1alpha1.BranchSpec"
         }
       },
       "x-kubernetes-group-version-kind": [
@@ -2850,7 +2850,7 @@
         }
       ]
     },
-    "ci.kube.git-apiserver.apis.git.v1alpha1.BranchStatus": {
+    "ci.kube.git-apiserver.apis.git.v1alpha1.BranchSpec": {
       "properties": {
         "lastCommitHash": {
           "type": "string"
