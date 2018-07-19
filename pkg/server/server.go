@@ -14,12 +14,7 @@ import (
 	"k8s.io/apimachinery/pkg/version"
 	"k8s.io/apiserver/pkg/registry/rest"
 	genericapiserver "k8s.io/apiserver/pkg/server"
-	"kube.ci/git-apiserver/apis/repositories"
-	"kube.ci/git-apiserver/apis/repositories/install"
-	"kube.ci/git-apiserver/apis/repositories/v1alpha1"
 	"kube.ci/git-apiserver/pkg/controller"
-	"kube.ci/git-apiserver/pkg/producer"
-	"kube.ci/git-apiserver/pkg/registry/branchTwo"
 )
 
 var (
@@ -28,7 +23,6 @@ var (
 )
 
 func init() {
-	install.Install(Scheme)
 	admission.AddToScheme(Scheme)
 
 	// we need to add the options to empty v1
@@ -154,25 +148,6 @@ func (c completedConfig) New() (*GitAPIServer, error) {
 				return admissionHook.Initialize(c.ExtraConfig.ClientConfig, context.StopCh)
 			},
 		)
-	}
-
-	{
-		registryBranch := branchTwo.NewREST()
-		producer := producer.Producer{
-			Repository:     "my-repo",
-			Url:            "github.com/kube.ci/my-repo",
-			BranchRegistry: registryBranch,
-		}
-		go producer.Run()
-
-		apiGroupInfo := genericapiserver.NewDefaultAPIGroupInfo(repositories.GroupName, Scheme, metav1.ParameterCodec, Codecs)
-		v1alpha1storage := map[string]rest.Storage{}
-		v1alpha1storage[v1alpha1.ResourceBranches] = registryBranch
-		apiGroupInfo.VersionedResourcesStorageMap["v1alpha1"] = v1alpha1storage
-
-		if err := s.GenericAPIServer.InstallAPIGroup(&apiGroupInfo); err != nil {
-			return nil, err
-		}
 	}
 
 	return s, nil
