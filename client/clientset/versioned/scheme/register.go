@@ -24,7 +24,6 @@ import (
 	schema "k8s.io/apimachinery/pkg/runtime/schema"
 	serializer "k8s.io/apimachinery/pkg/runtime/serializer"
 	gitv1alpha1 "kube.ci/git-apiserver/apis/git/v1alpha1"
-	repositoriesv1alpha1 "kube.ci/git-apiserver/apis/repositories/v1alpha1"
 )
 
 var Scheme = runtime.NewScheme()
@@ -52,5 +51,4 @@ func init() {
 // correctly.
 func AddToScheme(scheme *runtime.Scheme) {
 	gitv1alpha1.AddToScheme(scheme)
-	repositoriesv1alpha1.AddToScheme(scheme)
 }

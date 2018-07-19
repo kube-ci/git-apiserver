@@ -27,8 +27,6 @@ import (
 	clientset "kube.ci/git-apiserver/client/clientset/versioned"
 	gitv1alpha1 "kube.ci/git-apiserver/client/clientset/versioned/typed/git/v1alpha1"
 	fakegitv1alpha1 "kube.ci/git-apiserver/client/clientset/versioned/typed/git/v1alpha1/fake"
-	repositoriesv1alpha1 "kube.ci/git-apiserver/client/clientset/versioned/typed/repositories/v1alpha1"
-	fakerepositoriesv1alpha1 "kube.ci/git-apiserver/client/clientset/versioned/typed/repositories/v1alpha1/fake"
 )
 
 // NewSimpleClientset returns a clientset that will respond with the provided objects.
@@ -81,14 +79,4 @@ func (c *Clientset) GitV1alpha1() gitv1alpha1.GitV1alpha1Interface {
 // Git retrieves the GitV1alpha1Client
 func (c *Clientset) Git() gitv1alpha1.GitV1alpha1Interface {
 	return &fakegitv1alpha1.FakeGitV1alpha1{Fake: &c.Fake}
-}
-
-// RepositoriesV1alpha1 retrieves the RepositoriesV1alpha1Client
-func (c *Clientset) RepositoriesV1alpha1() repositoriesv1alpha1.RepositoriesV1alpha1Interface {
-	return &fakerepositoriesv1alpha1.FakeRepositoriesV1alpha1{Fake: &c.Fake}
-}
-
-// Repositories retrieves the RepositoriesV1alpha1Client
-func (c *Clientset) Repositories() repositoriesv1alpha1.RepositoriesV1alpha1Interface {
-	return &fakerepositoriesv1alpha1.FakeRepositoriesV1alpha1{Fake: &c.Fake}
 }

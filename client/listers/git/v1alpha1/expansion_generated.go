@@ -18,6 +18,14 @@ limitations under the License.
 
 package v1alpha1
 
+// BranchListerExpansion allows custom methods to be added to
+// BranchLister.
+type BranchListerExpansion interface{}
+
+// BranchNamespaceListerExpansion allows custom methods to be added to
+// BranchNamespaceLister.
+type BranchNamespaceListerExpansion interface{}
+
 // RepositoryListerExpansion allows custom methods to be added to
 // RepositoryLister.
 type RepositoryListerExpansion interface{}

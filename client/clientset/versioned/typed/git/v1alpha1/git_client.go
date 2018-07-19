@@ -27,12 +27,17 @@ import (
 
 type GitV1alpha1Interface interface {
 	RESTClient() rest.Interface
+	BranchesGetter
 	RepositoriesGetter
 }
 
 // GitV1alpha1Client is used to interact with features provided by the git.kube.ci group.
 type GitV1alpha1Client struct {
 	restClient rest.Interface
+}
+
+func (c *GitV1alpha1Client) Branches(namespace string) BranchInterface {
+	return newBranches(c, namespace)
 }
 
 func (c *GitV1alpha1Client) Repositories(namespace string) RepositoryInterface {

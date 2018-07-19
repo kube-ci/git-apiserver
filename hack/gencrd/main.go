@@ -17,8 +17,6 @@ import (
 	"k8s.io/kube-openapi/pkg/common"
 	git_install "kube.ci/git-apiserver/apis/git/install"
 	git_v1alpha1 "kube.ci/git-apiserver/apis/git/v1alpha1"
-	repo_install "kube.ci/git-apiserver/apis/repositories/install"
-	repo_v1alpha1 "kube.ci/git-apiserver/apis/repositories/v1alpha1"
 )
 
 func generateCRDDefinitions() {
@@ -47,7 +45,6 @@ func generateSwaggerJson() {
 	)
 
 	git_install.Install(Scheme)
-	repo_install.Install(Scheme)
 
 	apispec, err := openapi.RenderOpenAPISpec(openapi.Config{
 		Scheme: Scheme,
@@ -67,13 +64,10 @@ func generateSwaggerJson() {
 		},
 		OpenAPIDefinitions: []common.GetOpenAPIDefinitions{
 			git_v1alpha1.GetOpenAPIDefinitions,
-			repo_v1alpha1.GetOpenAPIDefinitions,
 		},
 		Resources: []openapi.TypeInfo{
 			{git_v1alpha1.SchemeGroupVersion, git_v1alpha1.ResourceRepositories, git_v1alpha1.ResourceKindRepository, true},
-		},
-		RDResources: []openapi.TypeInfo{
-			{repo_v1alpha1.SchemeGroupVersion, repo_v1alpha1.ResourceBranches, repo_v1alpha1.ResourceKindBranch, true},
+			{git_v1alpha1.SchemeGroupVersion, git_v1alpha1.ResourceBranches, git_v1alpha1.ResourceKindBranch, true},
 		},
 	})
 	if err != nil {

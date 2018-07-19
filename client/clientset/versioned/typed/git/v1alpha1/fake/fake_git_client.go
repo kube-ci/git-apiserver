@@ -28,6 +28,10 @@ type FakeGitV1alpha1 struct {
 	*testing.Fake
 }
 
+func (c *FakeGitV1alpha1) Branches(namespace string) v1alpha1.BranchInterface {
+	return &FakeBranches{c, namespace}
+}
+
 func (c *FakeGitV1alpha1) Repositories(namespace string) v1alpha1.RepositoryInterface {
 	return &FakeRepositories{c, namespace}
 }

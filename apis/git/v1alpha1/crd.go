@@ -32,3 +32,27 @@ func (c Repository) CustomResourceDefinition() *apiextensions.CustomResourceDefi
 		EnableStatusSubresource: EnableStatusSubresource,
 	})
 }
+
+func (c Branch) CustomResourceDefinition() *apiextensions.CustomResourceDefinition {
+	return crdutils.NewCustomResourceDefinition(crdutils.Config{
+		Group:         SchemeGroupVersion.Group,
+		Plural:        ResourceBranches,
+		Kind:          ResourceKindBranch,
+		ShortNames:    []string{"repo"},
+		ResourceScope: string(apiextensions.NamespaceScoped),
+		Versions: []apiextensions.CustomResourceDefinitionVersion{
+			{
+				Name:    SchemeGroupVersion.Version,
+				Served:  true,
+				Storage: true,
+			},
+		},
+		Labels: crdutils.Labels{
+			LabelsMap: map[string]string{"app": "kubeci"},
+		},
+		SpecDefinitionName:      "kube.ci/git-apiserver/apis/git/v1alpha1.Branch",
+		EnableValidation:        true,
+		GetOpenAPIDefinitions:   GetOpenAPIDefinitions,
+		EnableStatusSubresource: EnableStatusSubresource,
+	})
+}
