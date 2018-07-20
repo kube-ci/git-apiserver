@@ -44,6 +44,8 @@ type Controller struct {
 func (c *Controller) ensureCustomResourceDefinitions() error {
 	crds := []*crd_api.CustomResourceDefinition{
 		api.Repository{}.CustomResourceDefinition(),
+		api.Branch{}.CustomResourceDefinition(),
+		api.Binding{}.CustomResourceDefinition(),
 	}
 	return crdutils.RegisterCRDs(c.crdClient, crds)
 }
@@ -70,4 +72,5 @@ func (c *Controller) RunInformers(stopCh <-chan struct{}) {
 	}
 
 	c.repoQueue.Run(stopCh)
+	c.bindingQueue.Run(stopCh)
 }

@@ -57,6 +57,7 @@ func (c *Config) New() (*Controller, error) {
 	}
 
 	ctrl.initRepositoryWatcher()
+	ctrl.initBindingWatcher()
 
 	return ctrl, nil
 }

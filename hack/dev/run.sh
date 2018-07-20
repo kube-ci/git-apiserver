@@ -86,9 +86,9 @@ kubectl create clusterrolebinding serviceaccounts-cluster-admin --clusterrole=cl
 
 cat $REPO_ROOT/hack/dev/apiregistration.yaml | envsubst | kubectl apply -f -
 
-if [ "$GIT_APISERVER_ENABLE_WEBHOOK" = true ]; then
-  cat $REPO_ROOT/hack/deploy/validating-webhook.yaml | envsubst | kubectl apply -f -
-fi
+#if [ "$GIT_APISERVER_ENABLE_WEBHOOK" = true ]; then
+#  cat $REPO_ROOT/hack/deploy/validating-webhook.yaml | envsubst | kubectl apply -f -
+#fi
 
 $REPO_ROOT/hack/make.py
 

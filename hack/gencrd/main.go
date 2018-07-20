@@ -30,6 +30,8 @@ func generateCRDDefinitions() {
 
 	crds := []*crd_api.CustomResourceDefinition{
 		git_v1alpha1.Repository{}.CustomResourceDefinition(),
+		git_v1alpha1.Branch{}.CustomResourceDefinition(),
+		git_v1alpha1.Binding{}.CustomResourceDefinition(),
 	}
 	for _, crd := range crds {
 		err = crdutils.MarshallCrd(f, crd, "yaml")

@@ -8,7 +8,7 @@ import (
 	api "kube.ci/git-apiserver/apis/git/v1alpha1"
 )
 
-func (c *Controller) initRepositoryBindingWatcher() {
+func (c *Controller) initBindingWatcher() {
 	c.bindingInformer = c.gitAPIServerInformerFactory.Git().V1alpha1().Bindings().Informer()
 	c.bindingQueue = queue.New("Binding", c.MaxNumRequeues, c.NumThreads, c.runBindingInjector)
 	c.bindingInformer.AddEventHandler(queue.DefaultEventHandler(c.bindingQueue.GetQueue()))

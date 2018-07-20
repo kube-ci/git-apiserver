@@ -1,0 +1,9 @@
+apiVersion: git.kube.ci/v1alpha1
+kind: Repository
+metadata:
+  name: voyager
+  namespace: default
+  labels:
+    app: voyager
+spec:
+  url: https://github.com/appscode/voyager.git

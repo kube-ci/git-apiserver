@@ -62,7 +62,7 @@ func (c Binding) CustomResourceDefinition() *apiextensions.CustomResourceDefinit
 		Group:         SchemeGroupVersion.Group,
 		Plural:        ResourceBindings,
 		Kind:          ResourceKindBinding,
-		ShortNames:    []string{"repo-binding"},
+		ShortNames:    []string{"binding"},
 		ResourceScope: string(apiextensions.NamespaceScoped),
 		Versions: []apiextensions.CustomResourceDefinitionVersion{
 			{
