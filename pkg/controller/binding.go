@@ -4,11 +4,12 @@ import (
 	"path/filepath"
 	"time"
 
+	"github.com/appscode/go/log"
 	"github.com/appscode/go/types"
 	"github.com/appscode/kutil/tools/queue"
 	"github.com/golang/glog"
-	"github.com/prometheus/common/log"
 	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
+	"k8s.io/apimachinery/pkg/labels"
 	api "kube.ci/git-apiserver/apis/git/v1alpha1"
 	"kube.ci/git-apiserver/client/clientset/versioned/typed/git/v1alpha1/util"
 	"kube.ci/git-apiserver/pkg/git-repo"
@@ -50,7 +51,7 @@ func (c *Controller) reconcileForBinding(binding *api.Binding) error {
 				log.Errorln(err)
 				// TODO: write event to binding or repository ?
 			}
-			time.Sleep(time.Minute)
+			time.Sleep(time.Second * 30)
 		}
 	}()
 	return nil
@@ -99,6 +100,36 @@ func (c *Controller) runOnce(name, namespace string) error {
 		_, _, err := util.CreateOrPatchBranch(c.gitAPIServerClient.GitV1alpha1(), meta, transform)
 		if err != nil {
 			return err
+		}
+	}
+
+	// delete old branches that don't exist now
+	branchList, err := c.gitAPIServerClient.GitV1alpha1().Branches(namespace).List(
+		metav1.ListOptions{
+			LabelSelector: labels.FormatLabels(
+				map[string]string{
+					"repository": repository.Name,
+				},
+			),
+		},
+	)
+	if err != nil {
+		return err
+	}
+
+	for _, branch := range branchList.Items {
+		found := false
+		for _, gitBranch := range gitRepo.Branches {
+			if branch.Name == gitBranch.Name {
+				found = true
+				break
+			}
+		}
+		if !found {
+			err = c.gitAPIServerClient.GitV1alpha1().Branches(namespace).Delete(branch.Name, nil)
+			if err != nil {
+				return err
+			}
 		}
 	}
 
