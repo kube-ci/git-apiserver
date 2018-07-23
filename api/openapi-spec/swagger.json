@@ -2831,7 +2831,7 @@
         "items": {
           "type": "array",
           "items": {
-            "$ref": "#/definitions/ci.kube.git-apiserver.apis.git.v1alpha1.Branch"
+            "$ref": "#/definitions/ci.kube.git-apiserver.apis.git.v1alpha1.Binding"
           }
         },
         "kind": {

@@ -29,5 +29,5 @@ type BindingStatus struct {
 type BindingList struct {
 	metav1.TypeMeta `json:",inline"`
 	metav1.ListMeta `json:"metadata,omitempty"`
-	Items           []Branch `json:"items,omitempty"`
+	Items           []Binding `json:"items,omitempty"`
 }

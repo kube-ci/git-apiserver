@@ -15,7 +15,7 @@ import (
 	cs "kube.ci/git-apiserver/client/clientset/versioned/typed/git/v1alpha1"
 )
 
-func CreateOrPatchBranch(c cs.GitV1alpha1Interface, meta metav1.ObjectMeta, transform func(binding *api.Branch) *api.Branch) (*api.Branch, kutil.VerbType, error) {
+func CreateOrPatchBranch(c cs.GitV1alpha1Interface, meta metav1.ObjectMeta, transform func(branch *api.Branch) *api.Branch) (*api.Branch, kutil.VerbType, error) {
 	cur, err := c.Branches(meta.Namespace).Get(meta.Name, metav1.GetOptions{})
 	if kerr.IsNotFound(err) {
 		glog.V(3).Infof("Creating Branch %s/%s.", meta.Namespace, meta.Name)

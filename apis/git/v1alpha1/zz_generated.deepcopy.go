@@ -58,7 +58,7 @@ func (in *BindingList) DeepCopyInto(out *BindingList) {
 	out.ListMeta = in.ListMeta
 	if in.Items != nil {
 		in, out := &in.Items, &out.Items
-		*out = make([]Branch, len(*in))
+		*out = make([]Binding, len(*in))
 		for i := range *in {
 			(*in)[i].DeepCopyInto(&(*out)[i])
 		}

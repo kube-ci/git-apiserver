@@ -10775,7 +10775,7 @@ func GetOpenAPIDefinitions(ref common.ReferenceCallback) map[string]common.OpenA
 								Items: &spec.SchemaOrArray{
 									Schema: &spec.Schema{
 										SchemaProps: spec.SchemaProps{
-											Ref: ref("kube.ci/git-apiserver/apis/git/v1alpha1.Branch"),
+											Ref: ref("kube.ci/git-apiserver/apis/git/v1alpha1.Binding"),
 										},
 									},
 								},
@@ -10785,7 +10785,7 @@ func GetOpenAPIDefinitions(ref common.ReferenceCallback) map[string]common.OpenA
 				},
 			},
 			Dependencies: []string{
-				"k8s.io/apimachinery/pkg/apis/meta/v1.ListMeta", "kube.ci/git-apiserver/apis/git/v1alpha1.Branch"},
+				"k8s.io/apimachinery/pkg/apis/meta/v1.ListMeta", "kube.ci/git-apiserver/apis/git/v1alpha1.Binding"},
 		},
 		"kube.ci/git-apiserver/apis/git/v1alpha1.BindingStatus": {
 			Schema: spec.Schema{
