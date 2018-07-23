@@ -2852,6 +2852,10 @@
     },
     "ci.kube.git-apiserver.apis.git.v1alpha1.BindingStatus": {
       "properties": {
+        "lastObservedGeneration": {
+          "type": "integer",
+          "format": "int64"
+        },
         "lastSynced": {
           "$ref": "#/definitions/io.k8s.apimachinery.pkg.apis.meta.v1.Time"
         }
@@ -2983,7 +2987,14 @@
         }
       }
     },
-    "ci.kube.git-apiserver.apis.git.v1alpha1.RepositoryStatus": {},
+    "ci.kube.git-apiserver.apis.git.v1alpha1.RepositoryStatus": {
+      "properties": {
+        "lastObservedGeneration": {
+          "type": "integer",
+          "format": "int64"
+        }
+      }
+    },
     "io.k8s.apimachinery.pkg.apis.meta.v1.APIGroup": {
       "description": "APIGroup contains the name, the supported versions, and the preferred version of a group.",
       "required": [

@@ -20,7 +20,8 @@ type Binding struct {
 }
 
 type BindingStatus struct {
-	LastSynced metav1.Time `json:"lastSynced,omitempty"`
+	LastSynced             *metav1.Time `json:"lastSynced,omitempty"`
+	LastObservedGeneration *int64       `json:"lastObservedGeneration,omitempty"`
 }
 
 // +k8s:deepcopy-gen:interfaces=k8s.io/apimachinery/pkg/runtime.Object

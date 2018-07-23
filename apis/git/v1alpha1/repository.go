@@ -26,6 +26,7 @@ type RepositorySpec struct {
 }
 
 type RepositoryStatus struct {
+	LastObservedGeneration *int64 `json:"lastObservedGeneration,omitempty"`
 }
 
 // +k8s:deepcopy-gen:interfaces=k8s.io/apimachinery/pkg/runtime.Object

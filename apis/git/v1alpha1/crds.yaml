@@ -304,7 +304,11 @@ spec:
               type: string
             url:
               type: string
-        status: {}
+        status:
+          properties:
+            lastObservedGeneration:
+              format: int64
+              type: integer
   version: v1alpha1
   versions:
   - name: v1alpha1
@@ -921,6 +925,9 @@ spec:
               type: string
         status:
           properties:
+            lastObservedGeneration:
+              format: int64
+              type: integer
             lastSynced:
               format: date-time
               type: string

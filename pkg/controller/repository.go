@@ -1,6 +1,7 @@
 package controller
 
 import (
+	"github.com/appscode/go/types"
 	"github.com/appscode/kubernetes-webhook-util/admission"
 	hooks "github.com/appscode/kubernetes-webhook-util/admission/v1beta1"
 	webhook "github.com/appscode/kubernetes-webhook-util/admission/v1beta1/generic"
@@ -58,66 +59,40 @@ func (c *Controller) runRepositoryInjector(key string) error {
 	if !exist {
 		glog.Warningf("Repository %s does not exist anymore\n", key)
 	} else {
-		glog.Infof("Sync/Add/Update for Repository %s\n", key)
-
-		repo := obj.(*api.Repository)
-		return c.reconcileBindingForRepository(repo)
-
-		// finalizer
-		/*if repo.DeletionTimestamp != nil {
-			if core_util.HasFinalizer(repo.ObjectMeta, util.RepositoryFinalizer) {
-				err = c.deleteRepository(repo)
-				if err != nil {
-					return err
-				}
-				_, _, err = git_apiserver_util.PatchRepository(c.gitAPIServerClient.GitV1alpha1(), repo, func(in *api.Repository) *api.Repository {
-					in.ObjectMeta = core_util.RemoveFinalizer(in.ObjectMeta, util.RepositoryFinalizer)
-					return in
-				})
+		repo := obj.(*api.Repository).DeepCopy()
+		if repo.Status.LastObservedGeneration == nil || repo.Generation > *repo.Status.LastObservedGeneration {
+			glog.Infof("Sync/Add/Update for Repository %s\n", key)
+			if err := c.reconcileForRepository(repo); err != nil {
 				return err
 			}
-		} else {
-			_, _, err = git_apiserver_util.PatchRepository(c.gitAPIServerClient.GitV1alpha1(), repo, func(in *api.Repository) *api.Repository {
-				in.ObjectMeta = core_util.AddFinalizer(in.ObjectMeta, util.RepositoryFinalizer)
-				return in
-			})
-			return err
-		}*/
+			c.updateRepositoryLastObservedGen(repo.Name, repo.Namespace, repo.Generation) // TODO: errors ?
+		}
 	}
 	return nil
 }
 
-/*func (c *Controller) deleteRepository(repository *api.Repository) error {
-	return nil
-}*/
-
-func (c *Controller) reconcileBindingForRepository(repository *api.Repository) error {
-	/*binding, err := c.getBinding(repository.Name, repository.Namespace)
-	if err != nil {
-		return err
-	}
-
-	if ok, err := c.isBindingValid(binding); err != nil {
-		return err
-	} else if ok { // binding exists and valid, no nothing
-		return nil
-	} else { // binding do not exists or invalid, create/patch binding
-
-	}*/
-
+func (c *Controller) reconcileForRepository(repository *api.Repository) error {
 	meta := metav1.ObjectMeta{
 		Name:      repository.Name,
 		Namespace: repository.Namespace,
+		OwnerReferences: []metav1.OwnerReference{
+			{
+				APIVersion:         api.SchemeGroupVersion.Group + "/" + api.SchemeGroupVersion.Version,
+				Kind:               api.ResourceKindRepository,
+				Name:               repository.Name,
+				UID:                repository.UID,
+				BlockOwnerDeletion: types.TrueP(),
+			},
+		},
 	}
 
 	transform := func(binding *api.Binding) *api.Binding {
-		if ok, _ := c.isBindingValid(binding); !ok {
+		if ok, _ := c.isBindingValid(binding); !ok { // TODO: errors ?
 			if binding.Labels == nil {
 				binding.Labels = make(map[string]string, 0)
 			}
 			binding.Labels[NodeLabelKey] = c.nextNodeName()
 		}
-		binding.Status.LastSynced = metav1.Now()
 		return binding
 	}
 
@@ -125,19 +100,6 @@ func (c *Controller) reconcileBindingForRepository(repository *api.Repository) e
 
 	return err
 }
-
-/*func (c *Controller) getBinding(name, namespace string) (*api.Binding, error) {
-	bindings, err := c.bindingLister.List(labels.Everything())
-	if err != nil {
-		return nil, err
-	}
-	for _, binding := range bindings {
-		if binding.Name == name && binding.Namespace == namespace {
-			return binding, nil
-		}
-	}
-	return nil, nil
-}*/
 
 func (c *Controller) isBindingValid(binding *api.Binding) (bool, error) {
 	if binding == nil || binding.Labels == nil || binding.Labels[NodeLabelKey] == "" {
