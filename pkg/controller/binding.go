@@ -1,9 +1,17 @@
 package controller
 
 import (
+	"path/filepath"
+	"time"
+
+	"github.com/appscode/go/types"
 	"github.com/appscode/kutil/tools/queue"
 	"github.com/golang/glog"
+	"github.com/prometheus/common/log"
+	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
 	api "kube.ci/git-apiserver/apis/git/v1alpha1"
+	"kube.ci/git-apiserver/client/clientset/versioned/typed/git/v1alpha1/util"
+	"kube.ci/git-apiserver/pkg/git-repo"
 )
 
 func (c *Controller) initBindingWatcher() {
@@ -26,7 +34,9 @@ func (c *Controller) runBindingInjector(key string) error {
 		binding := obj.(*api.Binding).DeepCopy()
 		if binding.Status.LastObservedGeneration == nil || binding.Generation > *binding.Status.LastObservedGeneration {
 			glog.Infof("Sync/Add/Update for Binding %s\n", key)
-			// do tasks...
+			if err = c.reconcileForBinding(binding); err != nil {
+				return err
+			}
 			c.updateBindingLastObservedGen(binding.Name, binding.Namespace, binding.Generation) // TODO: errors
 		}
 	}
@@ -34,5 +44,63 @@ func (c *Controller) runBindingInjector(key string) error {
 }
 
 func (c *Controller) reconcileForBinding(binding *api.Binding) error {
+	go func() {
+		for {
+			if err := c.runOnce(binding.Name, binding.Namespace); err != nil {
+				log.Errorln(err)
+				// TODO: write event to binding or repository ?
+			}
+			time.Sleep(time.Minute)
+		}
+	}()
+	return nil
+}
+
+func (c *Controller) runOnce(name, namespace string) error {
+	// get repository CRD
+	repository, err := c.gitAPIServerClient.GitV1alpha1().Repositories(namespace).Get(name, metav1.GetOptions{})
+	if err != nil {
+		return err
+	}
+
+	// fetch git repo
+	gitRepo, err := git_repo.GetGitRepository(repository.Spec.Url, filepath.Join("/tmp/get-apiserver", repository.Name))
+	if err != nil {
+		return err
+	}
+
+	log.Infoln("Cloning/Fetching done...", gitRepo)
+
+	// create or patch branch CRDs
+	for _, gitBranch := range gitRepo.Branches {
+		meta := metav1.ObjectMeta{
+			Name:      gitBranch.Name,
+			Namespace: repository.Namespace,
+			OwnerReferences: []metav1.OwnerReference{ // TODO: owner ref repository or binding ?
+				{
+					APIVersion:         api.SchemeGroupVersion.Group + "/" + api.SchemeGroupVersion.Version,
+					Kind:               api.ResourceKindRepository,
+					Name:               repository.Name,
+					UID:                repository.UID,
+					BlockOwnerDeletion: types.TrueP(),
+				},
+			},
+		}
+
+		transform := func(branch *api.Branch) *api.Branch {
+			if branch.Labels == nil {
+				branch.Labels = make(map[string]string, 0)
+			}
+			branch.Labels["repository"] = repository.Name
+			branch.Spec.LastCommitHash = gitBranch.Hash
+			return branch
+		}
+
+		_, _, err := util.CreateOrPatchBranch(c.gitAPIServerClient.GitV1alpha1(), meta, transform)
+		if err != nil {
+			return err
+		}
+	}
+
 	return nil
 }

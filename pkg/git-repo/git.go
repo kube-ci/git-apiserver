@@ -14,7 +14,6 @@ const (
 )
 
 type GitRepository struct {
-	Name string
 	Url  string
 	Path string
 
@@ -27,9 +26,8 @@ type Reference struct {
 	Hash string
 }
 
-func GetGitRepository(name, url, path string) (GitRepository, error) {
+func GetGitRepository(url, path string) (GitRepository, error) {
 	gitRepo := GitRepository{
-		Name: name,
 		Url:  url,
 		Path: path,
 	}
