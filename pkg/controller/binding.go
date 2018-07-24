@@ -8,6 +8,7 @@ import (
 	"github.com/appscode/go/types"
 	"github.com/appscode/kutil/tools/queue"
 	"github.com/golang/glog"
+	kerr "k8s.io/apimachinery/pkg/api/errors"
 	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
 	"k8s.io/apimachinery/pkg/labels"
 	api "kube.ci/git-apiserver/apis/git/v1alpha1"
@@ -55,11 +56,16 @@ func (c *Controller) runBindingInjector(key string) error {
 func (c *Controller) reconcileForBinding(binding *api.Binding) error {
 	go func() {
 		for {
-			if err := c.runOnce(binding.Name, binding.Namespace); err != nil {
+			// TODO: write error events to binding or repository ?
+			// if repository not found, we should stop the git watcher
+			// TODO: use a stop channel instead ?
+			if err := c.runOnce(binding.Name, binding.Namespace); kerr.IsNotFound(err) {
+				log.Errorf("Stopping git watcher, reason: %s", err)
+				break
+			} else if err != nil {
 				log.Errorln(err)
-				// TODO: write event to binding or repository ?
 			}
-			time.Sleep(time.Second * 30)
+			time.Sleep(time.Second * 30) // TODO: period ?
 		}
 	}()
 	return nil
