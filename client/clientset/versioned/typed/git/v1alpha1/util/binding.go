@@ -80,3 +80,24 @@ func TryUpdateBinding(c cs.GitV1alpha1Interface, meta metav1.ObjectMeta, transfo
 	}
 	return
 }
+
+func TryUpdateBindingStatus(c cs.GitV1alpha1Interface, meta metav1.ObjectMeta, transform func(*api.Binding) *api.Binding) (result *api.Binding, err error) {
+	attempt := 0
+	err = wait.PollImmediate(kutil.RetryInterval, kutil.RetryTimeout, func() (bool, error) {
+		attempt++
+		cur, e2 := c.Bindings(meta.Namespace).Get(meta.Name, metav1.GetOptions{})
+		if kerr.IsNotFound(e2) {
+			return false, e2
+		} else if e2 == nil {
+			result, e2 = c.Bindings(cur.Namespace).UpdateStatus(transform(cur.DeepCopy()))
+			return e2 == nil, nil
+		}
+		glog.Errorf("Attempt %d failed to update status of Binding %s/%s due to %v.", attempt, cur.Namespace, cur.Name, e2)
+		return false, nil
+	})
+
+	if err != nil {
+		err = fmt.Errorf("failed to update status of Binding %s/%s after %d attempts due to %v", meta.Namespace, meta.Name, attempt, err)
+	}
+	return
+}

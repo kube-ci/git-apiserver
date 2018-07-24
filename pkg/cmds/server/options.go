@@ -28,6 +28,7 @@ type ExtraOptions struct {
 }
 
 func NewExtraOptions() *ExtraOptions {
+	api.EnableStatusSubresource = true
 	return &ExtraOptions{
 		DockerRegistry:       docker.ACRegistry,
 		GitAPIServerImageTag: stringz.Val(v.Version.Version, "canary"),

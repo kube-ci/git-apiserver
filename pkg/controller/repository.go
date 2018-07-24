@@ -42,6 +42,7 @@ func (c *Controller) NewRepositoryWebhook() hooks.AdmissionHook {
 		},
 	)
 }
+
 func (c *Controller) initRepositoryWatcher() {
 	c.repoInformer = c.gitAPIServerInformerFactory.Git().V1alpha1().Repositories().Informer()
 	c.repoQueue = queue.New("Repository", c.MaxNumRequeues, c.NumThreads, c.runRepositoryInjector)
@@ -60,13 +61,24 @@ func (c *Controller) runRepositoryInjector(key string) error {
 		glog.Warningf("Repository %s does not exist anymore\n", key)
 	} else {
 		repo := obj.(*api.Repository).DeepCopy()
-		if repo.Status.LastObservedGeneration == nil || repo.Generation > *repo.Status.LastObservedGeneration {
+
+		// TODO: periodically reconcile or use a node-watcher ?
+		// don't use LastObservedGeneration, always reconcile repository
+		// it will help us to check binding is valid or not periodically
+
+		glog.Infof("Sync/Add/Update for Repository %s\n", key)
+		if err := c.reconcileForRepository(repo); err != nil {
+			return err
+		}
+
+		/*if repo.Status.LastObservedGeneration == nil || repo.Generation > *repo.Status.LastObservedGeneration {
 			glog.Infof("Sync/Add/Update for Repository %s\n", key)
 			if err := c.reconcileForRepository(repo); err != nil {
 				return err
 			}
-			c.updateRepositoryLastObservedGen(repo.Name, repo.Namespace, repo.Generation) // TODO: errors ?
-		}
+			// update LastObservedGeneration // TODO: errors ?
+			c.updateRepositoryLastObservedGen(repo.Name, repo.Namespace, repo.Generation)
+		}*/
 	}
 	return nil
 }

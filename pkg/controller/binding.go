@@ -18,8 +18,15 @@ import (
 func (c *Controller) initBindingWatcher() {
 	c.bindingInformer = c.gitAPIServerInformerFactory.Git().V1alpha1().Bindings().Informer()
 	c.bindingQueue = queue.New("Binding", c.MaxNumRequeues, c.NumThreads, c.runBindingInjector)
-	c.bindingInformer.AddEventHandler(queue.DefaultEventHandler(c.bindingQueue.GetQueue()))
 	c.bindingLister = c.gitAPIServerInformerFactory.Git().V1alpha1().Bindings().Lister()
+	c.bindingInformer.AddEventHandler(
+		queue.NewFilteredHandler(
+			queue.DefaultEventHandler(c.bindingQueue.GetQueue()),
+			labels.SelectorFromSet(map[string]string{
+				NodeLabelKey: NodeMinikube, // TODO: get node-name from pod's env variable
+			}),
+		),
+	)
 }
 
 func (c *Controller) runBindingInjector(key string) error {
@@ -38,7 +45,8 @@ func (c *Controller) runBindingInjector(key string) error {
 			if err = c.reconcileForBinding(binding); err != nil {
 				return err
 			}
-			c.updateBindingLastObservedGen(binding.Name, binding.Namespace, binding.Generation) // TODO: errors
+			// update LastObservedGeneration // TODO: errors ?
+			c.updateBindingLastObservedGen(binding.Name, binding.Namespace, binding.Generation)
 		}
 	}
 	return nil
