@@ -89,7 +89,7 @@ func (c *Controller) runOnce(name, namespace string) error {
 	// create or patch branch CRDs
 	for _, gitBranch := range gitRepo.Branches {
 		meta := metav1.ObjectMeta{
-			Name:      gitBranch.Name,
+			Name:      repository.Name + "-" + gitBranch.Name,
 			Namespace: repository.Namespace,
 			OwnerReferences: []metav1.OwnerReference{ // TODO: owner ref repository or binding ?
 				{
