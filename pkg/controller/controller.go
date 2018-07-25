@@ -39,6 +39,9 @@ type Controller struct {
 	bindingQueue    *queue.Worker
 	bindingInformer cache.SharedIndexInformer
 	bindingLister   git_apiserver_listers.BindingLister
+
+	// Binding Map
+	bindingMap map[string]struct{}
 }
 
 func (c *Controller) ensureCustomResourceDefinitions() error {

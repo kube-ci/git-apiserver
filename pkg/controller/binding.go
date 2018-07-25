@@ -28,6 +28,8 @@ func (c *Controller) initBindingWatcher() {
 			}),
 		),
 	)
+
+	c.bindingMap = make(map[string]struct{})
 }
 
 func (c *Controller) runBindingInjector(key string) error {
@@ -39,16 +41,28 @@ func (c *Controller) runBindingInjector(key string) error {
 
 	if !exist {
 		glog.Warningf("Binding %s does not exist anymore\n", key)
+		delete(c.bindingMap, key)
 	} else {
 		binding := obj.(*api.Binding).DeepCopy()
-		if binding.Status.LastObservedGeneration == nil || binding.Generation > *binding.Status.LastObservedGeneration {
+
+		// use key map instead of LastObservedGeneration to check binding already reconciled or not
+		// it will help to restart git-watcher when operator is restarted
+		if _, ok := c.bindingMap[key]; !ok {
+			glog.Infof("Sync/Add/Update for Binding %s\n", key)
+			if err = c.reconcileForBinding(binding); err != nil {
+				return err
+			}
+			c.bindingMap[key] = struct{}{}
+		}
+
+		/*if binding.Status.LastObservedGeneration == nil || binding.Generation > *binding.Status.LastObservedGeneration {
 			glog.Infof("Sync/Add/Update for Binding %s\n", key)
 			if err = c.reconcileForBinding(binding); err != nil {
 				return err
 			}
 			// update LastObservedGeneration // TODO: errors ?
 			c.updateBindingLastObservedGen(binding.Name, binding.Namespace, binding.Generation)
-		}
+		}*/
 	}
 	return nil
 }
@@ -134,7 +148,7 @@ func (c *Controller) runOnce(name, namespace string) error {
 	for _, branch := range branchList.Items {
 		found := false
 		for _, gitBranch := range gitRepo.Branches {
-			if branch.Name == gitBranch.Name {
+			if branch.Name == repository.Name+"-"+gitBranch.Name {
 				found = true
 				break
 			}
