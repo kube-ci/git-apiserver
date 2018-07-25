@@ -1,9 +1,9 @@
 apiVersion: git.kube.ci/v1alpha1
 kind: Repository
 metadata:
-  name: voyager
+  name: watch
   namespace: default
   labels:
-    app: voyager
+    app: watch
 spec:
-  url: https://github.com/appscode/voyager.git
+  url: https://github.com/diptadas/watch.git

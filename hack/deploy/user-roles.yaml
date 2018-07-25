@@ -9,9 +9,9 @@ rules:
 - apiGroups:
   - git.kube.ci
   resources:
-  - restics
-  - recoveries
   - repositories
+  - bindings
+  - branches
   verbs:
   - create
   - delete
@@ -32,8 +32,8 @@ rules:
 - apiGroups:
   - git.kube.ci
   resources:
-  - restics
-  - recoveries
+  - branches
+  - bindings
   - repositories
   verbs:
   - get
