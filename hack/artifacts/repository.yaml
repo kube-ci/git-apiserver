@@ -1,9 +1,7 @@
 apiVersion: git.kube.ci/v1alpha1
 kind: Repository
 metadata:
-  name: watch
+  name: kubeci-gpig
   namespace: default
-  labels:
-    app: watch
 spec:
-  url: https://github.com/diptadas/watch.git
+  url: https://github.com/diptadas/kubeci-gpig.git
