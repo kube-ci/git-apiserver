@@ -84,6 +84,8 @@ func (c *Controller) runRepositoryInjector(key string) error {
 }
 
 func (c *Controller) reconcileForRepository(repository *api.Repository) error {
+	return nil // TODO: remove, temporarily turned of for webhook testing
+
 	meta := metav1.ObjectMeta{
 		Name:      repository.Name,
 		Namespace: repository.Namespace,
