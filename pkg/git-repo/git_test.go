@@ -9,7 +9,7 @@ func TestGetGitRepository(t *testing.T) {
 	url := "https://github.com/appscode/voyager.git"
 	path := "/tmp/my-repo"
 
-	gitRepo, err := GetGitRepository("my-repo", url, path)
+	gitRepo, err := GetGitRepository(url, path)
 	if err != nil {
 		t.Error(err)
 	}

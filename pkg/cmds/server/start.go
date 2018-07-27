@@ -68,6 +68,7 @@ func (o GitAPIServerOptions) Config() (*server.GitAPIServerConfig, error) {
 	serverConfig.OpenAPIConfig.IgnorePrefixes = []string{
 		"/swaggerapi",
 		"/apis/admission.git.kube.ci/v1alpha1/repositories",
+		"/apis/webhook.git.kube.ci/v1alpha1",
 	}
 
 	extraConfig := controller.NewConfig(serverConfig.ClientConfig)

@@ -54,6 +54,11 @@ type GitAPIServer struct {
 func (op *GitAPIServer) Run(stopCh <-chan struct{}) error {
 	// sync cache
 	op.Controller.RunInformers(stopCh)
+
+	// install web service
+	wsPath := "/apis/webhook.git.kube.ci/v1alpha1"
+	op.GenericAPIServer.Handler.GoRestfulContainer.Add(op.Controller.GetWebService(wsPath))
+
 	return op.GenericAPIServer.PrepareRun().Run(stopCh)
 }
 
