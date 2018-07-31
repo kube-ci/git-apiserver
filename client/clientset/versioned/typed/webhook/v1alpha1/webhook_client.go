@@ -21,41 +21,21 @@ package v1alpha1
 import (
 	serializer "k8s.io/apimachinery/pkg/runtime/serializer"
 	rest "k8s.io/client-go/rest"
-	v1alpha1 "kube.ci/git-apiserver/apis/git/v1alpha1"
+	v1alpha1 "kube.ci/git-apiserver/apis/webhook/v1alpha1"
 	"kube.ci/git-apiserver/client/clientset/versioned/scheme"
 )
 
-type GitV1alpha1Interface interface {
+type WebhookV1alpha1Interface interface {
 	RESTClient() rest.Interface
-	BindingsGetter
-	BranchesGetter
-	PullRequestsGetter
-	RepositoriesGetter
 }
 
-// GitV1alpha1Client is used to interact with features provided by the git.kube.ci group.
-type GitV1alpha1Client struct {
+// WebhookV1alpha1Client is used to interact with features provided by the webhook.git.kube.ci group.
+type WebhookV1alpha1Client struct {
 	restClient rest.Interface
 }
 
-func (c *GitV1alpha1Client) Bindings(namespace string) BindingInterface {
-	return newBindings(c, namespace)
-}
-
-func (c *GitV1alpha1Client) Branches(namespace string) BranchInterface {
-	return newBranches(c, namespace)
-}
-
-func (c *GitV1alpha1Client) PullRequests(namespace string) PullRequestInterface {
-	return newPullRequests(c, namespace)
-}
-
-func (c *GitV1alpha1Client) Repositories(namespace string) RepositoryInterface {
-	return newRepositories(c, namespace)
-}
-
-// NewForConfig creates a new GitV1alpha1Client for the given config.
-func NewForConfig(c *rest.Config) (*GitV1alpha1Client, error) {
+// NewForConfig creates a new WebhookV1alpha1Client for the given config.
+func NewForConfig(c *rest.Config) (*WebhookV1alpha1Client, error) {
 	config := *c
 	if err := setConfigDefaults(&config); err != nil {
 		return nil, err
@@ -64,12 +44,12 @@ func NewForConfig(c *rest.Config) (*GitV1alpha1Client, error) {
 	if err != nil {
 		return nil, err
 	}
-	return &GitV1alpha1Client{client}, nil
+	return &WebhookV1alpha1Client{client}, nil
 }
 
-// NewForConfigOrDie creates a new GitV1alpha1Client for the given config and
+// NewForConfigOrDie creates a new WebhookV1alpha1Client for the given config and
 // panics if there is an error in the config.
-func NewForConfigOrDie(c *rest.Config) *GitV1alpha1Client {
+func NewForConfigOrDie(c *rest.Config) *WebhookV1alpha1Client {
 	client, err := NewForConfig(c)
 	if err != nil {
 		panic(err)
@@ -77,9 +57,9 @@ func NewForConfigOrDie(c *rest.Config) *GitV1alpha1Client {
 	return client
 }
 
-// New creates a new GitV1alpha1Client for the given RESTClient.
-func New(c rest.Interface) *GitV1alpha1Client {
-	return &GitV1alpha1Client{c}
+// New creates a new WebhookV1alpha1Client for the given RESTClient.
+func New(c rest.Interface) *WebhookV1alpha1Client {
+	return &WebhookV1alpha1Client{c}
 }
 
 func setConfigDefaults(config *rest.Config) error {
@@ -97,7 +77,7 @@ func setConfigDefaults(config *rest.Config) error {
 
 // RESTClient returns a RESTClient that is used to communicate
 // with API server by this client implementation.
-func (c *GitV1alpha1Client) RESTClient() rest.Interface {
+func (c *WebhookV1alpha1Client) RESTClient() rest.Interface {
 	if c == nil {
 		return nil
 	}

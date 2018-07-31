@@ -28,6 +28,8 @@ type Interface interface {
 	Bindings() BindingInformer
 	// Branches returns a BranchInformer.
 	Branches() BranchInformer
+	// PullRequests returns a PullRequestInformer.
+	PullRequests() PullRequestInformer
 	// Repositories returns a RepositoryInformer.
 	Repositories() RepositoryInformer
 }
@@ -51,6 +53,11 @@ func (v *version) Bindings() BindingInformer {
 // Branches returns a BranchInformer.
 func (v *version) Branches() BranchInformer {
 	return &branchInformer{factory: v.factory, namespace: v.namespace, tweakListOptions: v.tweakListOptions}
+}
+
+// PullRequests returns a PullRequestInformer.
+func (v *version) PullRequests() PullRequestInformer {
+	return &pullRequestInformer{factory: v.factory, namespace: v.namespace, tweakListOptions: v.tweakListOptions}
 }
 
 // Repositories returns a RepositoryInformer.

@@ -34,6 +34,14 @@ type BranchListerExpansion interface{}
 // BranchNamespaceLister.
 type BranchNamespaceListerExpansion interface{}
 
+// PullRequestListerExpansion allows custom methods to be added to
+// PullRequestLister.
+type PullRequestListerExpansion interface{}
+
+// PullRequestNamespaceListerExpansion allows custom methods to be added to
+// PullRequestNamespaceLister.
+type PullRequestNamespaceListerExpansion interface{}
+
 // RepositoryListerExpansion allows custom methods to be added to
 // RepositoryLister.
 type RepositoryListerExpansion interface{}

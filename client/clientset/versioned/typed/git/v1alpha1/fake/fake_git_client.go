@@ -36,6 +36,10 @@ func (c *FakeGitV1alpha1) Branches(namespace string) v1alpha1.BranchInterface {
 	return &FakeBranches{c, namespace}
 }
 
+func (c *FakeGitV1alpha1) PullRequests(namespace string) v1alpha1.PullRequestInterface {
+	return &FakePullRequests{c, namespace}
+}
+
 func (c *FakeGitV1alpha1) Repositories(namespace string) v1alpha1.RepositoryInterface {
 	return &FakeRepositories{c, namespace}
 }

@@ -4,10 +4,11 @@ import (
 	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
 	"k8s.io/apimachinery/pkg/runtime"
 	"k8s.io/apimachinery/pkg/runtime/schema"
-	"kube.ci/git-apiserver/apis/git"
 )
 
-var SchemeGroupVersion = schema.GroupVersion{Group: git.GroupName, Version: "v1alpha1"}
+const GroupName = "webhook.git.kube.ci"
+
+var SchemeGroupVersion = schema.GroupVersion{Group: GroupName, Version: "v1alpha1"}
 
 var (
 	// TODO: move SchemeBuilder with zz_generated.deepcopy.go to k8s.io/api.
@@ -32,14 +33,7 @@ func Resource(resource string) schema.GroupResource {
 // Adds the list of known types to api.Scheme.
 func addKnownTypes(scheme *runtime.Scheme) error {
 	scheme.AddKnownTypes(SchemeGroupVersion,
-		&Repository{},
-		&RepositoryList{},
-		&Branch{},
-		&BranchList{},
-		&Binding{},
-		&BindingList{},
-		&PullRequest{},
-		&PullRequestList{},
+		&GithubEvent{},
 	)
 
 	scheme.AddKnownTypes(SchemeGroupVersion,

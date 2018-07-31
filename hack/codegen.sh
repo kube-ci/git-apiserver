@@ -11,6 +11,18 @@ apiGroups=(git/v1alpha1)
 
 pushd $REPO_ROOT
 
+# for EAS types
+# only deepcopy for webhook
+docker run --rm -ti -u $(id -u):$(id -g) \
+  -v "$REPO_ROOT":"$DOCKER_REPO_ROOT" \
+  -w "$DOCKER_REPO_ROOT" \
+  appscode/gengo:release-1.11 "$DOCKER_CODEGEN_PKG"/generate-internal-groups.sh "deepcopy" \
+  kube.ci/git-apiserver/client \
+  kube.ci/git-apiserver/apis \
+  kube.ci/git-apiserver/apis \
+  webhook:v1alpha1 \
+  --go-header-file "$DOCKER_REPO_ROOT/hack/gengo/boilerplate.go.txt"
+
 # for both CRD and EAS types
 docker run --rm -ti -u $(id -u):$(id -g) \
   -v "$REPO_ROOT":"$DOCKER_REPO_ROOT" \

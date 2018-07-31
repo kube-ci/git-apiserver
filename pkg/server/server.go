@@ -14,6 +14,9 @@ import (
 	"k8s.io/apimachinery/pkg/version"
 	"k8s.io/apiserver/pkg/registry/rest"
 	genericapiserver "k8s.io/apiserver/pkg/server"
+	"kube.ci/git-apiserver/apis/webhook"
+	"kube.ci/git-apiserver/apis/webhook/install"
+	"kube.ci/git-apiserver/apis/webhook/v1alpha1"
 	"kube.ci/git-apiserver/pkg/controller"
 )
 
@@ -23,6 +26,7 @@ var (
 )
 
 func init() {
+	install.Install(Scheme)
 	admission.AddToScheme(Scheme)
 
 	// we need to add the options to empty v1
@@ -56,8 +60,8 @@ func (op *GitAPIServer) Run(stopCh <-chan struct{}) error {
 	op.Controller.RunInformers(stopCh)
 
 	// install web service
-	wsPath := "/apis/webhook.git.kube.ci/v1alpha1"
-	op.GenericAPIServer.Handler.GoRestfulContainer.Add(op.Controller.GetWebService(wsPath))
+	// wsPath := "/apis/webhook.git.kube.ci/v1alpha1"
+	// op.GenericAPIServer.Handler.GoRestfulContainer.Add(op.Controller.GetWebService(wsPath))
 
 	return op.GenericAPIServer.PrepareRun().Run(stopCh)
 }
@@ -153,6 +157,17 @@ func (c completedConfig) New() (*GitAPIServer, error) {
 				return admissionHook.Initialize(c.ExtraConfig.ClientConfig, context.StopCh)
 			},
 		)
+	}
+
+	{
+		apiGroupInfo := genericapiserver.NewDefaultAPIGroupInfo(webhook.GroupName, Scheme, metav1.ParameterCodec, Codecs)
+		v1alpha1storage := map[string]rest.Storage{}
+		v1alpha1storage[v1alpha1.ResourceGithubEvents] = controller.NewGithubREST(ctrl)
+		apiGroupInfo.VersionedResourcesStorageMap["v1alpha1"] = v1alpha1storage
+
+		if err := s.GenericAPIServer.InstallAPIGroup(&apiGroupInfo); err != nil {
+			return nil, err
+		}
 	}
 
 	return s, nil
