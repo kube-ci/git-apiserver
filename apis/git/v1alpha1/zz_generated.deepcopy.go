@@ -227,7 +227,7 @@ func (in *PullRequestList) DeepCopyInto(out *PullRequestList) {
 	out.ListMeta = in.ListMeta
 	if in.Items != nil {
 		in, out := &in.Items, &out.Items
-		*out = make([]Branch, len(*in))
+		*out = make([]PullRequest, len(*in))
 		for i := range *in {
 			(*in)[i].DeepCopyInto(&(*out)[i])
 		}

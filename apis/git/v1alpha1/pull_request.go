@@ -16,11 +16,13 @@ const (
 type PullRequest struct {
 	metav1.TypeMeta   `json:",inline"`
 	metav1.ObjectMeta `json:"metadata,omitempty"`
-	Spec              BranchSpec `json:"spec,omitempty"`
+	Spec              PullRequestSpec `json:"spec,omitempty"`
 }
 
 type PullRequestSpec struct {
-	LastCommitHash string `json:"lastCommitHash,omitempty"`
+	Branch  string `json:"branch,omitempty"`
+	HeadSHA string `json:"headSHA,omitempty"`
+	State   string `json:"state,omitempty"`
 }
 
 // +k8s:deepcopy-gen:interfaces=k8s.io/apimachinery/pkg/runtime.Object
@@ -28,5 +30,5 @@ type PullRequestSpec struct {
 type PullRequestList struct {
 	metav1.TypeMeta `json:",inline"`
 	metav1.ListMeta `json:"metadata,omitempty"`
-	Items           []Branch `json:"items,omitempty"`
+	Items           []PullRequest `json:"items,omitempty"`
 }

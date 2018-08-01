@@ -2,15 +2,20 @@ package controller
 
 import (
 	"context"
+	"fmt"
 
 	"github.com/TamalSaha/go-oneliners"
 	"github.com/appscode/go/log"
+	"github.com/appscode/go/types"
+	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
 	"k8s.io/apimachinery/pkg/labels"
 	"k8s.io/apimachinery/pkg/runtime"
 	"k8s.io/apimachinery/pkg/runtime/schema"
 	"k8s.io/apiserver/pkg/registry/rest"
+	api "kube.ci/git-apiserver/apis/git/v1alpha1"
 	repo_v1alpha1 "kube.ci/git-apiserver/apis/git/v1alpha1"
 	"kube.ci/git-apiserver/apis/webhook/v1alpha1"
+	"kube.ci/git-apiserver/client/clientset/versioned/typed/git/v1alpha1/util"
 )
 
 type GithubREST struct {
@@ -57,12 +62,45 @@ func (c *Controller) githubEventHandler(event *v1alpha1.GithubEvent) {
 		if event.Repo != nil && event.Repo.CloneURL != nil && repository.Spec.Url == *event.Repo.CloneURL {
 			log.Infof("Event for repository %s/%s", repository.Namespace, repository.Name)
 			if event.PullRequest != nil {
-				c.githubPRHandler(event.PullRequest, repository)
+				err := c.githubPRHandler(event.PullRequest, repository) // TODO: errors ?
+				if err != nil {
+					log.Errorln(err)
+				}
 			}
 		}
 	}
 }
 
-func (c *Controller) githubPRHandler(pr *v1alpha1.PullRequest, repo *repo_v1alpha1.Repository) {
+func (c *Controller) githubPRHandler(githubPR *v1alpha1.PullRequest, repository *repo_v1alpha1.Repository) error {
 	// create or patch PR CRD
+	meta := metav1.ObjectMeta{
+		Name:      fmt.Sprintf("%s-%d", repository.Name, *githubPR.Number),
+		Namespace: repository.Namespace,
+		OwnerReferences: []metav1.OwnerReference{ // TODO: owner ref repository or binding ?
+			{
+				APIVersion:         api.SchemeGroupVersion.Group + "/" + api.SchemeGroupVersion.Version,
+				Kind:               api.ResourceKindRepository,
+				Name:               repository.Name,
+				UID:                repository.UID,
+				BlockOwnerDeletion: types.TrueP(),
+			},
+		},
+	}
+
+	transform := func(pr *api.PullRequest) *api.PullRequest {
+		if pr.Labels == nil {
+			pr.Labels = make(map[string]string, 0)
+		}
+		pr.Labels["repository"] = repository.Name
+		pr.Spec.HeadSHA = *githubPR.Head.SHA
+		pr.Spec.State = *githubPR.State
+		return pr
+	}
+
+	_, _, err := util.CreateOrPatchPullRequest(c.gitAPIServerClient.GitV1alpha1(), meta, transform)
+	if err != nil {
+		return err
+	}
+
+	return nil
 }

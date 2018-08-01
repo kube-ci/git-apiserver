@@ -3832,7 +3832,7 @@
           "$ref": "#/definitions/io.k8s.apimachinery.pkg.apis.meta.v1.ObjectMeta"
         },
         "spec": {
-          "$ref": "#/definitions/ci.kube.git-apiserver.apis.git.v1alpha1.BranchSpec"
+          "$ref": "#/definitions/ci.kube.git-apiserver.apis.git.v1alpha1.PullRequestSpec"
         }
       },
       "x-kubernetes-group-version-kind": [
@@ -3852,7 +3852,7 @@
         "items": {
           "type": "array",
           "items": {
-            "$ref": "#/definitions/ci.kube.git-apiserver.apis.git.v1alpha1.Branch"
+            "$ref": "#/definitions/ci.kube.git-apiserver.apis.git.v1alpha1.PullRequest"
           }
         },
         "kind": {
@@ -3870,6 +3870,19 @@
           "kind": "PullRequestList"
         }
       ]
+    },
+    "ci.kube.git-apiserver.apis.git.v1alpha1.PullRequestSpec": {
+      "properties": {
+        "branch": {
+          "type": "string"
+        },
+        "headSHA": {
+          "type": "string"
+        },
+        "state": {
+          "type": "string"
+        }
+      }
     },
     "ci.kube.git-apiserver.apis.git.v1alpha1.Repository": {
       "properties": {

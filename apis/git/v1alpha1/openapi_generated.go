@@ -10923,14 +10923,14 @@ func GetOpenAPIDefinitions(ref common.ReferenceCallback) map[string]common.OpenA
 						},
 						"spec": {
 							SchemaProps: spec.SchemaProps{
-								Ref: ref("kube.ci/git-apiserver/apis/git/v1alpha1.BranchSpec"),
+								Ref: ref("kube.ci/git-apiserver/apis/git/v1alpha1.PullRequestSpec"),
 							},
 						},
 					},
 				},
 			},
 			Dependencies: []string{
-				"k8s.io/apimachinery/pkg/apis/meta/v1.ObjectMeta", "kube.ci/git-apiserver/apis/git/v1alpha1.BranchSpec"},
+				"k8s.io/apimachinery/pkg/apis/meta/v1.ObjectMeta", "kube.ci/git-apiserver/apis/git/v1alpha1.PullRequestSpec"},
 		},
 		"kube.ci/git-apiserver/apis/git/v1alpha1.PullRequestList": {
 			Schema: spec.Schema{
@@ -10961,7 +10961,7 @@ func GetOpenAPIDefinitions(ref common.ReferenceCallback) map[string]common.OpenA
 								Items: &spec.SchemaOrArray{
 									Schema: &spec.Schema{
 										SchemaProps: spec.SchemaProps{
-											Ref: ref("kube.ci/git-apiserver/apis/git/v1alpha1.Branch"),
+											Ref: ref("kube.ci/git-apiserver/apis/git/v1alpha1.PullRequest"),
 										},
 									},
 								},
@@ -10971,13 +10971,25 @@ func GetOpenAPIDefinitions(ref common.ReferenceCallback) map[string]common.OpenA
 				},
 			},
 			Dependencies: []string{
-				"k8s.io/apimachinery/pkg/apis/meta/v1.ListMeta", "kube.ci/git-apiserver/apis/git/v1alpha1.Branch"},
+				"k8s.io/apimachinery/pkg/apis/meta/v1.ListMeta", "kube.ci/git-apiserver/apis/git/v1alpha1.PullRequest"},
 		},
 		"kube.ci/git-apiserver/apis/git/v1alpha1.PullRequestSpec": {
 			Schema: spec.Schema{
 				SchemaProps: spec.SchemaProps{
 					Properties: map[string]spec.Schema{
-						"lastCommitHash": {
+						"branch": {
+							SchemaProps: spec.SchemaProps{
+								Type:   []string{"string"},
+								Format: "",
+							},
+						},
+						"headSHA": {
+							SchemaProps: spec.SchemaProps{
+								Type:   []string{"string"},
+								Format: "",
+							},
+						},
+						"state": {
 							SchemaProps: spec.SchemaProps{
 								Type:   []string{"string"},
 								Format: "",
