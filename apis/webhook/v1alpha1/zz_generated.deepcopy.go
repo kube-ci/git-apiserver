@@ -21,6 +21,7 @@ limitations under the License.
 package v1alpha1
 
 import (
+	github "github.com/google/go-github/github"
 	runtime "k8s.io/apimachinery/pkg/runtime"
 )
 
@@ -42,7 +43,7 @@ func (in *GithubEvent) DeepCopyInto(out *GithubEvent) {
 		if *in == nil {
 			*out = nil
 		} else {
-			*out = new(Repository)
+			*out = new(github.Repository)
 			**out = **in
 		}
 	}
@@ -51,7 +52,7 @@ func (in *GithubEvent) DeepCopyInto(out *GithubEvent) {
 		if *in == nil {
 			*out = nil
 		} else {
-			*out = new(User)
+			*out = new(github.User)
 			**out = **in
 		}
 	}
@@ -60,7 +61,7 @@ func (in *GithubEvent) DeepCopyInto(out *GithubEvent) {
 		if *in == nil {
 			*out = nil
 		} else {
-			*out = new(Issue)
+			*out = new(github.Issue)
 			**out = **in
 		}
 	}
@@ -69,7 +70,7 @@ func (in *GithubEvent) DeepCopyInto(out *GithubEvent) {
 		if *in == nil {
 			*out = nil
 		} else {
-			*out = new(PullRequest)
+			*out = new(github.PullRequest)
 			**out = **in
 		}
 	}

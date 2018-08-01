@@ -943,12 +943,12 @@ metadata:
   creationTimestamp: null
   labels:
     app: kubeci
-  name: PullRequests.git.kube.ci
+  name: pullrequests.git.kube.ci
 spec:
   group: git.kube.ci
   names:
     kind: PullRequest
-    plural: PullRequests
+    plural: pullrequests
     shortNames:
     - pr
   scope: Namespaced

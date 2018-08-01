@@ -4,8 +4,10 @@ import (
 	"context"
 	"fmt"
 
+	"github.com/TamalSaha/go-oneliners"
 	"github.com/appscode/go/log"
 	"github.com/appscode/go/types"
+	"github.com/google/go-github/github"
 	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
 	"k8s.io/apimachinery/pkg/labels"
 	"k8s.io/apimachinery/pkg/runtime"
@@ -45,7 +47,7 @@ func (r *GithubREST) GroupVersionKind(containingGV schema.GroupVersion) schema.G
 // curl -k -H 'Content-Type: application/json' -d '{"action":"labeled"}' https://192.168.99.100:8443/apis/webhook.git.kube.ci/v1alpha1/githubpullrequests
 func (r *GithubREST) Create(ctx context.Context, obj runtime.Object, createValidation rest.ValidateObjectFunc, includeUninitialized bool) (runtime.Object, error) {
 	event := obj.(*v1alpha1.GithubEvent)
-	// oneliners.PrettyJson(event, "Github Webhook Event")
+	oneliners.PrettyJson(event, "Github Webhook Event")
 	r.controller.githubEventHandler(event)
 	return event, nil // TODO: error ?
 }
@@ -70,7 +72,7 @@ func (c *Controller) githubEventHandler(event *v1alpha1.GithubEvent) {
 	}
 }
 
-func (c *Controller) githubPRHandler(githubPR *v1alpha1.PullRequest, repository *repo_v1alpha1.Repository) error {
+func (c *Controller) githubPRHandler(githubPR *github.PullRequest, repository *repo_v1alpha1.Repository) error {
 	// create or patch PR CRD
 	meta := metav1.ObjectMeta{
 		Name:      fmt.Sprintf("%s-%d", repository.Name, *githubPR.Number),
