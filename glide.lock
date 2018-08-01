@@ -1,5 +1,5 @@
 hash: 75da108390f49158cde7efc79257714c4021f2cce9677d4b873bc7836be7b802
-updated: 2018-07-25T16:17:51.336520275+06:00
+updated: 2018-08-01T10:37:43.285890907+06:00
 imports:
 - name: bitbucket.org/ww/goautoneg
   version: 75cd24fc2f2c2a2088577d12123ddee5f54e0675
@@ -225,6 +225,14 @@ imports:
   - cmp/internal/diff
   - cmp/internal/function
   - cmp/internal/value
+- name: github.com/google/go-github
+  version: 24b7e9764391dd6494cc65fe5bed5df43662873a
+  subpackages:
+  - github
+- name: github.com/google/go-querystring
+  version: 53e6ce116135b80d037921a7fdd5138cf32d7a8a
+  subpackages:
+  - query
 - name: github.com/google/gofuzz
   version: 44d81051d367757e1c7c6a5a86423ece9afcf63c
 - name: github.com/google/uuid
@@ -364,6 +372,8 @@ imports:
   - scanner
   - token
   - types
+- name: github.com/TamalSaha/go-oneliners
+  version: 82a97ec58df4809a2bc57ebbbcc1e6a2feb78111
 - name: github.com/ugorji/go
   version: ded73eae5db7e7a0ef6f55aace87a2873c5d2b74
   subpackages:
@@ -438,7 +448,7 @@ imports:
   subpackages:
   - rate
 - name: google.golang.org/api
-  version: 2c45710c7f3fb0ab63506810a1ba84325ab90ab8
+  version: 31ca0e01cd791f07750cb23fc99327721f753290
   subpackages:
   - storage/v1
 - name: google.golang.org/appengine
