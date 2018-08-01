@@ -6,7 +6,7 @@ import (
 
 const (
 	ResourceKindPullRequest = "PullRequest"
-	ResourcePullRequests    = "PullRequests"
+	ResourcePullRequests    = "pullrequests"
 )
 
 // +genclient
@@ -20,9 +20,8 @@ type PullRequest struct {
 }
 
 type PullRequestSpec struct {
-	Branch  string `json:"branch,omitempty"`
+	HeadRef string `json:"headRef,omitempty"`
 	HeadSHA string `json:"headSHA,omitempty"`
-	State   string `json:"state,omitempty"`
 }
 
 // +k8s:deepcopy-gen:interfaces=k8s.io/apimachinery/pkg/runtime.Object

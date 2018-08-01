@@ -3873,13 +3873,10 @@
     },
     "ci.kube.git-apiserver.apis.git.v1alpha1.PullRequestSpec": {
       "properties": {
-        "branch": {
+        "headRef": {
           "type": "string"
         },
         "headSHA": {
-          "type": "string"
-        },
-        "state": {
           "type": "string"
         }
       }

@@ -1238,11 +1238,9 @@ spec:
               type: string
         spec:
           properties:
-            branch:
+            headRef:
               type: string
             headSHA:
-              type: string
-            state:
               type: string
   version: v1alpha1
   versions:

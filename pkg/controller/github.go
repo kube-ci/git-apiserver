@@ -4,7 +4,6 @@ import (
 	"context"
 	"fmt"
 
-	"github.com/TamalSaha/go-oneliners"
 	"github.com/appscode/go/log"
 	"github.com/appscode/go/types"
 	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
@@ -46,7 +45,7 @@ func (r *GithubREST) GroupVersionKind(containingGV schema.GroupVersion) schema.G
 // curl -k -H 'Content-Type: application/json' -d '{"action":"labeled"}' https://192.168.99.100:8443/apis/webhook.git.kube.ci/v1alpha1/githubpullrequests
 func (r *GithubREST) Create(ctx context.Context, obj runtime.Object, createValidation rest.ValidateObjectFunc, includeUninitialized bool) (runtime.Object, error) {
 	event := obj.(*v1alpha1.GithubEvent)
-	oneliners.PrettyJson(event, "Github Webhook Event")
+	// oneliners.PrettyJson(event, "Github Webhook Event")
 	r.controller.githubEventHandler(event)
 	return event, nil // TODO: error ?
 }
@@ -88,12 +87,33 @@ func (c *Controller) githubPRHandler(githubPR *v1alpha1.PullRequest, repository 
 	}
 
 	transform := func(pr *api.PullRequest) *api.PullRequest {
-		if pr.Labels == nil {
-			pr.Labels = make(map[string]string, 0)
-		}
+		//if pr.Labels == nil {
+		//	pr.Labels = make(map[string]string, 0)
+		//}
+		// TODO: always create new ?
+		pr.Labels = make(map[string]string, 0)
 		pr.Labels["repository"] = repository.Name
-		pr.Spec.HeadSHA = *githubPR.Head.SHA
-		pr.Spec.State = *githubPR.State
+
+		// add PR labels
+		for _, label := range githubPR.Labels {
+			if label != nil && label.Name != nil {
+				pr.Labels[*label.Name] = ""
+			}
+		}
+		// add state as label
+		if githubPR.State != nil {
+			pr.Labels["state"] = *githubPR.State
+		}
+
+		if githubPR.Head != nil {
+			if githubPR.Head.Ref != nil {
+				pr.Spec.HeadRef = *githubPR.Head.Ref
+			}
+			if githubPR.Head.SHA != nil {
+				pr.Spec.HeadSHA = *githubPR.Head.SHA
+			}
+		}
+
 		return pr
 	}
 

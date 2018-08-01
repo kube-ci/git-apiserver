@@ -49,6 +49,7 @@ func (c *Controller) ensureCustomResourceDefinitions() error {
 		api.Repository{}.CustomResourceDefinition(),
 		api.Branch{}.CustomResourceDefinition(),
 		api.Binding{}.CustomResourceDefinition(),
+		api.PullRequest{}.CustomResourceDefinition(),
 	}
 	return crdutils.RegisterCRDs(c.crdClient, crds)
 }
