@@ -116,6 +116,10 @@ func (c *Controller) githubPRHandler(githubPR *github.PullRequest, repository *r
 			}
 		}
 
+		if githubPR.ID != nil {
+			pr.Spec.Number = *githubPR.Number
+		}
+
 		return pr
 	}
 

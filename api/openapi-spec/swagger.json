@@ -3878,6 +3878,10 @@
         },
         "headSHA": {
           "type": "string"
+        },
+        "number": {
+          "type": "integer",
+          "format": "int32"
         }
       }
     },

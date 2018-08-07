@@ -20,6 +20,7 @@ type PullRequest struct {
 }
 
 type PullRequestSpec struct {
+	Number  int    `json:"number,omitempty"`
 	HeadRef string `json:"headRef,omitempty"`
 	HeadSHA string `json:"headSHA,omitempty"`
 }

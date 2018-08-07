@@ -1242,6 +1242,9 @@ spec:
               type: string
             headSHA:
               type: string
+            number:
+              format: int32
+              type: integer
   version: v1alpha1
   versions:
   - name: v1alpha1
