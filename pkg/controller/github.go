@@ -130,3 +130,8 @@ func (c *Controller) githubPRHandler(githubPR *github.PullRequest, repository *r
 
 	return nil
 }
+
+func (c *Controller) fetchGithubPRs(repository *repo_v1alpha1.Repository) error {
+	var githubPR *github.PullRequest // TODO: fetch list using github-api
+	return c.githubPRHandler(githubPR, repository)
+}

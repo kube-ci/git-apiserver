@@ -11039,6 +11039,27 @@ func GetOpenAPIDefinitions(ref common.ReferenceCallback) map[string]common.OpenA
 			Dependencies: []string{
 				"k8s.io/apimachinery/pkg/apis/meta/v1.ObjectMeta", "kube.ci/git-apiserver/apis/git/v1alpha1.RepositorySpec", "kube.ci/git-apiserver/apis/git/v1alpha1.RepositoryStatus"},
 		},
+		"kube.ci/git-apiserver/apis/git/v1alpha1.RepositoryAuth": {
+			Schema: spec.Schema{
+				SchemaProps: spec.SchemaProps{
+					Properties: map[string]spec.Schema{
+						"secretName": {
+							SchemaProps: spec.SchemaProps{
+								Type:   []string{"string"},
+								Format: "",
+							},
+						},
+						"secretKey": {
+							SchemaProps: spec.SchemaProps{
+								Type:   []string{"string"},
+								Format: "",
+							},
+						},
+					},
+				},
+			},
+			Dependencies: []string{},
+		},
 		"kube.ci/git-apiserver/apis/git/v1alpha1.RepositoryList": {
 			Schema: spec.Schema{
 				SchemaProps: spec.SchemaProps{
@@ -11084,22 +11105,29 @@ func GetOpenAPIDefinitions(ref common.ReferenceCallback) map[string]common.OpenA
 			Schema: spec.Schema{
 				SchemaProps: spec.SchemaProps{
 					Properties: map[string]spec.Schema{
-						"url": {
+						"host": {
 							SchemaProps: spec.SchemaProps{
 								Type:   []string{"string"},
 								Format: "",
 							},
 						},
-						"secret": {
+						"url": {
 							SchemaProps: spec.SchemaProps{
-								Type:   []string{"string"},
-								Format: "",
+								Description: "github",
+								Type:        []string{"string"},
+								Format:      "",
+							},
+						},
+						"auth": {
+							SchemaProps: spec.SchemaProps{
+								Ref: ref("kube.ci/git-apiserver/apis/git/v1alpha1.RepositoryAuth"),
 							},
 						},
 					},
 				},
 			},
-			Dependencies: []string{},
+			Dependencies: []string{
+				"kube.ci/git-apiserver/apis/git/v1alpha1.RepositoryAuth"},
 		},
 		"kube.ci/git-apiserver/apis/git/v1alpha1.RepositoryStatus": {
 			Schema: spec.Schema{

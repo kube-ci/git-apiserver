@@ -300,9 +300,16 @@ spec:
               type: string
         spec:
           properties:
-            secret:
+            auth:
+              properties:
+                secretKey:
+                  type: string
+                secretName:
+                  type: string
+            host:
               type: string
             url:
+              description: github
               type: string
         status:
           properties:

@@ -8,6 +8,7 @@ import (
 	"github.com/appscode/go/types"
 	"github.com/appscode/kutil/tools/queue"
 	"github.com/golang/glog"
+	"gopkg.in/src-d/go-git.v4/plumbing/transport/http"
 	kerr "k8s.io/apimachinery/pkg/api/errors"
 	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
 	"k8s.io/apimachinery/pkg/labels"
@@ -92,8 +93,21 @@ func (c *Controller) runOnce(name, namespace string) error {
 		return err
 	}
 
+	// repository auth
+	var auth *http.TokenAuth
+	if repository.Spec.Auth != nil {
+		secret, err := c.kubeClient.CoreV1().Secrets(repository.Namespace).Get(repository.Spec.Auth.SecretName, metav1.GetOptions{})
+		if err != nil {
+			return err
+		}
+		auth = &http.TokenAuth{
+			Token: string(secret.Data[repository.Spec.Auth.SecretKey]),
+		}
+	}
+
 	// fetch git repo
-	gitRepo, err := git_repo.GetGitRepository(repository.Spec.Url, filepath.Join("/tmp/get-apiserver", repository.Name))
+	path := filepath.Join("/tmp/git-apiserver", repository.Name) // TODO: use constant
+	gitRepo, err := git_repo.GetGitRepository(repository.Spec.Url, path, auth)
 	if err != nil {
 		return err
 	}

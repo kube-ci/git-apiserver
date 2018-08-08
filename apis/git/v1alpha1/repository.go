@@ -21,8 +21,15 @@ type Repository struct {
 }
 
 type RepositorySpec struct {
-	Url    string `json:"url,omitempty"`
-	Secret string `json:"secret,omitempty"`
+	Host string          `json:"host,omitempty"` // github
+	Url  string          `json:"url,omitempty"`
+	Auth *RepositoryAuth `json:"auth,omitempty"`
+}
+
+// TODO: use constants or types
+type RepositoryAuth struct {
+	SecretName string `json:"secretName,omitempty"`
+	SecretKey  string `json:"secretKey,omitempty"`
 }
 
 type RepositoryStatus struct {

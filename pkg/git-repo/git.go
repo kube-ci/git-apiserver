@@ -7,6 +7,7 @@ import (
 
 	"gopkg.in/src-d/go-git.v4"
 	"gopkg.in/src-d/go-git.v4/plumbing"
+	"gopkg.in/src-d/go-git.v4/plumbing/transport"
 )
 
 const (
@@ -26,20 +27,20 @@ type Reference struct {
 	Hash string
 }
 
-func GetGitRepository(url, path string) (GitRepository, error) {
+func GetGitRepository(url, path string, auth transport.AuthMethod) (GitRepository, error) {
 	gitRepo := GitRepository{
 		Url:  url,
 		Path: path,
 	}
 
 	// clone or fetch repo
-	repo, err := getRepo(path, url)
+	repo, err := getRepo(path, url, auth)
 	if err != nil {
 		return GitRepository{}, err
 	}
 
 	// get origin branches
-	originBranches, err := getOriginBranches(repo)
+	originBranches, err := getOriginBranches(repo, auth)
 	if err != nil {
 		return GitRepository{}, err
 	}
@@ -64,14 +65,14 @@ func GetGitRepository(url, path string) (GitRepository, error) {
 	return gitRepo, nil
 }
 
-func getRepo(path, url string) (*git.Repository, error) {
+func getRepo(path, url string, auth transport.AuthMethod) (*git.Repository, error) {
 	repo, err := git.PlainOpen(path)
 	if err != nil && err != git.ErrRepositoryNotExists {
 		return nil, err
 	}
 	if err == git.ErrRepositoryNotExists {
 		log.Println("Cloning repo...")
-		repo, err = git.PlainClone(path, false, &git.CloneOptions{URL: url})
+		repo, err = git.PlainClone(path, false, &git.CloneOptions{URL: url, Auth: auth})
 		if err != nil {
 			return nil, err
 		}
@@ -86,7 +87,7 @@ func getRepo(path, url string) (*git.Repository, error) {
 				return nil, err
 			}
 			log.Println("Cloning repo...")
-			repo, err = git.PlainClone(path, false, &git.CloneOptions{URL: url})
+			repo, err = git.PlainClone(path, false, &git.CloneOptions{URL: url, Auth: auth})
 			if err != nil {
 				return nil, err
 			}
@@ -102,7 +103,7 @@ func getRepo(path, url string) (*git.Repository, error) {
 	return repo, nil
 }
 
-func getOriginBranches(repo *git.Repository) ([]*plumbing.Reference, error) {
+func getOriginBranches(repo *git.Repository, auth transport.AuthMethod) ([]*plumbing.Reference, error) {
 	var refBranches []*plumbing.Reference
 
 	remote, err := repo.Remote(RemoteOrigin)
@@ -110,7 +111,7 @@ func getOriginBranches(repo *git.Repository) ([]*plumbing.Reference, error) {
 		return nil, err
 	}
 
-	refList, err := remote.List(&git.ListOptions{})
+	refList, err := remote.List(&git.ListOptions{Auth: auth})
 	if err != nil {
 		return nil, err
 	}
