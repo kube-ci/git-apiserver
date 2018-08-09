@@ -25,3 +25,5 @@ type BranchExpansion interface{}
 type PullRequestExpansion interface{}
 
 type RepositoryExpansion interface{}
+
+type TagExpansion interface{}

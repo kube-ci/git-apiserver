@@ -61,6 +61,8 @@ func (f *sharedInformerFactory) ForResource(resource schema.GroupVersionResource
 		return &genericInformer{resource: resource.GroupResource(), informer: f.Git().V1alpha1().PullRequests().Informer()}, nil
 	case v1alpha1.SchemeGroupVersion.WithResource("repositories"):
 		return &genericInformer{resource: resource.GroupResource(), informer: f.Git().V1alpha1().Repositories().Informer()}, nil
+	case v1alpha1.SchemeGroupVersion.WithResource("tags"):
+		return &genericInformer{resource: resource.GroupResource(), informer: f.Git().V1alpha1().Tags().Informer()}, nil
 
 	}
 

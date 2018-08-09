@@ -49,3 +49,11 @@ type RepositoryListerExpansion interface{}
 // RepositoryNamespaceListerExpansion allows custom methods to be added to
 // RepositoryNamespaceLister.
 type RepositoryNamespaceListerExpansion interface{}
+
+// TagListerExpansion allows custom methods to be added to
+// TagLister.
+type TagListerExpansion interface{}
+
+// TagNamespaceListerExpansion allows custom methods to be added to
+// TagNamespaceLister.
+type TagNamespaceListerExpansion interface{}

@@ -36,6 +36,8 @@ func addKnownTypes(scheme *runtime.Scheme) error {
 		&RepositoryList{},
 		&Branch{},
 		&BranchList{},
+		&Tag{},
+		&TagList{},
 		&Binding{},
 		&BindingList{},
 		&PullRequest{},

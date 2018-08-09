@@ -32,6 +32,8 @@ type Interface interface {
 	PullRequests() PullRequestInformer
 	// Repositories returns a RepositoryInformer.
 	Repositories() RepositoryInformer
+	// Tags returns a TagInformer.
+	Tags() TagInformer
 }
 
 type version struct {
@@ -63,4 +65,9 @@ func (v *version) PullRequests() PullRequestInformer {
 // Repositories returns a RepositoryInformer.
 func (v *version) Repositories() RepositoryInformer {
 	return &repositoryInformer{factory: v.factory, namespace: v.namespace, tweakListOptions: v.tweakListOptions}
+}
+
+// Tags returns a TagInformer.
+func (v *version) Tags() TagInformer {
+	return &tagInformer{factory: v.factory, namespace: v.namespace, tweakListOptions: v.tweakListOptions}
 }

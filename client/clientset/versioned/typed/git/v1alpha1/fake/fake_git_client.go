@@ -44,6 +44,10 @@ func (c *FakeGitV1alpha1) Repositories(namespace string) v1alpha1.RepositoryInte
 	return &FakeRepositories{c, namespace}
 }
 
+func (c *FakeGitV1alpha1) Tags(namespace string) v1alpha1.TagInterface {
+	return &FakeTags{c, namespace}
+}
+
 // RESTClient returns a RESTClient that is used to communicate
 // with API server by this client implementation.
 func (c *FakeGitV1alpha1) RESTClient() rest.Interface {

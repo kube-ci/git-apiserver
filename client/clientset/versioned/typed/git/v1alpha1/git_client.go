@@ -31,6 +31,7 @@ type GitV1alpha1Interface interface {
 	BranchesGetter
 	PullRequestsGetter
 	RepositoriesGetter
+	TagsGetter
 }
 
 // GitV1alpha1Client is used to interact with features provided by the git.kube.ci group.
@@ -52,6 +53,10 @@ func (c *GitV1alpha1Client) PullRequests(namespace string) PullRequestInterface 
 
 func (c *GitV1alpha1Client) Repositories(namespace string) RepositoryInterface {
 	return newRepositories(c, namespace)
+}
+
+func (c *GitV1alpha1Client) Tags(namespace string) TagInterface {
+	return newTags(c, namespace)
 }
 
 // NewForConfig creates a new GitV1alpha1Client for the given config.

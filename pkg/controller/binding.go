@@ -109,8 +109,9 @@ func (c *Controller) runOnce(name, namespace string) error {
 	if err = c.reconcileBranches(repository, repo); err != nil {
 		return err
 	}
-
-	// TODO: do same for tags
+	if err = c.reconcileTags(repository, repo); err != nil {
+		return err
+	}
 
 	return nil
 }
@@ -176,6 +177,76 @@ func (c *Controller) reconcileBranches(repository *api.Repository, repo *git_rep
 		}
 		if !found {
 			err = c.gitAPIServerClient.GitV1alpha1().Branches(repository.Namespace).Delete(branch.Name, nil)
+			if err != nil {
+				return err
+			}
+		}
+	}
+
+	return nil
+}
+
+func (c *Controller) reconcileTags(repository *api.Repository, repo *git_repo.Repository) error {
+	tags, err := repo.GetTags()
+	if err != nil {
+		return err
+	}
+
+	// create or patch tag CRDs
+	for _, gitTag := range tags {
+		meta := metav1.ObjectMeta{
+			Name:      repository.Name + "-" + gitTag.Name,
+			Namespace: repository.Namespace,
+			OwnerReferences: []metav1.OwnerReference{ // TODO: owner ref repository or binding ?
+				{
+					APIVersion:         api.SchemeGroupVersion.Group + "/" + api.SchemeGroupVersion.Version,
+					Kind:               api.ResourceKindRepository,
+					Name:               repository.Name,
+					UID:                repository.UID,
+					BlockOwnerDeletion: types.TrueP(),
+				},
+			},
+		}
+
+		transform := func(tag *api.Tag) *api.Tag {
+			if tag.Labels == nil {
+				tag.Labels = make(map[string]string, 0)
+			}
+			tag.Labels["repository"] = repository.Name
+			tag.Spec.LastCommitHash = gitTag.Hash
+			return tag
+		}
+
+		_, _, err := util.CreateOrPatchTag(c.gitAPIServerClient.GitV1alpha1(), meta, transform)
+		if err != nil {
+			return err
+		}
+	}
+
+	// delete old tags that don't exist now
+	tagList, err := c.gitAPIServerClient.GitV1alpha1().Tags(repository.Namespace).List(
+		metav1.ListOptions{
+			LabelSelector: labels.FormatLabels(
+				map[string]string{
+					"repository": repository.Name,
+				},
+			),
+		},
+	)
+	if err != nil {
+		return err
+	}
+
+	for _, tag := range tagList.Items {
+		found := false
+		for _, gitTag := range tags {
+			if tag.Name == repository.Name+"-"+gitTag.Name {
+				found = true
+				break
+			}
+		}
+		if !found {
+			err = c.gitAPIServerClient.GitV1alpha1().Tags(repository.Namespace).Delete(tag.Name, nil)
 			if err != nil {
 				return err
 			}
