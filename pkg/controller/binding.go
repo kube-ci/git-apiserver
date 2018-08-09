@@ -94,14 +94,17 @@ func (c *Controller) runOnce(name, namespace string) error {
 	}
 
 	// repository auth
-	var auth *http.TokenAuth
+	// token-auth not working, use basic-auth with token as password
+	// https://github.com/src-d/go-git/issues/730
+	var auth *http.BasicAuth
 	if repository.Spec.Auth != nil {
 		secret, err := c.kubeClient.CoreV1().Secrets(repository.Namespace).Get(repository.Spec.Auth.SecretName, metav1.GetOptions{})
 		if err != nil {
 			return err
 		}
-		auth = &http.TokenAuth{
-			Token: string(secret.Data[repository.Spec.Auth.SecretKey]),
+		auth = &http.BasicAuth{
+			Username: "token",
+			Password: string(secret.Data[repository.Spec.Auth.SecretKey]),
 		}
 	}
 
