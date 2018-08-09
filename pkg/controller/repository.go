@@ -84,6 +84,14 @@ func (c *Controller) runRepositoryInjector(key string) error {
 }
 
 func (c *Controller) reconcileForRepository(repository *api.Repository) error {
+	// fetch all open prs initially
+	if repository.Spec.Host == "github" {
+		err := c.initGithubPRs(repository)
+		if err != nil {
+			return err
+		}
+	}
+
 	return nil // TODO: remove, temporarily turned of for webhook testing
 
 	meta := metav1.ObjectMeta{

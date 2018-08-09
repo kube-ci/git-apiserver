@@ -3,11 +3,13 @@ package controller
 import (
 	"context"
 	"fmt"
+	"net/http"
 
 	"github.com/TamalSaha/go-oneliners"
 	"github.com/appscode/go/log"
 	"github.com/appscode/go/types"
 	"github.com/google/go-github/github"
+	"golang.org/x/oauth2"
 	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
 	"k8s.io/apimachinery/pkg/labels"
 	"k8s.io/apimachinery/pkg/runtime"
@@ -60,7 +62,7 @@ func (c *Controller) githubEventHandler(event *v1alpha1.GithubEvent) {
 
 	// find matching repository
 	for _, repository := range repositories {
-		if event.Repo != nil && event.Repo.CloneURL != nil && repository.Spec.Url == *event.Repo.CloneURL {
+		if event.Repo != nil && event.Repo.CloneURL != nil && repository.Spec.CloneUrl == *event.Repo.CloneURL {
 			log.Infof("Event for repository %s/%s", repository.Namespace, repository.Name)
 			if event.PullRequest != nil {
 				err := c.githubPRHandler(event.PullRequest, repository) // TODO: errors ?
@@ -131,7 +133,40 @@ func (c *Controller) githubPRHandler(githubPR *github.PullRequest, repository *r
 	return nil
 }
 
-func (c *Controller) fetchGithubPRs(repository *repo_v1alpha1.Repository) error {
-	var githubPR *github.PullRequest // TODO: fetch list using github-api
-	return c.githubPRHandler(githubPR, repository)
+func (c *Controller) initGithubPRs(repository *repo_v1alpha1.Repository) error {
+	// repository token, empty if repository.Spec.TokenFormSecret is nil
+	token, err := repository.GetToken(c.kubeClient)
+	if err != nil {
+		return err
+	}
+
+	prs, err := listGithubPRs(repository.Spec.Owner, repository.Spec.Repo, token)
+	if err != nil {
+		return err
+	}
+	for _, pr := range prs {
+		if err = c.githubPRHandler(pr, repository); err != nil {
+			return err
+		}
+	}
+	return nil
+}
+
+func listGithubPRs(owner, repo, token string) ([]*github.PullRequest, error) {
+	var httpClient *http.Client // nil if token is empty
+	if token != "" {
+		httpClient = oauth2.NewClient(
+			context.Background(),
+			oauth2.StaticTokenSource(
+				&oauth2.Token{AccessToken: token},
+			),
+		)
+	}
+
+	client := github.NewClient(httpClient)
+
+	prs, _, err := client.PullRequests.List(context.Background(), owner, repo, &github.PullRequestListOptions{
+		State: "open",
+	})
+	return prs, err
 }
