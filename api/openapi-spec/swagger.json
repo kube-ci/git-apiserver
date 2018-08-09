@@ -3913,16 +3913,6 @@
         }
       ]
     },
-    "ci.kube.git-apiserver.apis.git.v1alpha1.RepositoryAuth": {
-      "properties": {
-        "secretKey": {
-          "type": "string"
-        },
-        "secretName": {
-          "type": "string"
-        }
-      }
-    },
     "ci.kube.git-apiserver.apis.git.v1alpha1.RepositoryList": {
       "properties": {
         "apiVersion": {
@@ -3953,14 +3943,20 @@
     },
     "ci.kube.git-apiserver.apis.git.v1alpha1.RepositorySpec": {
       "properties": {
-        "auth": {
-          "$ref": "#/definitions/ci.kube.git-apiserver.apis.git.v1alpha1.RepositoryAuth"
+        "cloneUrl": {
+          "type": "string"
         },
         "host": {
           "type": "string"
         },
-        "url": {
-          "description": "github",
+        "owner": {
+          "description": "github, gitlab // TODO: use type",
+          "type": "string"
+        },
+        "repo": {
+          "type": "string"
+        },
+        "tokenFormSecret": {
           "type": "string"
         }
       }

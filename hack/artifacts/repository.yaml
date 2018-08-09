@@ -4,4 +4,7 @@ metadata:
   name: kubeci-gpig
   namespace: default
 spec:
-  url: https://github.com/diptadas/kubeci-gpig.git
+  host: github
+  owner: diptadas
+  repo: kubeci-gpig
+  cloneUrl: https://github.com/diptadas/kubeci-gpig.git

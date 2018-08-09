@@ -2,6 +2,7 @@ package v1alpha1
 
 import (
 	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
+	"k8s.io/client-go/kubernetes"
 )
 
 const (
@@ -21,15 +22,11 @@ type Repository struct {
 }
 
 type RepositorySpec struct {
-	Host string          `json:"host,omitempty"` // github
-	Url  string          `json:"url,omitempty"`
-	Auth *RepositoryAuth `json:"auth,omitempty"`
-}
-
-// TODO: use constants or types
-type RepositoryAuth struct {
-	SecretName string `json:"secretName,omitempty"`
-	SecretKey  string `json:"secretKey,omitempty"`
+	Host            string  `json:"host,omitempty"` // github, gitlab // TODO: use type
+	Owner           string  `json:"owner,omitempty"`
+	Repo            string  `json:"repo,omitempty"`
+	CloneUrl        string  `json:"cloneUrl,omitempty"`
+	TokenFormSecret *string `json:"tokenFormSecret,omitempty"` // secret name, secret must have field 'token'
 }
 
 type RepositoryStatus struct {
@@ -42,4 +39,15 @@ type RepositoryList struct {
 	metav1.TypeMeta `json:",inline"`
 	metav1.ListMeta `json:"metadata,omitempty"`
 	Items           []Repository `json:"items,omitempty"`
+}
+
+func (repo *Repository) GetToken(kubeClient kubernetes.Interface) (string, error) {
+	if repo.Spec.TokenFormSecret == nil {
+		return "", nil
+	}
+	secret, err := kubeClient.CoreV1().Secrets(repo.Namespace).Get(*repo.Spec.TokenFormSecret, metav1.GetOptions{})
+	if err != nil {
+		return "", err
+	}
+	return string(secret.Data["token"]), nil
 }

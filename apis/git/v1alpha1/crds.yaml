@@ -300,16 +300,16 @@ spec:
               type: string
         spec:
           properties:
-            auth:
-              properties:
-                secretKey:
-                  type: string
-                secretName:
-                  type: string
+            cloneUrl:
+              type: string
             host:
               type: string
-            url:
-              description: github
+            owner:
+              description: 'github, gitlab // TODO: use type'
+              type: string
+            repo:
+              type: string
+            tokenFormSecret:
               type: string
         status:
           properties:
