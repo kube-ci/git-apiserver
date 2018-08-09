@@ -8,7 +8,6 @@ import (
 	"github.com/appscode/go/types"
 	"github.com/appscode/kutil/tools/queue"
 	"github.com/golang/glog"
-	"gopkg.in/src-d/go-git.v4/plumbing/transport/http"
 	kerr "k8s.io/apimachinery/pkg/api/errors"
 	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
 	"k8s.io/apimachinery/pkg/labels"
@@ -93,32 +92,37 @@ func (c *Controller) runOnce(name, namespace string) error {
 		return err
 	}
 
-	// repository auth
-	// token-auth not working, use basic-auth with token as password
-	// https://github.com/src-d/go-git/issues/730
-	var auth *http.BasicAuth
-	if repository.Spec.Auth != nil {
-		secret, err := c.kubeClient.CoreV1().Secrets(repository.Namespace).Get(repository.Spec.Auth.SecretName, metav1.GetOptions{})
-		if err != nil {
-			return err
-		}
-		auth = &http.BasicAuth{
-			Username: "token",
-			Password: string(secret.Data[repository.Spec.Auth.SecretKey]),
-		}
-	}
-
-	// fetch git repo
-	path := filepath.Join("/tmp/git-apiserver", repository.Name) // TODO: use constant
-	gitRepo, err := git_repo.GetGitRepository(repository.Spec.Url, path, auth)
+	// repository token, empty if repository.Spec.TokenFormSecret is nil
+	token, err := repository.GetToken(c.kubeClient)
 	if err != nil {
 		return err
 	}
 
-	log.Infoln("Cloning/Fetching done...", gitRepo)
+	path := filepath.Join("/tmp/git-apiserver", repository.Name) // TODO: use constant
+	repo := git_repo.New(repository.Spec.CloneUrl, path, token)
+	if err := repo.CloneOrFetch(false); err != nil { // TODO: true if repository crd changes
+		return err
+	}
+
+	log.Infoln("Cloning/Fetching done...", repo)
+
+	if err = c.reconcileBranches(repository, repo); err != nil {
+		return err
+	}
+
+	// TODO: do same for tags
+
+	return nil
+}
+
+func (c *Controller) reconcileBranches(repository *api.Repository, repo *git_repo.Repository) error {
+	branches, err := repo.GetBranches()
+	if err != nil {
+		return err
+	}
 
 	// create or patch branch CRDs
-	for _, gitBranch := range gitRepo.Branches {
+	for _, gitBranch := range branches {
 		meta := metav1.ObjectMeta{
 			Name:      repository.Name + "-" + gitBranch.Name,
 			Namespace: repository.Namespace,
@@ -149,7 +153,7 @@ func (c *Controller) runOnce(name, namespace string) error {
 	}
 
 	// delete old branches that don't exist now
-	branchList, err := c.gitAPIServerClient.GitV1alpha1().Branches(namespace).List(
+	branchList, err := c.gitAPIServerClient.GitV1alpha1().Branches(repository.Namespace).List(
 		metav1.ListOptions{
 			LabelSelector: labels.FormatLabels(
 				map[string]string{
@@ -164,14 +168,14 @@ func (c *Controller) runOnce(name, namespace string) error {
 
 	for _, branch := range branchList.Items {
 		found := false
-		for _, gitBranch := range gitRepo.Branches {
+		for _, gitBranch := range branches {
 			if branch.Name == repository.Name+"-"+gitBranch.Name {
 				found = true
 				break
 			}
 		}
 		if !found {
-			err = c.gitAPIServerClient.GitV1alpha1().Branches(namespace).Delete(branch.Name, nil)
+			err = c.gitAPIServerClient.GitV1alpha1().Branches(repository.Namespace).Delete(branch.Name, nil)
 			if err != nil {
 				return err
 			}

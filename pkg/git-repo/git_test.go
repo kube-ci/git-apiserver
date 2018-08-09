@@ -2,49 +2,74 @@ package git_repo
 
 import (
 	"log"
-	"os"
 	"testing"
-
-	"gopkg.in/src-d/go-git.v4/plumbing/transport/http"
 )
 
-func TestGetGitRepository(t *testing.T) {
+func TestGetBranches(t *testing.T) {
 	url := "https://github.com/diptadas/kubeci-gpig.git"
 	path := "/tmp/my-repo"
+	token := ""
 
-	os.RemoveAll(path)
+	repo := New(url, path, token)
+	if err := repo.CloneOrFetch(true); err != nil {
+		t.Error(err)
+	}
+	if err := repo.CloneOrFetch(false); err != nil { // should fetch instead of cloning
+		t.Error(err)
+	}
 
-	gitRepo, err := GetGitRepository(url, path, nil)
+	branches, err := repo.GetBranches()
 	if err != nil {
 		t.Error(err)
 	}
 
-	for _, branch := range gitRepo.Branches {
-		log.Println("Branches", branch)
-	}
-	for _, tag := range gitRepo.Tags {
-		log.Println("Tags", tag)
+	for _, branch := range branches {
+		log.Println(branch)
 	}
 }
 
-func TestGetGitRepositoryWithAuth(t *testing.T) {
-	url := "https://github.com/tamalsaha/private-test-repo.git" // private repo
+func TestGetTags(t *testing.T) {
+	url := "https://github.com/diptadas/kubeci-gpig.git"
 	path := "/tmp/my-repo"
+	token := ""
 
-	os.RemoveAll(path)
+	repo := New(url, path, token)
+	if err := repo.CloneOrFetch(true); err != nil {
+		t.Error(err)
+	}
+	if err := repo.CloneOrFetch(false); err != nil { // should fetch instead of cloning
+		t.Error(err)
+	}
 
-	gitRepo, err := GetGitRepository(url, path, &http.BasicAuth{
-		Username: "token",
-		Password: "...",
-	})
+	tags, err := repo.GetTags()
 	if err != nil {
-		t.Error(err.Error())
+		t.Error(err)
 	}
 
-	for _, branch := range gitRepo.Branches {
-		log.Println("Branches", branch)
+	for _, tag := range tags {
+		log.Println(tag)
 	}
-	for _, tag := range gitRepo.Tags {
-		log.Println("Tags", tag)
+}
+
+func TestGetBranchesWithAuth(t *testing.T) {
+	url := "https://github.com/tamalsaha/private-test-repo.git"
+	path := "/tmp/my-repo"
+	token := "..."
+
+	repo := New(url, path, token)
+	if err := repo.CloneOrFetch(true); err != nil {
+		t.Error(err)
+	}
+	if err := repo.CloneOrFetch(false); err != nil { // should fetch instead of cloning
+		t.Error(err)
+	}
+
+	branches, err := repo.GetBranches()
+	if err != nil {
+		t.Error(err)
+	}
+
+	for _, branch := range branches {
+		log.Println(branch)
 	}
 }

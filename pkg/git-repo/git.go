@@ -7,19 +7,20 @@ import (
 
 	"gopkg.in/src-d/go-git.v4"
 	"gopkg.in/src-d/go-git.v4/plumbing"
-	"gopkg.in/src-d/go-git.v4/plumbing/transport"
+	"gopkg.in/src-d/go-git.v4/plumbing/transport/http"
 )
 
 const (
-	RemoteOrigin = "origin"
+	RemoteOrigin    = "origin"
+	BranchRefPrefix = "refs/heads/"
+	TagRefPrefix    = "refs/tags/"
 )
 
-type GitRepository struct {
-	Url  string
-	Path string
-
-	Branches []Reference
-	Tags     []Reference
+type Repository struct {
+	url  string
+	path string
+	auth *http.BasicAuth
+	*git.Repository
 }
 
 type Reference struct {
@@ -27,110 +28,105 @@ type Reference struct {
 	Hash string
 }
 
-func GetGitRepository(url, path string, auth transport.AuthMethod) (GitRepository, error) {
-	gitRepo := GitRepository{
-		Url:  url,
-		Path: path,
+func New(url, path, token string) *Repository {
+	repo := &Repository{
+		url:        url,
+		path:       path,
+		auth:       nil,
+		Repository: nil, // will be assigned in CloneOrFetch
 	}
 
-	// clone or fetch repo
-	repo, err := getRepo(path, url, auth)
-	if err != nil {
-		return GitRepository{}, err
+	// repository auth, nil if token is empty
+	// token-auth not working, use basic-auth with token as password
+	// https://github.com/src-d/go-git/issues/730
+	if token != "" {
+		repo.auth = &http.BasicAuth{
+			Username: "token", // any string
+			Password: token,
+		}
 	}
 
-	// get origin branches
-	originBranches, err := getOriginBranches(repo, auth)
-	if err != nil {
-		return GitRepository{}, err
-	}
-	for _, reference := range originBranches {
-		branch := getReference(reference)
-		branch.Name = strings.TrimPrefix(branch.Name, "refs/heads/")
-		gitRepo.Branches = append(gitRepo.Branches, branch)
-	}
-
-	// get tags
-	tags, err := repo.Tags()
-	if err != nil {
-		return GitRepository{}, err
-	}
-	tags.ForEach(func(reference *plumbing.Reference) error {
-		tag := getReference(reference)
-		tag.Name = strings.TrimPrefix(tag.Name, "refs/tags/")
-		gitRepo.Tags = append(gitRepo.Tags, tag)
-		return nil
-	})
-
-	return gitRepo, nil
+	return repo
 }
 
-func getRepo(path, url string, auth transport.AuthMethod) (*git.Repository, error) {
-	repo, err := git.PlainOpen(path)
+// forceClone if repository crd changes
+func (repo *Repository) CloneOrFetch(forceClone bool) error {
+	var err error
+
+	if forceClone {
+		log.Println("Deleting old repository if exists...")
+		if err = os.RemoveAll(repo.path); err != nil {
+			return err
+		}
+	}
+
+	// try to open repository from given path
+	repo.Repository, err = git.PlainOpen(repo.path)
 	if err != nil && err != git.ErrRepositoryNotExists {
-		return nil, err
+		return err
 	}
-	if err == git.ErrRepositoryNotExists {
+
+	if err == git.ErrRepositoryNotExists { // repository not exists, clone it
 		log.Println("Cloning repo...")
-		repo, err = git.PlainClone(path, false, &git.CloneOptions{URL: url, Auth: auth})
+		repo.Repository, err = git.PlainClone(repo.path, false, &git.CloneOptions{
+			URL:  repo.url,
+			Auth: repo.auth,
+		})
 		if err != nil {
-			return nil, err
+			return err
 		}
-	} else {
-		remote, err := repo.Remote(RemoteOrigin)
-		if err != nil && err != git.ErrRemoteNotFound {
-			return nil, err
-		}
-		if err == git.ErrRemoteNotFound || remote.Config().URLs[0] != url {
-			log.Println("Remote changed, deleting old repo...")
-			if err = os.RemoveAll(path); err != nil {
-				return nil, err
-			}
-			log.Println("Cloning repo...")
-			repo, err = git.PlainClone(path, false, &git.CloneOptions{URL: url, Auth: auth})
-			if err != nil {
-				return nil, err
-			}
-		} else {
-			log.Println("Fetching repo...")
-			err = repo.Fetch(&git.FetchOptions{})
-			if err != nil && err != git.NoErrAlreadyUpToDate {
-				return nil, err
-			}
+	} else { // repository exists, just fetch it
+		log.Println("Fetching repo...")
+		err = repo.Fetch(&git.FetchOptions{Auth: repo.auth})
+		if err != nil && err != git.NoErrAlreadyUpToDate {
+			return err
 		}
 	}
 
-	return repo, nil
+	return nil
 }
 
-func getOriginBranches(repo *git.Repository, auth transport.AuthMethod) ([]*plumbing.Reference, error) {
-	var refBranches []*plumbing.Reference
+// get origin branches
+func (repo *Repository) GetBranches() ([]Reference, error) {
+	var branches []Reference
 
 	remote, err := repo.Remote(RemoteOrigin)
 	if err != nil {
 		return nil, err
 	}
 
-	refList, err := remote.List(&git.ListOptions{Auth: auth})
+	refList, err := remote.List(&git.ListOptions{Auth: repo.auth})
 	if err != nil {
 		return nil, err
 	}
 
-	refPrefix := "refs/heads/"
 	for _, ref := range refList {
-		refName := ref.Name().String()
-		if !strings.HasPrefix(refName, refPrefix) {
-			continue
+		if strings.HasPrefix(ref.Name().String(), BranchRefPrefix) {
+			branches = append(branches, Reference{
+				Name: strings.TrimPrefix(ref.Name().String(), BranchRefPrefix),
+				Hash: ref.Hash().String(),
+			})
 		}
-		refBranches = append(refBranches, ref)
 	}
 
-	return refBranches, nil
+	return branches, nil
 }
 
-func getReference(reference *plumbing.Reference) Reference {
-	return Reference{
-		Name: reference.Name().String(),
-		Hash: reference.Hash().String(),
+func (repo *Repository) GetTags() ([]Reference, error) {
+	var tags []Reference
+
+	refList, err := repo.Tags()
+	if err != nil {
+		return nil, err
 	}
+
+	refList.ForEach(func(ref *plumbing.Reference) error {
+		tags = append(tags, Reference{
+			Name: strings.TrimPrefix(ref.Name().String(), TagRefPrefix),
+			Hash: ref.Hash().String(),
+		})
+		return nil
+	})
+
+	return tags, nil
 }
