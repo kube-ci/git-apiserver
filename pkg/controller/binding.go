@@ -16,7 +16,7 @@ import (
 )
 
 const (
-	clonePathPrefix = "/kubeci/git-apiserver"
+	clonePathPrefix = "/tmp/kubeci/git-apiserver"
 )
 
 func (c *Controller) initBindingWatcher() {
@@ -181,7 +181,8 @@ func (c *Controller) reconcileBranches(repository *api.Repository, repo *git_rep
 			}
 		}
 		if !found {
-			err = c.gitAPIServerClient.GitV1alpha1().Branches(repository.Namespace).Delete(branch.Name, nil)
+			log.Infof("Deleting Branch %s/%s", branch.Namespace, branch.Name)
+			err = c.gitAPIServerClient.GitV1alpha1().Branches(branch.Namespace).Delete(branch.Name, nil)
 			if err != nil {
 				return err
 			}
@@ -251,7 +252,8 @@ func (c *Controller) reconcileTags(repository *api.Repository, repo *git_repo.Re
 			}
 		}
 		if !found {
-			err = c.gitAPIServerClient.GitV1alpha1().Tags(repository.Namespace).Delete(tag.Name, nil)
+			log.Infof("Deleting Tag %s/%s", tag.Namespace, tag.Name)
+			err = c.gitAPIServerClient.GitV1alpha1().Tags(tag.Namespace).Delete(tag.Name, nil)
 			if err != nil {
 				return err
 			}

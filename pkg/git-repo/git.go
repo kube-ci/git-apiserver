@@ -6,7 +6,6 @@ import (
 
 	"github.com/appscode/go/log"
 	"gopkg.in/src-d/go-git.v4"
-	"gopkg.in/src-d/go-git.v4/plumbing"
 	"gopkg.in/src-d/go-git.v4/plumbing/transport/http"
 )
 
@@ -127,18 +126,24 @@ func (repo *Repository) GetBranches() ([]Reference, error) {
 func (repo *Repository) GetTags() ([]Reference, error) {
 	var tags []Reference
 
-	refList, err := repo.Tags()
+	remote, err := repo.Remote(RemoteOrigin)
 	if err != nil {
 		return nil, err
 	}
 
-	refList.ForEach(func(ref *plumbing.Reference) error {
-		tags = append(tags, Reference{
-			Name: strings.TrimPrefix(ref.Name().String(), TagRefPrefix),
-			Hash: ref.Hash().String(),
-		})
-		return nil
-	})
+	refList, err := remote.List(&git.ListOptions{Auth: repo.auth})
+	if err != nil {
+		return nil, err
+	}
+
+	for _, ref := range refList {
+		if strings.HasPrefix(ref.Name().String(), TagRefPrefix) {
+			tags = append(tags, Reference{
+				Name: strings.TrimPrefix(ref.Name().String(), TagRefPrefix),
+				Hash: ref.Hash().String(),
+			})
+		}
+	}
 
 	return tags, nil
 }
