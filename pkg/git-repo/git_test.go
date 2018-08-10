@@ -54,7 +54,7 @@ func TestGetTags(t *testing.T) {
 func TestGetBranchesWithAuth(t *testing.T) {
 	url := "https://github.com/tamalsaha/private-test-repo.git"
 	path := "/tmp/my-repo"
-	token := "..."
+	token := os.Getenv("github-access-token")
 
 	os.RemoveAll(path)
 

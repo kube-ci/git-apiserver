@@ -1,10 +1,10 @@
 package git_repo
 
 import (
-	"log"
 	"os"
 	"strings"
 
+	"github.com/appscode/go/log"
 	"gopkg.in/src-d/go-git.v4"
 	"gopkg.in/src-d/go-git.v4/plumbing"
 	"gopkg.in/src-d/go-git.v4/plumbing/transport/http"
@@ -60,7 +60,7 @@ func (repo *Repository) CloneOrFetch() error {
 	}
 
 	if err == git.ErrRepositoryNotExists { // repository not exists, clone it
-		log.Println("Cloning repo...")
+		log.Infof("Cloning repository from %s into %s", repo.url, repo.path)
 		repo.Repository, err = git.PlainClone(repo.path, false, &git.CloneOptions{
 			URL:  repo.url,
 			Auth: repo.auth,
@@ -74,11 +74,11 @@ func (repo *Repository) CloneOrFetch() error {
 			return err
 		}
 		if err == git.ErrRemoteNotFound || remote.Config().URLs[0] != repo.url { // remote changed, clone it again
-			log.Println("Remote changed, deleting old repo...")
+			log.Infof("Remote changed from '%s' to '%s', deleting old repository from path %s", remote.Config().URLs[0], repo.url, repo.path)
 			if err = os.RemoveAll(repo.path); err != nil {
 				return err
 			}
-			log.Println("Cloning repo...")
+			log.Infof("Cloning repository from %s into %s", repo.url, repo.path)
 			repo.Repository, err = git.PlainClone(repo.path, false, &git.CloneOptions{
 				URL:  repo.url,
 				Auth: repo.auth,
@@ -87,7 +87,7 @@ func (repo *Repository) CloneOrFetch() error {
 				return err
 			}
 		} else { // repository exists and remote not changed, just fetch it
-			log.Println("Fetching repo...")
+			log.Infof("Fetching repository from %s into %s", repo.url, repo.path)
 			err = repo.Fetch(&git.FetchOptions{})
 			if err != nil && err != git.NoErrAlreadyUpToDate {
 				return err

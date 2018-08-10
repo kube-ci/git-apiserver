@@ -5,7 +5,6 @@ import (
 	"fmt"
 	"net/http"
 
-	"github.com/TamalSaha/go-oneliners"
 	"github.com/appscode/go/log"
 	"github.com/appscode/go/types"
 	"github.com/google/go-github/github"
@@ -49,7 +48,7 @@ func (r *GithubREST) GroupVersionKind(containingGV schema.GroupVersion) schema.G
 // curl -k -H 'Content-Type: application/json' -d '{"action":"labeled"}' https://192.168.99.100:8443/apis/webhook.git.kube.ci/v1alpha1/githubpullrequests
 func (r *GithubREST) Create(ctx context.Context, obj runtime.Object, createValidation rest.ValidateObjectFunc, includeUninitialized bool) (runtime.Object, error) {
 	event := obj.(*v1alpha1.GithubEvent)
-	oneliners.PrettyJson(event, "Github Webhook Event")
+	log.Info("Received github webhook event")
 	r.controller.githubEventHandler(event)
 	return event, nil // TODO: error ?
 }

@@ -3,9 +3,9 @@ package v1alpha1
 import (
 	"encoding/json"
 
+	"github.com/appscode/go/log"
 	"github.com/appscode/kutil"
 	"github.com/evanphx/json-patch"
-	"github.com/golang/glog"
 	kerr "k8s.io/apimachinery/pkg/api/errors"
 	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
 	"k8s.io/apimachinery/pkg/types"
@@ -15,7 +15,7 @@ import (
 func (c *bindings) CreateOrPatch(meta metav1.ObjectMeta, transform func(binding *api.Binding) *api.Binding) (*api.Binding, kutil.VerbType, error) {
 	cur, err := c.Get(meta.Name, metav1.GetOptions{})
 	if kerr.IsNotFound(err) {
-		glog.V(3).Infof("Creating Binding %s/%s.", meta.Namespace, meta.Name)
+		log.Infof("Creating Binding %s/%s.", meta.Namespace, meta.Name)
 		out, err := c.Create(transform(&api.Binding{
 			TypeMeta: metav1.TypeMeta{
 				Kind:       "Binding",
@@ -49,7 +49,7 @@ func (c *bindings) patchBindingObject(cur, mod *api.Binding) (*api.Binding, kuti
 		return cur, kutil.VerbUnchanged, nil
 	}
 
-	glog.V(3).Infof("Patching Binding %s/%s with %s.", cur.Namespace, cur.Name, string(patch))
+	log.Infof("Patching Binding %s/%s with %s.", cur.Namespace, cur.Name, string(patch))
 	out, err := c.Patch(cur.Name, types.MergePatchType, patch)
 	return out, kutil.VerbPatched, err
 }

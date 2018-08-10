@@ -2,6 +2,7 @@ package controller
 
 import (
 	"log"
+	"os"
 	"testing"
 )
 
@@ -23,7 +24,7 @@ func TestListGithubPRs(t *testing.T) {
 func TestListGithubPRsWithAuth(t *testing.T) {
 	owner := "tamalsaha"
 	repo := "private-test-repo"
-	token := "..."
+	token := os.Getenv("github-access-token")
 
 	prs, err := listGithubPRs(owner, repo, token)
 	if err != nil {

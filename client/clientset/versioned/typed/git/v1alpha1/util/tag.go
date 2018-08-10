@@ -4,9 +4,9 @@ import (
 	"encoding/json"
 	"fmt"
 
+	"github.com/appscode/go/log"
 	"github.com/appscode/kutil"
 	"github.com/evanphx/json-patch"
-	"github.com/golang/glog"
 	kerr "k8s.io/apimachinery/pkg/api/errors"
 	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
 	"k8s.io/apimachinery/pkg/types"
@@ -18,7 +18,7 @@ import (
 func CreateOrPatchTag(c cs.GitV1alpha1Interface, meta metav1.ObjectMeta, transform func(tag *api.Tag) *api.Tag) (*api.Tag, kutil.VerbType, error) {
 	cur, err := c.Tags(meta.Namespace).Get(meta.Name, metav1.GetOptions{})
 	if kerr.IsNotFound(err) {
-		glog.V(3).Infof("Creating Tag %s/%s.", meta.Namespace, meta.Name)
+		log.Infof("Creating Tag %s/%s.", meta.Namespace, meta.Name)
 		out, err := c.Tags(meta.Namespace).Create(transform(&api.Tag{
 			TypeMeta: metav1.TypeMeta{
 				Kind:       "Tag",
@@ -55,7 +55,7 @@ func PatchTagObject(c cs.GitV1alpha1Interface, cur, mod *api.Tag) (*api.Tag, kut
 	if len(patch) == 0 || string(patch) == "{}" {
 		return cur, kutil.VerbUnchanged, nil
 	}
-	glog.V(3).Infof("Patching Tag %s/%s with %s.", cur.Namespace, cur.Name, string(patch))
+	log.Infof("Patching Tag %s/%s with %s.", cur.Namespace, cur.Name, string(patch))
 	out, err := c.Tags(cur.Namespace).Patch(cur.Name, types.MergePatchType, patch)
 	return out, kutil.VerbPatched, err
 }
@@ -71,7 +71,7 @@ func TryUpdateTag(c cs.GitV1alpha1Interface, meta metav1.ObjectMeta, transform f
 			result, e2 = c.Tags(cur.Namespace).Update(transform(cur.DeepCopy()))
 			return e2 == nil, nil
 		}
-		glog.Errorf("Attempt %d failed to update Tag %s/%s due to %v.", attempt, cur.Namespace, cur.Name, e2)
+		log.Errorf("Attempt %d failed to update Tag %s/%s due to %v.", attempt, cur.Namespace, cur.Name, e2)
 		return false, nil
 	})
 

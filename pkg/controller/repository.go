@@ -7,7 +7,6 @@ import (
 	hooks "github.com/appscode/kubernetes-webhook-util/admission/v1beta1"
 	webhook "github.com/appscode/kubernetes-webhook-util/admission/v1beta1/generic"
 	"github.com/appscode/kutil/tools/queue"
-	"github.com/golang/glog"
 	kerr "k8s.io/apimachinery/pkg/api/errors"
 	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
 	"k8s.io/apimachinery/pkg/runtime"
@@ -54,12 +53,12 @@ func (c *Controller) initRepositoryWatcher() {
 func (c *Controller) runRepositoryInjector(key string) error {
 	obj, exist, err := c.repoInformer.GetIndexer().GetByKey(key)
 	if err != nil {
-		glog.Errorf("Fetching object with key %s from store failed with %v", key, err)
+		log.Errorf("Fetching object with key %s from store failed with %v", key, err)
 		return err
 	}
 
 	if !exist {
-		glog.Warningf("Repository %s does not exist anymore\n", key)
+		log.Warningf("Repository %s does not exist anymore\n", key)
 	} else {
 		repo := obj.(*api.Repository).DeepCopy()
 
@@ -67,13 +66,13 @@ func (c *Controller) runRepositoryInjector(key string) error {
 		// don't use LastObservedGeneration, always reconcile repository
 		// it will help us to check binding is valid or not periodically
 
-		glog.Infof("Sync/Add/Update for Repository %s\n", key)
+		log.Infof("Sync/Add/Update for Repository %s\n", key)
 		if err := c.reconcileForRepository(repo); err != nil {
 			return err
 		}
 
 		/*if repo.Status.LastObservedGeneration == nil || repo.Generation > *repo.Status.LastObservedGeneration {
-			glog.Infof("Sync/Add/Update for Repository %s\n", key)
+			log.Infof("Sync/Add/Update for Repository %s\n", key)
 			if err := c.reconcileForRepository(repo); err != nil {
 				return err
 			}
@@ -87,14 +86,12 @@ func (c *Controller) runRepositoryInjector(key string) error {
 func (c *Controller) reconcileForRepository(repository *api.Repository) error {
 	// fetch all open prs initially
 	if repository.Spec.Host == "github" {
-		log.Infoln("Syncing github PRs...")
+		log.Infof("Syncing github PRs for repository %s", repository.Name)
 		err := c.initGithubPRs(repository)
 		if err != nil {
 			return err
 		}
 	}
-
-	return nil // TODO: remove, temporarily turned of for webhook testing
 
 	meta := metav1.ObjectMeta{
 		Name:      repository.Name,
@@ -120,6 +117,7 @@ func (c *Controller) reconcileForRepository(repository *api.Repository) error {
 		return binding
 	}
 
+	log.Infof("Reconciling binding for repository %s/%s", repository.Namespace, repository.Name)
 	_, _, err := util.CreateOrPatchBinding(c.gitAPIServerClient.GitV1alpha1(), meta, transform)
 
 	return err

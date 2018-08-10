@@ -4,9 +4,9 @@ import (
 	"encoding/json"
 	"fmt"
 
+	"github.com/appscode/go/log"
 	"github.com/appscode/kutil"
 	"github.com/evanphx/json-patch"
-	"github.com/golang/glog"
 	kerr "k8s.io/apimachinery/pkg/api/errors"
 	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
 	"k8s.io/apimachinery/pkg/types"
@@ -18,7 +18,7 @@ import (
 func CreateOrPatchBinding(c cs.GitV1alpha1Interface, meta metav1.ObjectMeta, transform func(binding *api.Binding) *api.Binding) (*api.Binding, kutil.VerbType, error) {
 	cur, err := c.Bindings(meta.Namespace).Get(meta.Name, metav1.GetOptions{})
 	if kerr.IsNotFound(err) {
-		glog.V(3).Infof("Creating Binding %s/%s.", meta.Namespace, meta.Name)
+		log.Infof("Creating Binding %s/%s.", meta.Namespace, meta.Name)
 		out, err := c.Bindings(meta.Namespace).Create(transform(&api.Binding{
 			TypeMeta: metav1.TypeMeta{
 				Kind:       "Binding",
@@ -55,7 +55,7 @@ func PatchBindingObject(c cs.GitV1alpha1Interface, cur, mod *api.Binding) (*api.
 	if len(patch) == 0 || string(patch) == "{}" {
 		return cur, kutil.VerbUnchanged, nil
 	}
-	glog.V(3).Infof("Patching Binding %s/%s with %s.", cur.Namespace, cur.Name, string(patch))
+	log.Infof("Patching Binding %s/%s with %s.", cur.Namespace, cur.Name, string(patch))
 	out, err := c.Bindings(cur.Namespace).Patch(cur.Name, types.MergePatchType, patch)
 	return out, kutil.VerbPatched, err
 }
@@ -71,7 +71,7 @@ func TryUpdateBinding(c cs.GitV1alpha1Interface, meta metav1.ObjectMeta, transfo
 			result, e2 = c.Bindings(cur.Namespace).Update(transform(cur.DeepCopy()))
 			return e2 == nil, nil
 		}
-		glog.Errorf("Attempt %d failed to update Binding %s/%s due to %v.", attempt, cur.Namespace, cur.Name, e2)
+		log.Errorf("Attempt %d failed to update Binding %s/%s due to %v.", attempt, cur.Namespace, cur.Name, e2)
 		return false, nil
 	})
 
@@ -92,7 +92,7 @@ func TryUpdateBindingStatus(c cs.GitV1alpha1Interface, meta metav1.ObjectMeta, t
 			result, e2 = c.Bindings(cur.Namespace).UpdateStatus(transform(cur.DeepCopy()))
 			return e2 == nil, nil
 		}
-		glog.Errorf("Attempt %d failed to update status of Binding %s/%s due to %v.", attempt, cur.Namespace, cur.Name, e2)
+		log.Errorf("Attempt %d failed to update status of Binding %s/%s due to %v.", attempt, cur.Namespace, cur.Name, e2)
 		return false, nil
 	})
 

@@ -7,13 +7,16 @@ import (
 	"github.com/appscode/go/log"
 	"github.com/appscode/go/types"
 	"github.com/appscode/kutil/tools/queue"
-	"github.com/golang/glog"
 	kerr "k8s.io/apimachinery/pkg/api/errors"
 	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
 	"k8s.io/apimachinery/pkg/labels"
 	api "kube.ci/git-apiserver/apis/git/v1alpha1"
 	"kube.ci/git-apiserver/client/clientset/versioned/typed/git/v1alpha1/util"
 	"kube.ci/git-apiserver/pkg/git-repo"
+)
+
+const (
+	clonePathPrefix = "/kubeci/git-apiserver"
 )
 
 func (c *Controller) initBindingWatcher() {
@@ -35,12 +38,12 @@ func (c *Controller) initBindingWatcher() {
 func (c *Controller) runBindingInjector(key string) error {
 	obj, exist, err := c.bindingInformer.GetIndexer().GetByKey(key)
 	if err != nil {
-		glog.Errorf("Fetching object with key %s from store failed with %v", key, err)
+		log.Errorf("Fetching object with key %s from store failed with %v", key, err)
 		return err
 	}
 
 	if !exist {
-		glog.Warningf("Binding %s does not exist anymore\n", key)
+		log.Warningf("Binding %s does not exist anymore\n", key)
 		delete(c.bindingMap, key)
 	} else {
 		binding := obj.(*api.Binding).DeepCopy()
@@ -48,7 +51,7 @@ func (c *Controller) runBindingInjector(key string) error {
 		// use key map instead of LastObservedGeneration to check binding already reconciled or not
 		// it will help to restart git-watcher when operator is restarted
 		if _, ok := c.bindingMap[key]; !ok {
-			glog.Infof("Sync/Add/Update for Binding %s\n", key)
+			log.Infof("Sync/Add/Update for Binding %s\n", key)
 			if err = c.reconcileForBinding(binding); err != nil {
 				return err
 			}
@@ -56,7 +59,7 @@ func (c *Controller) runBindingInjector(key string) error {
 		}
 
 		/*if binding.Status.LastObservedGeneration == nil || binding.Generation > *binding.Status.LastObservedGeneration {
-			glog.Infof("Sync/Add/Update for Binding %s\n", key)
+			log.Infof("Sync/Add/Update for Binding %s\n", key)
 			if err = c.reconcileForBinding(binding); err != nil {
 				return err
 			}
@@ -72,9 +75,8 @@ func (c *Controller) reconcileForBinding(binding *api.Binding) error {
 		for {
 			// TODO: write error events to binding or repository ?
 			// if repository not found, we should stop the git watcher
-			// TODO: use a stop channel instead ?
 			if err := c.runOnce(binding.Name, binding.Namespace); kerr.IsNotFound(err) {
-				log.Errorf("Stopping git watcher, reason: %s", err)
+				log.Errorf("Stopping git watcher for binding %s/%s, reason: %s", binding.Namespace, binding.Name, err)
 				break
 			} else if err != nil {
 				log.Errorln(err)
@@ -92,23 +94,26 @@ func (c *Controller) runOnce(name, namespace string) error {
 		return err
 	}
 
+	log.Infof("Fetching/Cloning repository %s/%s", repository.Namespace, repository.Name)
+
 	// repository token, empty if repository.Spec.TokenFormSecret is nil
 	token, err := repository.GetToken(c.kubeClient)
 	if err != nil {
 		return err
 	}
 
-	path := filepath.Join("/tmp/git-apiserver", repository.Name) // TODO: use constant
+	path := filepath.Join(clonePathPrefix, repository.Name)
 	repo := git_repo.New(repository.Spec.CloneUrl, path, token)
 	if err := repo.CloneOrFetch(); err != nil {
 		return err
 	}
 
-	log.Infoln("Cloning/Fetching done...", repo)
-
+	log.Infof("Reconciling branches for repository %s/%s", repository.Namespace, repository.Name)
 	if err = c.reconcileBranches(repository, repo); err != nil {
 		return err
 	}
+
+	log.Infof("Reconciling tags for repository %s/%s", repository.Namespace, repository.Name)
 	if err = c.reconcileTags(repository, repo); err != nil {
 		return err
 	}
