@@ -2,6 +2,7 @@ package git_repo
 
 import (
 	"log"
+	"os"
 	"testing"
 )
 
@@ -33,11 +34,10 @@ func TestGetTags(t *testing.T) {
 	path := "/tmp/my-repo"
 	token := ""
 
+	os.RemoveAll(path)
+
 	repo := New(url, path, token)
-	if err := repo.CloneOrFetch(true); err != nil {
-		t.Error(err)
-	}
-	if err := repo.CloneOrFetch(false); err != nil { // should fetch instead of cloning
+	if err := repo.CloneOrFetch(); err != nil {
 		t.Error(err)
 	}
 
@@ -56,11 +56,10 @@ func TestGetBranchesWithAuth(t *testing.T) {
 	path := "/tmp/my-repo"
 	token := "..."
 
+	os.RemoveAll(path)
+
 	repo := New(url, path, token)
-	if err := repo.CloneOrFetch(true); err != nil {
-		t.Error(err)
-	}
-	if err := repo.CloneOrFetch(false); err != nil { // should fetch instead of cloning
+	if err := repo.CloneOrFetch(); err != nil {
 		t.Error(err)
 	}
 

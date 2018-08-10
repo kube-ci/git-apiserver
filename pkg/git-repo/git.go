@@ -50,15 +50,8 @@ func New(url, path, token string) *Repository {
 }
 
 // forceClone if repository crd changes
-func (repo *Repository) CloneOrFetch(forceClone bool) error {
+func (repo *Repository) CloneOrFetch() error {
 	var err error
-
-	if forceClone {
-		log.Println("Deleting old repository if exists...")
-		if err = os.RemoveAll(repo.path); err != nil {
-			return err
-		}
-	}
 
 	// try to open repository from given path
 	repo.Repository, err = git.PlainOpen(repo.path)
@@ -75,11 +68,30 @@ func (repo *Repository) CloneOrFetch(forceClone bool) error {
 		if err != nil {
 			return err
 		}
-	} else { // repository exists, just fetch it
-		log.Println("Fetching repo...")
-		err = repo.Fetch(&git.FetchOptions{Auth: repo.auth})
-		if err != nil && err != git.NoErrAlreadyUpToDate {
+	} else {
+		remote, err := repo.Remote(RemoteOrigin)
+		if err != nil && err != git.ErrRemoteNotFound {
 			return err
+		}
+		if err == git.ErrRemoteNotFound || remote.Config().URLs[0] != repo.url { // remote changed, clone it again
+			log.Println("Remote changed, deleting old repo...")
+			if err = os.RemoveAll(repo.path); err != nil {
+				return err
+			}
+			log.Println("Cloning repo...")
+			repo.Repository, err = git.PlainClone(repo.path, false, &git.CloneOptions{
+				URL:  repo.url,
+				Auth: repo.auth,
+			})
+			if err != nil {
+				return err
+			}
+		} else { // repository exists and remote not changed, just fetch it
+			log.Println("Fetching repo...")
+			err = repo.Fetch(&git.FetchOptions{})
+			if err != nil && err != git.NoErrAlreadyUpToDate {
+				return err
+			}
 		}
 	}
 

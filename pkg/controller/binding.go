@@ -100,7 +100,7 @@ func (c *Controller) runOnce(name, namespace string) error {
 
 	path := filepath.Join("/tmp/git-apiserver", repository.Name) // TODO: use constant
 	repo := git_repo.New(repository.Spec.CloneUrl, path, token)
-	if err := repo.CloneOrFetch(false); err != nil { // TODO: true if repository crd changes
+	if err := repo.CloneOrFetch(); err != nil {
 		return err
 	}
 

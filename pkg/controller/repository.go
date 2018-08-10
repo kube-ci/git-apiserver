@@ -1,6 +1,7 @@
 package controller
 
 import (
+	"github.com/appscode/go/log"
 	"github.com/appscode/go/types"
 	"github.com/appscode/kubernetes-webhook-util/admission"
 	hooks "github.com/appscode/kubernetes-webhook-util/admission/v1beta1"
@@ -86,6 +87,7 @@ func (c *Controller) runRepositoryInjector(key string) error {
 func (c *Controller) reconcileForRepository(repository *api.Repository) error {
 	// fetch all open prs initially
 	if repository.Spec.Host == "github" {
+		log.Infoln("Syncing github PRs...")
 		err := c.initGithubPRs(repository)
 		if err != nil {
 			return err
