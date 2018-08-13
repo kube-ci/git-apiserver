@@ -1,6 +1,8 @@
 package controller
 
 import (
+	"time"
+
 	"github.com/appscode/go/log"
 	"github.com/appscode/go/types"
 	"github.com/appscode/kubernetes-webhook-util/admission"
@@ -44,6 +46,7 @@ func (c *Controller) initRepositoryWatcher() {
 	c.repoQueue = queue.New("Repository", c.MaxNumRequeues, c.NumThreads, c.runRepositoryInjector)
 	c.repoInformer.AddEventHandler(queue.DefaultEventHandler(c.repoQueue.GetQueue()))
 	c.repoLister = c.gitAPIServerInformerFactory.Git().V1alpha1().Repositories().Lister()
+	c.repoSyncChannels = make(map[string]chan struct{})
 }
 
 func (c *Controller) runRepositoryInjector(key string) error {
@@ -55,32 +58,37 @@ func (c *Controller) runRepositoryInjector(key string) error {
 
 	if !exist {
 		log.Warningf("Repository %s does not exist anymore\n", key)
+		if stopCh, ok := c.repoSyncChannels[key]; ok { // send stop signal and delete from map
+			log.Infof("Closing sync for repository %s", key)
+			close(stopCh)
+			delete(c.repoSyncChannels, key)
+		}
 	} else {
 		repo := obj.(*api.Repository).DeepCopy()
-
-		// TODO: periodically reconcile to fetch repos, tags, prs ? or run using go-routine ?
-		// don't use LastObservedGeneration, always reconcile repository
-
-		log.Infof("Sync/Add/Update for Repository %s\n", key)
-		if err := c.reconcileForRepository(repo); err != nil {
-			return err
-		}
-
-		/*if repo.Status.LastObservedGeneration == nil || repo.Generation > *repo.Status.LastObservedGeneration {
+		if repo.Status.LastObservedGeneration == nil || repo.Generation > *repo.Status.LastObservedGeneration {
 			log.Infof("Sync/Add/Update for Repository %s\n", key)
-			if err := c.reconcileForRepository(repo); err != nil {
+
+			if stopCh, ok := c.repoSyncChannels[key]; ok { // send stop signal and delete from map
+				log.Infof("Restarting sync for repository %s", key)
+				close(stopCh)
+				delete(c.repoSyncChannels, key)
+			}
+
+			c.repoSyncChannels[key] = make(chan struct{}) // create stop channel
+			if err := c.reconcileForRepository(repo, c.repoSyncChannels[key]); err != nil {
 				return err
 			}
+
 			// update LastObservedGeneration // TODO: errors ?
 			c.updateRepositoryLastObservedGen(repo.Name, repo.Namespace, repo.Generation)
-		}*/
+		}
 	}
 	return nil
 }
 
-func (c *Controller) reconcileForRepository(repository *api.Repository) error {
-	// TODO: fetch every time repository is synced ?
-	// fetch fetch and reconcile open prs
+func (c *Controller) reconcileForRepository(repository *api.Repository, stopCh <-chan struct{}) error {
+	// fetch and reconcile open prs initially
+	// next updates will be handled through webhook
 	if repository.Spec.Host == "github" {
 		log.Infof("Syncing github PRs for repository %s/%s", repository.Namespace, repository.Name)
 		if err := c.fetchAndReconcileGithubPRs(repository); err != nil {
@@ -88,8 +96,25 @@ func (c *Controller) reconcileForRepository(repository *api.Repository) error {
 		}
 	}
 
-	// fetch and reconcile repos, tags
-	return c.fetchAndReconcileRefs(repository)
+	// periodically fetch and reconcile branches, tags
+	// stop using stopCh
+	go func() {
+		t := time.NewTicker(30 * time.Second)
+	loop:
+		for {
+			select {
+			case <-stopCh:
+				log.Infof("Stop signal received for repository %s/%s", repository.Namespace, repository.Name)
+				break loop
+			case <-t.C:
+				if err := c.fetchAndReconcileRefs(repository); err != nil {
+					log.Errorln(err)
+				}
+			}
+		}
+	}()
+
+	return nil
 }
 
 func (c *Controller) fetchAndReconcileRefs(repository *api.Repository) error {

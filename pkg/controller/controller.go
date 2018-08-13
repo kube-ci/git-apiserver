@@ -31,9 +31,10 @@ type Controller struct {
 	gitAPIServerInformerFactory git_apiserver_informers.SharedInformerFactory
 
 	// Repository
-	repoQueue    *queue.Worker
-	repoInformer cache.SharedIndexInformer
-	repoLister   git_apiserver_listers.RepositoryLister
+	repoQueue        *queue.Worker
+	repoInformer     cache.SharedIndexInformer
+	repoLister       git_apiserver_listers.RepositoryLister
+	repoSyncChannels map[string]chan struct{}
 }
 
 func (c *Controller) ensureCustomResourceDefinitions() error {
