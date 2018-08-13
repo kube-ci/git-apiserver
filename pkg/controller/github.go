@@ -78,7 +78,7 @@ func (c *Controller) githubPRHandler(githubPR *github.PullRequest, repository *r
 	meta := metav1.ObjectMeta{
 		Name:      fmt.Sprintf("%s-%d", repository.Name, *githubPR.Number),
 		Namespace: repository.Namespace,
-		OwnerReferences: []metav1.OwnerReference{ // TODO: owner ref repository or binding ?
+		OwnerReferences: []metav1.OwnerReference{
 			{
 				APIVersion:         api.SchemeGroupVersion.Group + "/" + api.SchemeGroupVersion.Version,
 				Kind:               api.ResourceKindRepository,

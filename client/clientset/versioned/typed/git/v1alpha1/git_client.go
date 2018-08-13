@@ -27,7 +27,6 @@ import (
 
 type GitV1alpha1Interface interface {
 	RESTClient() rest.Interface
-	BindingsGetter
 	BranchesGetter
 	PullRequestsGetter
 	RepositoriesGetter
@@ -37,10 +36,6 @@ type GitV1alpha1Interface interface {
 // GitV1alpha1Client is used to interact with features provided by the git.kube.ci group.
 type GitV1alpha1Client struct {
 	restClient rest.Interface
-}
-
-func (c *GitV1alpha1Client) Bindings(namespace string) BindingInterface {
-	return newBindings(c, namespace)
 }
 
 func (c *GitV1alpha1Client) Branches(namespace string) BranchInterface {

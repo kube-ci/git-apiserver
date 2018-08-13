@@ -28,10 +28,6 @@ type FakeGitV1alpha1 struct {
 	*testing.Fake
 }
 
-func (c *FakeGitV1alpha1) Bindings(namespace string) v1alpha1.BindingInterface {
-	return &FakeBindings{c, namespace}
-}
-
 func (c *FakeGitV1alpha1) Branches(namespace string) v1alpha1.BranchInterface {
 	return &FakeBranches{c, namespace}
 }

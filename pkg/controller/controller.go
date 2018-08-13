@@ -34,14 +34,6 @@ type Controller struct {
 	repoQueue    *queue.Worker
 	repoInformer cache.SharedIndexInformer
 	repoLister   git_apiserver_listers.RepositoryLister
-
-	// Binding
-	bindingQueue    *queue.Worker
-	bindingInformer cache.SharedIndexInformer
-	bindingLister   git_apiserver_listers.BindingLister
-
-	// Binding Map
-	bindingMap map[string]struct{}
 }
 
 func (c *Controller) ensureCustomResourceDefinitions() error {
@@ -49,7 +41,6 @@ func (c *Controller) ensureCustomResourceDefinitions() error {
 		api.Repository{}.CustomResourceDefinition(),
 		api.Branch{}.CustomResourceDefinition(),
 		api.Tag{}.CustomResourceDefinition(),
-		api.Binding{}.CustomResourceDefinition(),
 		api.PullRequest{}.CustomResourceDefinition(),
 	}
 	return crdutils.RegisterCRDs(c.crdClient, crds)
@@ -77,5 +68,4 @@ func (c *Controller) RunInformers(stopCh <-chan struct{}) {
 	}
 
 	c.repoQueue.Run(stopCh)
-	c.bindingQueue.Run(stopCh)
 }

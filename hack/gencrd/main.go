@@ -31,7 +31,6 @@ func generateCRDDefinitions() {
 		git_v1alpha1.Repository{}.CustomResourceDefinition(),
 		git_v1alpha1.Branch{}.CustomResourceDefinition(),
 		git_v1alpha1.Tag{}.CustomResourceDefinition(),
-		git_v1alpha1.Binding{}.CustomResourceDefinition(),
 		git_v1alpha1.PullRequest{}.CustomResourceDefinition(),
 	}
 	for _, crd := range crds {
@@ -72,7 +71,6 @@ func generateSwaggerJson() {
 			{git_v1alpha1.SchemeGroupVersion, git_v1alpha1.ResourceRepositories, git_v1alpha1.ResourceKindRepository, true},
 			{git_v1alpha1.SchemeGroupVersion, git_v1alpha1.ResourceBranches, git_v1alpha1.ResourceKindBranch, true},
 			{git_v1alpha1.SchemeGroupVersion, git_v1alpha1.ResourceTags, git_v1alpha1.ResourceKindTag, true},
-			{git_v1alpha1.SchemeGroupVersion, git_v1alpha1.ResourceBindings, git_v1alpha1.ResourceKindBinding, true},
 			{git_v1alpha1.SchemeGroupVersion, git_v1alpha1.ResourcePullRequests, git_v1alpha1.ResourceKindPullRequest, true},
 		},
 	})

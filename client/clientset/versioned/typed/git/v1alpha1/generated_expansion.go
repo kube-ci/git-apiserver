@@ -18,8 +18,6 @@ limitations under the License.
 
 package v1alpha1
 
-type BindingExpansion interface{}
-
 type BranchExpansion interface{}
 
 type PullRequestExpansion interface{}

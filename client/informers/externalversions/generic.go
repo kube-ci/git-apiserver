@@ -53,8 +53,6 @@ func (f *genericInformer) Lister() cache.GenericLister {
 func (f *sharedInformerFactory) ForResource(resource schema.GroupVersionResource) (GenericInformer, error) {
 	switch resource {
 	// Group=git.kube.ci, Version=v1alpha1
-	case v1alpha1.SchemeGroupVersion.WithResource("bindings"):
-		return &genericInformer{resource: resource.GroupResource(), informer: f.Git().V1alpha1().Bindings().Informer()}, nil
 	case v1alpha1.SchemeGroupVersion.WithResource("branches"):
 		return &genericInformer{resource: resource.GroupResource(), informer: f.Git().V1alpha1().Branches().Informer()}, nil
 	case v1alpha1.SchemeGroupVersion.WithResource("pullrequests"):

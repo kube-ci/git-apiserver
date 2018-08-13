@@ -1,6 +1,8 @@
 package controller
 
 import (
+	"time"
+
 	"github.com/appscode/go/log"
 	"github.com/appscode/go/types"
 	"github.com/appscode/kubernetes-webhook-util/admission"
@@ -9,16 +11,13 @@ import (
 	"github.com/appscode/kutil/tools/queue"
 	kerr "k8s.io/apimachinery/pkg/api/errors"
 	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
+	"k8s.io/apimachinery/pkg/labels"
 	"k8s.io/apimachinery/pkg/runtime"
 	"k8s.io/apimachinery/pkg/runtime/schema"
 	"kube.ci/git-apiserver/apis/git"
 	api "kube.ci/git-apiserver/apis/git/v1alpha1"
 	"kube.ci/git-apiserver/client/clientset/versioned/typed/git/v1alpha1/util"
-)
-
-const (
-	NodeLabelKey = "node"
-	NodeMinikube = "minikube"
+	"kube.ci/git-apiserver/pkg/git-repo"
 )
 
 func (c *Controller) NewRepositoryWebhook() hooks.AdmissionHook {
@@ -93,53 +92,178 @@ func (c *Controller) reconcileForRepository(repository *api.Repository) error {
 		}
 	}
 
-	meta := metav1.ObjectMeta{
-		Name:      repository.Name,
-		Namespace: repository.Namespace,
-		OwnerReferences: []metav1.OwnerReference{
-			{
-				APIVersion:         api.SchemeGroupVersion.Group + "/" + api.SchemeGroupVersion.Version,
-				Kind:               api.ResourceKindRepository,
-				Name:               repository.Name,
-				UID:                repository.UID,
-				BlockOwnerDeletion: types.TrueP(),
-			},
-		},
-	}
-
-	transform := func(binding *api.Binding) *api.Binding {
-		if ok, _ := c.isBindingValid(binding); !ok { // TODO: errors ?
-			if binding.Labels == nil {
-				binding.Labels = make(map[string]string, 0)
+	go func() {
+		for {
+			// TODO: write error events to repository
+			// if repository not found, we should stop the git watcher
+			if err := c.runOnce(repository); kerr.IsNotFound(err) {
+				log.Errorf("Stopping git watcher for repository %s/%s, reason: %s", repository.Namespace, repository.Name, err)
+				break
+			} else if err != nil {
+				log.Errorln(err)
 			}
-			binding.Labels[NodeLabelKey] = c.nextNodeName()
+			time.Sleep(time.Second * 30) // TODO: period ?
 		}
-		return binding
-	}
+	}()
 
-	log.Infof("Reconciling binding for repository %s/%s", repository.Namespace, repository.Name)
-	_, _, err := util.CreateOrPatchBinding(c.gitAPIServerClient.GitV1alpha1(), meta, transform)
-
-	return err
+	return nil
 }
 
-func (c *Controller) isBindingValid(binding *api.Binding) (bool, error) {
-	if binding == nil || binding.Labels == nil || binding.Labels[NodeLabelKey] == "" {
-		return false, nil
-	}
+func (c *Controller) runOnce(repository *api.Repository) error {
+	log.Infof("Fetching repository %s/%s", repository.Namespace, repository.Name)
 
-	// check node exists or not
-	_, err := c.kubeClient.CoreV1().Nodes().Get(binding.Labels[NodeLabelKey], metav1.GetOptions{})
+	// repository token, empty if repository.Spec.TokenFormSecret is nil
+	token, err := repository.GetToken(c.kubeClient)
 	if err != nil {
-		if kerr.IsNotFound(err) { // node not found
-			return false, nil
-		}
-		return false, err // something wrong
+		return err
 	}
 
-	return true, nil
+	repo, err := git_repo.Fetch(repository.Spec.CloneUrl, token)
+	if err != nil {
+		return err
+	}
+
+	log.Infof("Reconciling branches for repository %s/%s", repository.Namespace, repository.Name)
+	if err = c.reconcileBranches(repository, repo.Branches); err != nil {
+		return err
+	}
+
+	log.Infof("Reconciling tags for repository %s/%s", repository.Namespace, repository.Name)
+	if err = c.reconcileTags(repository, repo.Tags); err != nil {
+		return err
+	}
+
+	return nil
 }
 
-func (c *Controller) nextNodeName() string { // TODO: use a node selector strategy
-	return NodeMinikube
+func (c *Controller) reconcileBranches(repository *api.Repository, branches []git_repo.Reference) error {
+	// create or patch branch CRDs
+	for _, gitBranch := range branches {
+		meta := metav1.ObjectMeta{
+			Name:      repository.Name + "-" + gitBranch.Name,
+			Namespace: repository.Namespace,
+			OwnerReferences: []metav1.OwnerReference{
+				{
+					APIVersion:         api.SchemeGroupVersion.Group + "/" + api.SchemeGroupVersion.Version,
+					Kind:               api.ResourceKindRepository,
+					Name:               repository.Name,
+					UID:                repository.UID,
+					BlockOwnerDeletion: types.TrueP(),
+				},
+			},
+		}
+
+		transform := func(branch *api.Branch) *api.Branch {
+			if branch.Labels == nil {
+				branch.Labels = make(map[string]string, 0)
+			}
+			branch.Labels["repository"] = repository.Name
+			branch.Spec.LastCommitHash = gitBranch.Hash
+			return branch
+		}
+
+		_, _, err := util.CreateOrPatchBranch(c.gitAPIServerClient.GitV1alpha1(), meta, transform)
+		if err != nil {
+			return err
+		}
+	}
+
+	// delete old branches that don't exist now
+	branchList, err := c.gitAPIServerClient.GitV1alpha1().Branches(repository.Namespace).List(
+		metav1.ListOptions{
+			LabelSelector: labels.FormatLabels(
+				map[string]string{
+					"repository": repository.Name,
+				},
+			),
+		},
+	)
+	if err != nil {
+		return err
+	}
+
+	for _, branch := range branchList.Items {
+		found := false
+		for _, gitBranch := range branches {
+			if branch.Name == repository.Name+"-"+gitBranch.Name {
+				found = true
+				break
+			}
+		}
+		if !found {
+			log.Infof("Deleting Branch %s/%s", branch.Namespace, branch.Name)
+			err = c.gitAPIServerClient.GitV1alpha1().Branches(branch.Namespace).Delete(branch.Name, nil)
+			if err != nil {
+				return err
+			}
+		}
+	}
+
+	return nil
+}
+
+func (c *Controller) reconcileTags(repository *api.Repository, tags []git_repo.Reference) error {
+	// create or patch tag CRDs
+	for _, gitTag := range tags {
+		meta := metav1.ObjectMeta{
+			Name:      repository.Name + "-" + gitTag.Name,
+			Namespace: repository.Namespace,
+			OwnerReferences: []metav1.OwnerReference{
+				{
+					APIVersion:         api.SchemeGroupVersion.Group + "/" + api.SchemeGroupVersion.Version,
+					Kind:               api.ResourceKindRepository,
+					Name:               repository.Name,
+					UID:                repository.UID,
+					BlockOwnerDeletion: types.TrueP(),
+				},
+			},
+		}
+
+		transform := func(tag *api.Tag) *api.Tag {
+			if tag.Labels == nil {
+				tag.Labels = make(map[string]string, 0)
+			}
+			tag.Labels["repository"] = repository.Name
+			tag.Spec.LastCommitHash = gitTag.Hash
+			return tag
+		}
+
+		_, _, err := util.CreateOrPatchTag(c.gitAPIServerClient.GitV1alpha1(), meta, transform)
+		if err != nil {
+			return err
+		}
+	}
+
+	// delete old tags that don't exist now
+	tagList, err := c.gitAPIServerClient.GitV1alpha1().Tags(repository.Namespace).List(
+		metav1.ListOptions{
+			LabelSelector: labels.FormatLabels(
+				map[string]string{
+					"repository": repository.Name,
+				},
+			),
+		},
+	)
+	if err != nil {
+		return err
+	}
+
+	for _, tag := range tagList.Items {
+		found := false
+		for _, gitTag := range tags {
+			if tag.Name == repository.Name+"-"+gitTag.Name {
+				found = true
+				break
+			}
+		}
+		if !found {
+			log.Infof("Deleting Tag %s/%s", tag.Namespace, tag.Name)
+			err = c.gitAPIServerClient.GitV1alpha1().Tags(tag.Namespace).Delete(tag.Name, nil)
+			if err != nil {
+				return err
+			}
+		}
+	}
+
+	return nil
 }
