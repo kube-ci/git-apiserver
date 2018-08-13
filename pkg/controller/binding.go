@@ -1,7 +1,6 @@
 package controller
 
 import (
-	"path/filepath"
 	"time"
 
 	"github.com/appscode/go/log"
@@ -13,10 +12,6 @@ import (
 	api "kube.ci/git-apiserver/apis/git/v1alpha1"
 	"kube.ci/git-apiserver/client/clientset/versioned/typed/git/v1alpha1/util"
 	"kube.ci/git-apiserver/pkg/git-repo"
-)
-
-const (
-	clonePathPrefix = "/tmp/kubeci/git-apiserver"
 )
 
 func (c *Controller) initBindingWatcher() {
@@ -94,7 +89,7 @@ func (c *Controller) runOnce(name, namespace string) error {
 		return err
 	}
 
-	log.Infof("Fetching/Cloning repository %s/%s", repository.Namespace, repository.Name)
+	log.Infof("Fetching repository %s/%s", repository.Namespace, repository.Name)
 
 	// repository token, empty if repository.Spec.TokenFormSecret is nil
 	token, err := repository.GetToken(c.kubeClient)
@@ -102,31 +97,25 @@ func (c *Controller) runOnce(name, namespace string) error {
 		return err
 	}
 
-	path := filepath.Join(clonePathPrefix, repository.Name)
-	repo := git_repo.New(repository.Spec.CloneUrl, path, token)
-	if err := repo.CloneOrFetch(); err != nil {
+	repo, err := git_repo.Fetch(repository.Spec.CloneUrl, token)
+	if err != nil {
 		return err
 	}
 
 	log.Infof("Reconciling branches for repository %s/%s", repository.Namespace, repository.Name)
-	if err = c.reconcileBranches(repository, repo); err != nil {
+	if err = c.reconcileBranches(repository, repo.Branches); err != nil {
 		return err
 	}
 
 	log.Infof("Reconciling tags for repository %s/%s", repository.Namespace, repository.Name)
-	if err = c.reconcileTags(repository, repo); err != nil {
+	if err = c.reconcileTags(repository, repo.Tags); err != nil {
 		return err
 	}
 
 	return nil
 }
 
-func (c *Controller) reconcileBranches(repository *api.Repository, repo *git_repo.Repository) error {
-	branches, err := repo.GetBranches()
-	if err != nil {
-		return err
-	}
-
+func (c *Controller) reconcileBranches(repository *api.Repository, branches []git_repo.Reference) error {
 	// create or patch branch CRDs
 	for _, gitBranch := range branches {
 		meta := metav1.ObjectMeta{
@@ -192,12 +181,7 @@ func (c *Controller) reconcileBranches(repository *api.Repository, repo *git_rep
 	return nil
 }
 
-func (c *Controller) reconcileTags(repository *api.Repository, repo *git_repo.Repository) error {
-	tags, err := repo.GetTags()
-	if err != nil {
-		return err
-	}
-
+func (c *Controller) reconcileTags(repository *api.Repository, tags []git_repo.Reference) error {
 	// create or patch tag CRDs
 	for _, gitTag := range tags {
 		meta := metav1.ObjectMeta{

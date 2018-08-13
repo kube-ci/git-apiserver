@@ -6,68 +6,42 @@ import (
 	"testing"
 )
 
-func TestGetBranches(t *testing.T) {
+func TestFetch(t *testing.T) {
 	url := "https://github.com/diptadas/kubeci-gpig.git"
-	path := "/tmp/my-repo"
 	token := ""
 
-	os.RemoveAll(path)
-
-	repo := New(url, path, token)
-	if err := repo.CloneOrFetch(); err != nil {
-		t.Error(err)
-	}
-
-	branches, err := repo.GetBranches()
+	repo, err := Fetch(url, token)
 	if err != nil {
 		t.Error(err)
 	}
 
-	for _, branch := range branches {
+	log.Println("Branches")
+	for _, branch := range repo.Branches {
 		log.Println(branch)
 	}
-}
 
-func TestGetTags(t *testing.T) {
-	url := "https://github.com/diptadas/kubeci-gpig.git"
-	path := "/tmp/my-repo"
-	token := ""
-
-	os.RemoveAll(path)
-
-	repo := New(url, path, token)
-	if err := repo.CloneOrFetch(); err != nil {
-		t.Error(err)
-	}
-
-	tags, err := repo.GetTags()
-	if err != nil {
-		t.Error(err)
-	}
-
-	for _, tag := range tags {
+	log.Println("Tags")
+	for _, tag := range repo.Tags {
 		log.Println(tag)
 	}
 }
 
-func TestGetBranchesWithAuth(t *testing.T) {
+func TestFetchPrivate(t *testing.T) {
 	url := "https://github.com/tamalsaha/private-test-repo.git"
-	path := "/tmp/my-repo"
 	token := os.Getenv("github-access-token")
 
-	os.RemoveAll(path)
-
-	repo := New(url, path, token)
-	if err := repo.CloneOrFetch(); err != nil {
-		t.Error(err)
-	}
-
-	branches, err := repo.GetBranches()
+	repo, err := Fetch(url, token)
 	if err != nil {
 		t.Error(err)
 	}
 
-	for _, branch := range branches {
+	log.Println("Branches")
+	for _, branch := range repo.Branches {
 		log.Println(branch)
+	}
+
+	log.Println("Tags")
+	for _, tag := range repo.Tags {
+		log.Println(tag)
 	}
 }
