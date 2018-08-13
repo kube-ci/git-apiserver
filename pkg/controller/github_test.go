@@ -11,7 +11,7 @@ func TestListGithubPRs(t *testing.T) {
 	repo := "kubeci-gpig"
 	token := ""
 
-	prs, err := listGithubPRs(owner, repo, token)
+	prs, err := fetchGithubPRs(owner, repo, token)
 	if err != nil {
 		t.Error(err)
 	}
@@ -26,7 +26,7 @@ func TestListGithubPRsWithAuth(t *testing.T) {
 	repo := "private-test-repo"
 	token := os.Getenv("github-access-token")
 
-	prs, err := listGithubPRs(owner, repo, token)
+	prs, err := fetchGithubPRs(owner, repo, token)
 	if err != nil {
 		t.Error(err)
 	}

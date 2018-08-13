@@ -48,7 +48,7 @@ func (c *Config) New() (*Controller, error) {
 		gitAPIServerClient:          c.GitAPIServerClient,
 		crdClient:                   c.CRDClient,
 		kubeInformerFactory:         informers.NewFilteredSharedInformerFactory(c.KubeClient, c.ResyncPeriod, core.NamespaceAll, tweakListOptions),
-		gitAPIServerInformerFactory: git_apiserver_informers.NewSharedInformerFactory(c.GitAPIServerClient, c.ResyncPeriod),
+		gitAPIServerInformerFactory: git_apiserver_informers.NewSharedInformerFactory(c.GitAPIServerClient, time.Second*30), // TODO: period ?
 		recorder:                    eventer.NewEventRecorder(c.KubeClient, "kubeci-controller"),
 	}
 

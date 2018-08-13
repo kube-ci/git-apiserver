@@ -64,7 +64,7 @@ func (c *Controller) githubEventHandler(event *v1alpha1.GithubEvent) {
 		if event.Repo != nil && event.Repo.CloneURL != nil && repository.Spec.CloneUrl == *event.Repo.CloneURL {
 			log.Infof("Event for repository %s/%s", repository.Namespace, repository.Name)
 			if event.PullRequest != nil {
-				err := c.githubPRHandler(event.PullRequest, repository) // TODO: errors ?
+				err := c.reconcileGithubPR(event.PullRequest, repository) // TODO: errors ?
 				if err != nil {
 					log.Errorln(err)
 				}
@@ -73,7 +73,7 @@ func (c *Controller) githubEventHandler(event *v1alpha1.GithubEvent) {
 	}
 }
 
-func (c *Controller) githubPRHandler(githubPR *github.PullRequest, repository *repo_v1alpha1.Repository) error {
+func (c *Controller) reconcileGithubPR(githubPR *github.PullRequest, repository *repo_v1alpha1.Repository) error {
 	// create or patch PR CRD
 	meta := metav1.ObjectMeta{
 		Name:      fmt.Sprintf("%s-%d", repository.Name, *githubPR.Number),
@@ -132,26 +132,26 @@ func (c *Controller) githubPRHandler(githubPR *github.PullRequest, repository *r
 	return nil
 }
 
-func (c *Controller) initGithubPRs(repository *repo_v1alpha1.Repository) error {
+func (c *Controller) fetchAndReconcileGithubPRs(repository *repo_v1alpha1.Repository) error {
 	// repository token, empty if repository.Spec.TokenFormSecret is nil
 	token, err := repository.GetToken(c.kubeClient)
 	if err != nil {
 		return err
 	}
 
-	prs, err := listGithubPRs(repository.Spec.Owner, repository.Spec.Repo, token)
+	prs, err := fetchGithubPRs(repository.Spec.Owner, repository.Spec.Repo, token)
 	if err != nil {
 		return err
 	}
 	for _, pr := range prs {
-		if err = c.githubPRHandler(pr, repository); err != nil {
+		if err = c.reconcileGithubPR(pr, repository); err != nil {
 			return err
 		}
 	}
 	return nil
 }
 
-func listGithubPRs(owner, repo, token string) ([]*github.PullRequest, error) {
+func fetchGithubPRs(owner, repo, token string) ([]*github.PullRequest, error) {
 	var httpClient *http.Client // nil if token is empty
 	if token != "" {
 		httpClient = oauth2.NewClient(

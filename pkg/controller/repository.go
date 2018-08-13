@@ -1,15 +1,12 @@
 package controller
 
 import (
-	"time"
-
 	"github.com/appscode/go/log"
 	"github.com/appscode/go/types"
 	"github.com/appscode/kubernetes-webhook-util/admission"
 	hooks "github.com/appscode/kubernetes-webhook-util/admission/v1beta1"
 	webhook "github.com/appscode/kubernetes-webhook-util/admission/v1beta1/generic"
 	"github.com/appscode/kutil/tools/queue"
-	kerr "k8s.io/apimachinery/pkg/api/errors"
 	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
 	"k8s.io/apimachinery/pkg/labels"
 	"k8s.io/apimachinery/pkg/runtime"
@@ -61,9 +58,8 @@ func (c *Controller) runRepositoryInjector(key string) error {
 	} else {
 		repo := obj.(*api.Repository).DeepCopy()
 
-		// TODO: periodically reconcile or use a node-watcher ?
+		// TODO: periodically reconcile to fetch repos, tags, prs ? or run using go-routine ?
 		// don't use LastObservedGeneration, always reconcile repository
-		// it will help us to check binding is valid or not periodically
 
 		log.Infof("Sync/Add/Update for Repository %s\n", key)
 		if err := c.reconcileForRepository(repo); err != nil {
@@ -83,33 +79,20 @@ func (c *Controller) runRepositoryInjector(key string) error {
 }
 
 func (c *Controller) reconcileForRepository(repository *api.Repository) error {
-	// fetch all open prs initially
+	// TODO: fetch every time repository is synced ?
+	// fetch fetch and reconcile open prs
 	if repository.Spec.Host == "github" {
-		log.Infof("Syncing github PRs for repository %s", repository.Name)
-		err := c.initGithubPRs(repository)
-		if err != nil {
+		log.Infof("Syncing github PRs for repository %s/%s", repository.Namespace, repository.Name)
+		if err := c.fetchAndReconcileGithubPRs(repository); err != nil {
 			return err
 		}
 	}
 
-	go func() {
-		for {
-			// TODO: write error events to repository
-			// if repository not found, we should stop the git watcher
-			if err := c.runOnce(repository); kerr.IsNotFound(err) {
-				log.Errorf("Stopping git watcher for repository %s/%s, reason: %s", repository.Namespace, repository.Name, err)
-				break
-			} else if err != nil {
-				log.Errorln(err)
-			}
-			time.Sleep(time.Second * 30) // TODO: period ?
-		}
-	}()
-
-	return nil
+	// fetch and reconcile repos, tags
+	return c.fetchAndReconcileRefs(repository)
 }
 
-func (c *Controller) runOnce(repository *api.Repository) error {
+func (c *Controller) fetchAndReconcileRefs(repository *api.Repository) error {
 	log.Infof("Fetching repository %s/%s", repository.Namespace, repository.Name)
 
 	// repository token, empty if repository.Spec.TokenFormSecret is nil
