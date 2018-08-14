@@ -68,19 +68,28 @@ func (c *Controller) runRepositoryInjector(key string) error {
 		if repo.Status.LastObservedGeneration == nil || repo.Generation > *repo.Status.LastObservedGeneration {
 			log.Infof("Sync/Add/Update for Repository %s\n", key)
 
-			if stopCh, ok := c.repoSyncChannels[key]; ok { // send stop signal and delete from map
+			if stopCh, ok := c.repoSyncChannels[key]; ok { // send stop signal
 				log.Infof("Restarting sync for repository %s", key)
 				close(stopCh)
-				delete(c.repoSyncChannels, key)
 			}
 
-			c.repoSyncChannels[key] = make(chan struct{}) // create stop channel
+			c.repoSyncChannels[key] = make(chan struct{}) // create new stop channel
 			if err := c.reconcileForRepository(repo, c.repoSyncChannels[key]); err != nil {
 				return err
 			}
 
-			// update LastObservedGeneration // TODO: errors ?
-			c.updateRepositoryLastObservedGen(repo.Name, repo.Namespace, repo.Generation)
+			// update LastObservedGeneration
+			_, err = util.UpdateRepositoryStatus(
+				c.gitAPIServerClient.GitV1alpha1(),
+				repo.ObjectMeta,
+				func(r *api.RepositoryStatus) *api.RepositoryStatus {
+					r.LastObservedGeneration = &repo.Generation
+					return r
+				},
+			)
+			if err != nil {
+				return err
+			}
 		}
 	}
 	return nil
