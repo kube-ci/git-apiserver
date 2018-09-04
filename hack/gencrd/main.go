@@ -15,31 +15,37 @@ import (
 	"k8s.io/apimachinery/pkg/runtime/serializer"
 	"k8s.io/kube-openapi/pkg/common"
 	git_install "kube.ci/git-apiserver/apis/git/install"
-	git_v1alpha1 "kube.ci/git-apiserver/apis/git/v1alpha1"
+	v1alpha1 "kube.ci/git-apiserver/apis/git/v1alpha1"
 )
 
 func generateCRDDefinitions() {
-	filename := gort.GOPath() + "/src/kube.ci/git-apiserver/apis/git/v1alpha1/crds.yaml"
+	v1alpha1.EnableStatusSubresource = true
 
-	f, err := os.OpenFile(filename, os.O_WRONLY|os.O_CREATE|os.O_TRUNC, 0644)
+	filename := gort.GOPath() + "/src/kube.ci/git-apiserver/apis/kubedb/v1alpha1/crds.yaml"
+	os.Remove(filename)
+
+	err := os.MkdirAll(filepath.Join(gort.GOPath(), "/src/kube.ci/git-apiserver/api/crds"), 0755)
 	if err != nil {
 		log.Fatal(err)
 	}
-	defer f.Close()
 
 	crds := []*crd_api.CustomResourceDefinition{
-		git_v1alpha1.Repository{}.CustomResourceDefinition(),
-		git_v1alpha1.Branch{}.CustomResourceDefinition(),
-		git_v1alpha1.Tag{}.CustomResourceDefinition(),
-		git_v1alpha1.PullRequest{}.CustomResourceDefinition(),
+		v1alpha1.Repository{}.CustomResourceDefinition(),
+		v1alpha1.Branch{}.CustomResourceDefinition(),
+		v1alpha1.Tag{}.CustomResourceDefinition(),
+		v1alpha1.PullRequest{}.CustomResourceDefinition(),
 	}
 	for _, crd := range crds {
-		err = crdutils.MarshallCrd(f, crd, "yaml")
+		filename := filepath.Join(gort.GOPath(), "/src/kube.ci/git-apiserver/api/crds", crd.Spec.Names.Singular+".yaml")
+		f, err := os.OpenFile(filename, os.O_WRONLY|os.O_CREATE|os.O_TRUNC, 0644)
 		if err != nil {
 			log.Fatal(err)
 		}
+		crdutils.MarshallCrd(f, crd, "yaml")
+		f.Close()
 	}
 }
+
 func generateSwaggerJson() {
 	var (
 		Scheme = runtime.NewScheme()
@@ -65,13 +71,13 @@ func generateSwaggerJson() {
 			},
 		},
 		OpenAPIDefinitions: []common.GetOpenAPIDefinitions{
-			git_v1alpha1.GetOpenAPIDefinitions,
+			v1alpha1.GetOpenAPIDefinitions,
 		},
 		Resources: []openapi.TypeInfo{
-			{git_v1alpha1.SchemeGroupVersion, git_v1alpha1.ResourceRepositories, git_v1alpha1.ResourceKindRepository, true},
-			{git_v1alpha1.SchemeGroupVersion, git_v1alpha1.ResourceBranches, git_v1alpha1.ResourceKindBranch, true},
-			{git_v1alpha1.SchemeGroupVersion, git_v1alpha1.ResourceTags, git_v1alpha1.ResourceKindTag, true},
-			{git_v1alpha1.SchemeGroupVersion, git_v1alpha1.ResourcePullRequests, git_v1alpha1.ResourceKindPullRequest, true},
+			{v1alpha1.SchemeGroupVersion, v1alpha1.ResourceRepositories, v1alpha1.ResourceKindRepository, true},
+			{v1alpha1.SchemeGroupVersion, v1alpha1.ResourceBranches, v1alpha1.ResourceKindBranch, true},
+			{v1alpha1.SchemeGroupVersion, v1alpha1.ResourceTags, v1alpha1.ResourceKindTag, true},
+			{v1alpha1.SchemeGroupVersion, v1alpha1.ResourcePullRequests, v1alpha1.ResourceKindPullRequest, true},
 		},
 	})
 	if err != nil {
