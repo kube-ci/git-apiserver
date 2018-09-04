@@ -1,6 +1,8 @@
 package v1alpha1
 
 import (
+	"strings"
+
 	crdutils "github.com/appscode/kutil/apiextensions/v1beta1"
 	apiextensions "k8s.io/apiextensions-apiserver/pkg/apis/apiextensions/v1beta1"
 )
@@ -13,8 +15,10 @@ func (c Repository) CustomResourceDefinition() *apiextensions.CustomResourceDefi
 	return crdutils.NewCustomResourceDefinition(crdutils.Config{
 		Group:         SchemeGroupVersion.Group,
 		Plural:        ResourceRepositories,
+		Singular:      strings.ToLower(ResourceKindRepository),
 		Kind:          ResourceKindRepository,
 		ShortNames:    []string{"repo"},
+		Categories:    []string{"kubeci", "ci", "appscode", "all"},
 		ResourceScope: string(apiextensions.NamespaceScoped),
 		Versions: []apiextensions.CustomResourceDefinitionVersion{
 			{
@@ -37,8 +41,10 @@ func (c Branch) CustomResourceDefinition() *apiextensions.CustomResourceDefiniti
 	return crdutils.NewCustomResourceDefinition(crdutils.Config{
 		Group:         SchemeGroupVersion.Group,
 		Plural:        ResourceBranches,
+		Singular:      strings.ToLower(ResourceKindBranch),
 		Kind:          ResourceKindBranch,
 		ShortNames:    []string{"branch"},
+		Categories:    []string{"kubeci", "ci", "appscode", "all"},
 		ResourceScope: string(apiextensions.NamespaceScoped),
 		Versions: []apiextensions.CustomResourceDefinitionVersion{
 			{
@@ -61,8 +67,10 @@ func (c Tag) CustomResourceDefinition() *apiextensions.CustomResourceDefinition 
 	return crdutils.NewCustomResourceDefinition(crdutils.Config{
 		Group:         SchemeGroupVersion.Group,
 		Plural:        ResourceTags,
+		Singular:      strings.ToLower(ResourceKindTag),
 		Kind:          ResourceKindTag,
 		ShortNames:    []string{"tag"},
+		Categories:    []string{"kubeci", "ci", "appscode", "all"},
 		ResourceScope: string(apiextensions.NamespaceScoped),
 		Versions: []apiextensions.CustomResourceDefinitionVersion{
 			{
@@ -85,8 +93,10 @@ func (c PullRequest) CustomResourceDefinition() *apiextensions.CustomResourceDef
 	return crdutils.NewCustomResourceDefinition(crdutils.Config{
 		Group:         SchemeGroupVersion.Group,
 		Plural:        ResourcePullRequests,
+		Singular:      strings.ToLower(ResourceKindPullRequest),
 		Kind:          ResourceKindPullRequest,
 		ShortNames:    []string{"pr"},
+		Categories:    []string{"kubeci", "ci", "appscode", "all"},
 		ResourceScope: string(apiextensions.NamespaceScoped),
 		Versions: []apiextensions.CustomResourceDefinitionVersion{
 			{
