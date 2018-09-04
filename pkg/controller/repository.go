@@ -3,11 +3,13 @@ package controller
 import (
 	"time"
 
+	. "github.com/appscode/go/encoding/json/types"
 	"github.com/appscode/go/log"
 	"github.com/appscode/go/types"
 	"github.com/appscode/kubernetes-webhook-util/admission"
 	hooks "github.com/appscode/kubernetes-webhook-util/admission/v1beta1"
 	webhook "github.com/appscode/kubernetes-webhook-util/admission/v1beta1/generic"
+	meta_util "github.com/appscode/kutil/meta"
 	"github.com/appscode/kutil/tools/queue"
 	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
 	"k8s.io/apimachinery/pkg/labels"
@@ -44,7 +46,7 @@ func (c *Controller) NewRepositoryWebhook() hooks.AdmissionHook {
 func (c *Controller) initRepositoryWatcher() {
 	c.repoInformer = c.gitAPIServerInformerFactory.Git().V1alpha1().Repositories().Informer()
 	c.repoQueue = queue.New("Repository", c.MaxNumRequeues, c.NumThreads, c.runRepositoryInjector)
-	c.repoInformer.AddEventHandler(queue.DefaultEventHandler(c.repoQueue.GetQueue()))
+	c.repoInformer.AddEventHandler(queue.NewObservableHandler(c.repoQueue.GetQueue(), api.EnableStatusSubresource))
 	c.repoLister = c.gitAPIServerInformerFactory.Git().V1alpha1().Repositories().Lister()
 	c.repoSyncChannels = make(map[string]chan struct{})
 }
@@ -65,31 +67,29 @@ func (c *Controller) runRepositoryInjector(key string) error {
 		}
 	} else {
 		repo := obj.(*api.Repository).DeepCopy()
-		if repo.Status.LastObservedGeneration == nil || repo.Generation > *repo.Status.LastObservedGeneration {
-			log.Infof("Sync/Add/Update for Repository %s\n", key)
+		log.Infof("Sync/Add/Update for Repository %s\n", key)
 
-			if stopCh, ok := c.repoSyncChannels[key]; ok { // send stop signal
-				log.Infof("Restarting sync for repository %s", key)
-				close(stopCh)
-			}
+		if stopCh, ok := c.repoSyncChannels[key]; ok { // send stop signal
+			log.Infof("Restarting sync for repository %s", key)
+			close(stopCh)
+		}
 
-			c.repoSyncChannels[key] = make(chan struct{}) // create new stop channel
-			if err := c.reconcileForRepository(repo, c.repoSyncChannels[key]); err != nil {
-				return err
-			}
+		c.repoSyncChannels[key] = make(chan struct{}) // create new stop channel
+		if err := c.reconcileForRepository(repo, c.repoSyncChannels[key]); err != nil {
+			return err
+		}
 
-			// update LastObservedGeneration
-			_, err = util.UpdateRepositoryStatus(
-				c.gitAPIServerClient.GitV1alpha1(),
-				repo.ObjectMeta,
-				func(r *api.RepositoryStatus) *api.RepositoryStatus {
-					r.LastObservedGeneration = &repo.Generation
-					return r
-				},
-			)
-			if err != nil {
-				return err
-			}
+		// update LastObservedGeneration
+		_, err = util.UpdateRepositoryStatus(
+			c.gitAPIServerClient.GitV1alpha1(),
+			repo.ObjectMeta,
+			func(r *api.RepositoryStatus) *api.RepositoryStatus {
+				r.ObservedGeneration = NewIntHash(repo.Generation, meta_util.GenerationHash(repo))
+				return r
+			},
+		)
+		if err != nil {
+			return err
 		}
 	}
 	return nil
