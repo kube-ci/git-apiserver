@@ -1,5 +1,5 @@
-hash: a7c578e52f063c04d011f11f1cfa4f6687039ec6b4f3474ebea5d542cc450f49
-updated: 2018-09-10T17:03:45.613815258-07:00
+hash: f81ddf10a2c8f3e678262bf0292b2db969b058fbbe22777a266d7a8196f3be70
+updated: 2018-09-10T21:36:25.646240692-07:00
 imports:
 - name: bitbucket.org/ww/goautoneg
   version: 75cd24fc2f2c2a2088577d12123ddee5f54e0675
@@ -223,14 +223,14 @@ imports:
 - name: github.com/google/btree
   version: 7d79101e329e5a3adf994758c578dab82b90c017
 - name: github.com/google/go-cmp
-  version: 2006917edc5a27cd174dbc4baba31a137d6cb9ff
+  version: 3af367b6b30c263d47e8895973edcca9a49cf029
   subpackages:
   - cmp
   - cmp/internal/diff
   - cmp/internal/function
   - cmp/internal/value
 - name: github.com/google/go-github
-  version: e48060a28fac52d0f1cb758bc8b87c07bac4a87d
+  version: 08dbadce1a0514f79ea9a9aa91b2f12ba656d5a7
   subpackages:
   - github
 - name: github.com/google/go-querystring
