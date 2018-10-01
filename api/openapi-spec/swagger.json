@@ -3900,6 +3900,7 @@
     "ci.kube.git-apiserver.apis.git.v1alpha1.RepositoryStatus": {
       "properties": {
         "observedGeneration": {
+          "description": "observedGeneration is the most recent generation observed for this resource. It corresponds to the resource's generation, which is updated on mutation by the API Server.",
           "$ref": "#/definitions/com.github.appscode.go.encoding.json.types.IntHash"
         }
       }

@@ -10,7 +10,7 @@ import (
 	crdutils "github.com/appscode/kutil/apiextensions/v1beta1"
 	"github.com/appscode/kutil/openapi"
 	"github.com/go-openapi/spec"
-		crd_api "k8s.io/apiextensions-apiserver/pkg/apis/apiextensions/v1beta1"
+	crd_api "k8s.io/apiextensions-apiserver/pkg/apis/apiextensions/v1beta1"
 	"k8s.io/apimachinery/pkg/runtime"
 	"k8s.io/apimachinery/pkg/runtime/serializer"
 	"k8s.io/kube-openapi/pkg/common"
@@ -21,7 +21,7 @@ import (
 func generateCRDDefinitions() {
 	v1alpha1.EnableStatusSubresource = true
 
-	filename := gort.GOPath() + "/src/kube.ci/git-apiserver/apis/kubedb/v1alpha1/crds.yaml"
+	filename := gort.GOPath() + "/src/kube.ci/git-apiserver/apis/git/v1alpha1/crds.yaml"
 	os.Remove(filename)
 
 	err := os.MkdirAll(filepath.Join(gort.GOPath(), "/src/kube.ci/git-apiserver/api/crds"), 0755)

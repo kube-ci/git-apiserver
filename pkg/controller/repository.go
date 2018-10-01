@@ -79,18 +79,19 @@ func (c *Controller) runRepositoryInjector(key string) error {
 			return err
 		}
 
-		// update LastObservedGeneration
-		_, err = util.UpdateRepositoryStatus(
+		// update ObservedGeneration and ObservedGenerationHash
+		if _, err := util.UpdateRepositoryStatus(
 			c.gitAPIServerClient.GitV1alpha1(),
-			repo.ObjectMeta,
+			repo,
 			func(r *api.RepositoryStatus) *api.RepositoryStatus {
 				r.ObservedGeneration = NewIntHash(repo.Generation, meta_util.GenerationHash(repo))
 				return r
 			},
-		)
-		if err != nil {
+			api.EnableStatusSubresource,
+		); err != nil {
 			return err
 		}
+
 	}
 	return nil
 }
