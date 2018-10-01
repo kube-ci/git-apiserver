@@ -12036,7 +12036,8 @@ func schema_git_apiserver_apis_git_v1alpha1_RepositoryStatus(ref common.Referenc
 				Properties: map[string]spec.Schema{
 					"observedGeneration": {
 						SchemaProps: spec.SchemaProps{
-							Ref: ref("github.com/appscode/go/encoding/json/types.IntHash"),
+							Description: "observedGeneration is the most recent generation observed for this resource. It corresponds to the resource's generation, which is updated on mutation by the API Server.",
+							Ref:         ref("github.com/appscode/go/encoding/json/types.IntHash"),
 						},
 					},
 				},

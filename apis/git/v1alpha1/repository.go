@@ -31,6 +31,9 @@ type RepositorySpec struct {
 }
 
 type RepositoryStatus struct {
+	// observedGeneration is the most recent generation observed for this resource. It corresponds to the
+	// resource's generation, which is updated on mutation by the API Server.
+	// +optional
 	ObservedGeneration *types.IntHash `json:"observedGeneration,omitempty"`
 }
 

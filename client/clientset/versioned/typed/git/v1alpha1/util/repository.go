@@ -7,6 +7,7 @@ import (
 	"github.com/appscode/go/log"
 	"github.com/appscode/kutil"
 	"github.com/evanphx/json-patch"
+	"github.com/pkg/errors"
 	kerr "k8s.io/apimachinery/pkg/api/errors"
 	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
 	"k8s.io/apimachinery/pkg/types"
@@ -81,27 +82,78 @@ func TryUpdateRepository(c cs.GitV1alpha1Interface, meta metav1.ObjectMeta, tran
 	return
 }
 
+func PatchWorkflowObject(c cs.GitV1alpha1Interface, cur, mod *api.Repository) (*api.Repository, kutil.VerbType, error) {
+	curJson, err := json.Marshal(cur)
+	if err != nil {
+		return nil, kutil.VerbUnchanged, err
+	}
+
+	modJson, err := json.Marshal(mod)
+	if err != nil {
+		return nil, kutil.VerbUnchanged, err
+	}
+
+	patch, err := jsonpatch.CreateMergePatch(curJson, modJson)
+	if err != nil {
+		return nil, kutil.VerbUnchanged, err
+	}
+	if len(patch) == 0 || string(patch) == "{}" {
+		return cur, kutil.VerbUnchanged, nil
+	}
+	log.Infof("Patching Workflow %s/%s with %s.", cur.Namespace, cur.Name, string(patch))
+	out, err := c.Repositories(cur.Namespace).Patch(cur.Name, types.MergePatchType, patch)
+	return out, kutil.VerbPatched, err
+}
+
 func UpdateRepositoryStatus(
 	c cs.GitV1alpha1Interface,
-	meta metav1.ObjectMeta,
+	in *api.Repository,
 	transform func(status *api.RepositoryStatus) *api.RepositoryStatus,
+	useSubresource ...bool,
 ) (result *api.Repository, err error) {
-	attempt := 0
-	err = wait.PollImmediate(kutil.RetryInterval, kutil.RetryTimeout, func() (bool, error) {
-		attempt++
-		cur, e2 := c.Repositories(meta.Namespace).Get(meta.Name, metav1.GetOptions{})
-		if kerr.IsNotFound(e2) {
-			return false, e2
-		} else if e2 == nil {
-			transform(&cur.Status)
-			result, e2 = c.Repositories(cur.Namespace).UpdateStatus(cur)
-			return e2 == nil, nil
-		}
-		log.Errorf("Attempt %d failed to update status of Repository %s/%s due to %v.", attempt, cur.Namespace, cur.Name, e2)
-		return false, nil
-	})
-	if err != nil {
-		err = fmt.Errorf("failed to update status of Repository %s/%s after %d attempts due to %v", meta.Namespace, meta.Name, attempt, err)
+	if len(useSubresource) > 1 {
+		return nil, errors.Errorf("invalid value passed for useSubresource: %v", useSubresource)
 	}
+	apply := func(x *api.Repository) *api.Repository {
+		out := &api.Repository{
+			TypeMeta:   x.TypeMeta,
+			ObjectMeta: x.ObjectMeta,
+			Spec:       x.Spec,
+			Status:     *transform(in.Status.DeepCopy()),
+		}
+		return out
+	}
+
+	if len(useSubresource) == 1 && useSubresource[0] {
+		attempt := 0
+		cur := in.DeepCopy()
+		err = wait.PollImmediate(kutil.RetryInterval, kutil.RetryTimeout, func() (bool, error) {
+			attempt++
+			var e2 error
+			result, e2 = c.Repositories(in.Namespace).UpdateStatus(apply(cur))
+			if kerr.IsConflict(e2) {
+				latest, e3 := c.Repositories(in.Namespace).Get(in.Name, metav1.GetOptions{})
+				switch {
+				case e3 == nil:
+					cur = latest
+					return false, nil
+				case kutil.IsRequestRetryable(e3):
+					return false, nil
+				default:
+					return false, e3
+				}
+			} else if err != nil && !kutil.IsRequestRetryable(e2) {
+				return false, e2
+			}
+			return e2 == nil, nil
+		})
+
+		if err != nil {
+			err = fmt.Errorf("failed to update status of Ingress %s/%s after %d attempts due to %v", in.Namespace, in.Name, attempt, err)
+		}
+		return
+	}
+
+	result, _, err = PatchRepositoryObject(c, in, apply(in))
 	return
 }
