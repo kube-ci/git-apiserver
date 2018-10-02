@@ -1,7 +1,7 @@
 #!/bin/bash
 set -eou pipefail
 
-crds=(repositories)
+crds=(repositories branches tags pullrequests)
 
 echo "checking kubeconfig context"
 kubectl config current-context || {
@@ -107,7 +107,7 @@ export GIT_APISERVER_UNINSTALL=0
 export GIT_APISERVER_PURGE=0
 
 export APPSCODE_ENV=${APPSCODE_ENV:-prod}
-export SCRIPT_LOCATION="curl -fsSL https://raw.githubusercontent.com/appscode/kubeci/0.7.0/"
+export SCRIPT_LOCATION="curl -fsSL https://raw.githubusercontent.com/appscode/git-apiserver/0.7.0/"
 if [ "$APPSCODE_ENV" = "dev" ]; then
   detect_tag
   export SCRIPT_LOCATION="cat "
@@ -123,23 +123,23 @@ $ONESSL semver --check='<1.9.0' $KUBE_APISERVER_VERSION || {
 $ONESSL semver --check='<1.11.0' $KUBE_APISERVER_VERSION || { export GIT_APISERVER_ENABLE_STATUS_SUBRESOURCE=true; }
 
 show_help() {
-  echo "kubeci.sh - install kubeci operator"
+  echo "git-apiserver.sh - install git-apiserver operator"
   echo " "
-  echo "kubeci.sh [options]"
+  echo "git-apiserver.sh [options]"
   echo " "
   echo "options:"
   echo "-h, --help                         show brief help"
   echo "-n, --namespace=NAMESPACE          specify namespace (default: kube-system)"
   echo "    --rbac                         create RBAC roles and bindings (default: true)"
-  echo "    --docker-registry              docker registry used to pull kubeci images (default: appscode)"
-  echo "    --image-pull-secret            name of secret used to pull kubeci operator images"
-  echo "    --run-on-master                run kubeci operator on master"
-  echo "    --enable-validating-webhook    enable/disable validating webhooks for KUBECI crds"
+  echo "    --docker-registry              docker registry used to pull git-apiserver images (default: kubeci)"
+  echo "    --image-pull-secret            name of secret used to pull git-apiserver operator images"
+  echo "    --run-on-master                run git-apiserver operator on master"
+  echo "    --enable-validating-webhook    enable/disable validating webhooks for git-apiserver crds"
   echo "    --enable-mutating-webhook      enable/disable mutating webhooks for Kubernetes workloads"
   echo "    --enable-status-subresource    If enabled, uses status sub resource for crds"
   echo "    --enable-analytics             send usage events to Google Analytics (default: true)"
-  echo "    --uninstall                    uninstall kubeci"
-  echo "    --purge                        purges kubeci crd objects and crds"
+  echo "    --uninstall                    uninstall git-apiserver"
+  echo "    --purge                        purges git-apiserver crd objects and crds"
 }
 
 while test $# -gt 0; do
@@ -228,23 +228,23 @@ done
 
 if [ "$GIT_APISERVER_UNINSTALL" -eq 1 ]; then
   # delete webhooks and apiservices
-  kubectl delete validatingwebhookconfiguration -l app=kubeci || true
-  kubectl delete mutatingwebhookconfiguration -l app=kubeci || true
-  kubectl delete apiservice -l app=kubeci
-  # delete kubeci operator
-  kubectl delete deployment -l app=kubeci --namespace $GIT_APISERVER_NAMESPACE
-  kubectl delete service -l app=kubeci --namespace $GIT_APISERVER_NAMESPACE
-  kubectl delete secret -l app=kubeci --namespace $GIT_APISERVER_NAMESPACE
+  kubectl delete validatingwebhookconfiguration -l app=git-apiserver || true
+  kubectl delete mutatingwebhookconfiguration -l app=git-apiserver || true
+  kubectl delete apiservice -l app=git-apiserver
+  # delete git-apiserver operator
+  kubectl delete deployment -l app=git-apiserver --namespace $GIT_APISERVER_NAMESPACE
+  kubectl delete service -l app=git-apiserver --namespace $GIT_APISERVER_NAMESPACE
+  kubectl delete secret -l app=git-apiserver --namespace $GIT_APISERVER_NAMESPACE
   # delete RBAC objects, if --rbac flag was used.
-  kubectl delete serviceaccount -l app=kubeci --namespace $GIT_APISERVER_NAMESPACE
-  kubectl delete clusterrolebindings -l app=kubeci
-  kubectl delete clusterrole -l app=kubeci
-  kubectl delete rolebindings -l app=kubeci --namespace $GIT_APISERVER_NAMESPACE
-  kubectl delete role -l app=kubeci --namespace $GIT_APISERVER_NAMESPACE
+  kubectl delete serviceaccount -l app=git-apiserver --namespace $GIT_APISERVER_NAMESPACE
+  kubectl delete clusterrolebindings -l app=git-apiserver
+  kubectl delete clusterrole -l app=git-apiserver
+  kubectl delete rolebindings -l app=git-apiserver --namespace $GIT_APISERVER_NAMESPACE
+  kubectl delete role -l app=git-apiserver --namespace $GIT_APISERVER_NAMESPACE
 
-  echo "waiting for kubeci operator pod to stop running"
+  echo "waiting for git-apiserver operator pod to stop running"
   for (( ; ; )); do
-    pods=($(kubectl get pods --namespace $GIT_APISERVER_NAMESPACE -l app=kubeci -o jsonpath='{range .items[*]}{.metadata.name} {end}'))
+    pods=($(kubectl get pods --namespace $GIT_APISERVER_NAMESPACE -l app=git-apiserver -o jsonpath='{range .items[*]}{.metadata.name} {end}'))
     total=${#pods[*]}
     if [ $total -eq 0 ]; then
       break
@@ -277,11 +277,11 @@ if [ "$GIT_APISERVER_UNINSTALL" -eq 1 ]; then
     done
 
     # delete user roles
-    kubectl delete clusterroles appscode:kubeci:edit appscode:kubeci:view
+    kubectl delete clusterroles appscode:git-apiserver:edit appscode:git-apiserver:view
   fi
 
   echo
-  echo "Successfully uninstalled KUBECI!"
+  echo "Successfully uninstalled GIT-APISERVER!"
   exit 0
 fi
 
@@ -304,7 +304,7 @@ if [ "$GIT_APISERVER_ENABLE_VALIDATING_WEBHOOK" = true ] || [ "$GIT_APISERVER_EN
   export GIT_APISERVER_ENABLE_APISERVER=true
 fi
 
-env | sort | grep KUBECI*
+env | sort | grep GIT_APISERVER*
 echo ""
 
 # create necessary TLS certificates:
@@ -340,21 +340,21 @@ fi
 # fi
 
 echo
-echo "waiting until kubeci operator deployment is ready"
+echo "waiting until git-apiserver operator deployment is ready"
 $ONESSL wait-until-ready deployment git-apiserver --namespace $GIT_APISERVER_NAMESPACE || {
-  echo "KUBECI operator deployment failed to be ready"
+  echo "GIT-APISERVER operator deployment failed to be ready"
   exit 1
 }
 
 if [ "$GIT_APISERVER_ENABLE_APISERVER" = true ]; then
-  echo "waiting until kubeci apiservice is available"
+  echo "waiting until git-apiserver apiservice is available"
   $ONESSL wait-until-ready apiservice v1alpha1.admission.git.kube.ci || {
-    echo "KUBECI apiservice failed to be ready"
+    echo "GIT-APISERVER apiservice failed to be ready"
     exit 1
   }
 fi
 
-echo "waiting until kubeci crds are ready"
+echo "waiting until git-apiserver crds are ready"
 for crd in "${crds[@]}"; do
   $ONESSL wait-until-ready crd ${crd}.git.kube.ci || {
     echo "$crd crd failed to be ready"
@@ -363,4 +363,4 @@ for crd in "${crds[@]}"; do
 done
 
 echo
-echo "Successfully installed KUBECI in $GIT_APISERVER_NAMESPACE namespace!"
+echo "Successfully installed GIT-APISERVER in $GIT_APISERVER_NAMESPACE namespace!"

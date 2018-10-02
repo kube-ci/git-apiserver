@@ -4,16 +4,16 @@ metadata:
   name: git-apiserver
   namespace: ${GIT_APISERVER_NAMESPACE}
   labels:
-    app: kubeci
+    app: git-apiserver
 spec:
   replicas: 1
   selector:
     matchLabels:
-      app: kubeci
+      app: git-apiserver
   template:
     metadata:
       labels:
-        app: kubeci
+        app: git-apiserver
       annotations:
         scheduler.alpha.kubernetes.io/critical-pod: ''
     spec:
@@ -55,16 +55,16 @@ spec:
         - mountPath: /var/pv
           name: data-volume
         - mountPath: /tmp
-          name: kubeci-scratchdir
+          name: git-apiserver-scratchdir
       volumes:
       - emptyDir: {}
         name: data-volume
       - emptyDir: {}
-        name: kubeci-scratchdir
+        name: git-apiserver-scratchdir
       - name: serving-cert
         secret:
           defaultMode: 420
-          secretName: kubeci-apiserver-cert
+          secretName: git-apiserver-cert
       tolerations:
       - key: CriticalAddonsOnly
         operator: Exists
@@ -73,10 +73,10 @@ spec:
 apiVersion: v1
 kind: Secret
 metadata:
-  name: kubeci-apiserver-cert
+  name: git-apiserver-cert
   namespace: ${GIT_APISERVER_NAMESPACE}
   labels:
-    app: kubeci
+    app: git-apiserver
 type: kubernetes.io/tls
 data:
   tls.crt: ${TLS_SERVING_CERT}
@@ -89,7 +89,7 @@ metadata:
   name: git-apiserver
   namespace: ${GIT_APISERVER_NAMESPACE}
   labels:
-    app: kubeci
+    app: git-apiserver
 spec:
   ports:
   - name: admission
@@ -99,4 +99,4 @@ spec:
     port: 56789
     targetPort: 56789
   selector:
-    app: kubeci
+    app: git-apiserver
