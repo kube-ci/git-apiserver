@@ -3,8 +3,13 @@ kind: ClusterRole
 metadata:
   name: git-apiserver
   labels:
-    app: kubeci
+    app: git-apiserver
 rules:
+- apiGroups:
+  - admissionregistration.k8s.io
+  resources:
+  - validatingwebhookconfigurations
+  verbs: ["delete", "list", "watch", "patch"]
 - apiGroups:
   - apiextensions.k8s.io
   resources:
@@ -82,7 +87,7 @@ kind: ClusterRoleBinding
 metadata:
   name: git-apiserver
   labels:
-    app: kubeci
+    app: git-apiserver
 roleRef:
   apiGroup: rbac.authorization.k8s.io
   kind: ClusterRole
@@ -96,10 +101,10 @@ subjects:
 apiVersion: rbac.authorization.k8s.io/v1
 kind: RoleBinding
 metadata:
-  name: kubeci-apiserver-extension-server-authentication-reader
+  name: git-apiserver-extension-server-authentication-reader
   namespace: kube-system
   labels:
-    app: kubeci
+    app: git-apiserver
 roleRef:
   kind: Role
   apiGroup: rbac.authorization.k8s.io
@@ -113,9 +118,9 @@ subjects:
 apiVersion: rbac.authorization.k8s.io/v1
 kind: ClusterRoleBinding
 metadata:
-  name: kubeci-apiserver-auth-delegator
+  name: git-apiserver-auth-delegator
   labels:
-    app: kubeci
+    app: git-apiserver
 roleRef:
   kind: ClusterRole
   apiGroup: rbac.authorization.k8s.io
@@ -124,3 +129,28 @@ subjects:
 - kind: ServiceAccount
   name: ${GIT_APISERVER_SERVICE_ACCOUNT}
   namespace: ${GIT_APISERVER_NAMESPACE}
+---
+# Give system:anonymous user access to apis/webhook.git.kube.ci/v1alpha1/githubevents path
+apiVersion: rbac.authorization.k8s.io/v1
+kind: ClusterRole
+metadata:
+  name: git-apiserver-webhook
+rules:
+- apiGroups:
+  - webhook.git.kube.ci
+  resources:
+  - githubevents
+  verbs: ["create"]
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: ClusterRoleBinding
+metadata:
+  name: git-apiserver-webhook
+roleRef:
+  apiGroup: rbac.authorization.k8s.io
+  kind: ClusterRole
+  name: git-apiserver-webhook
+subjects:
+- apiGroup: rbac.authorization.k8s.io
+  kind: User
+  name: system:anonymous

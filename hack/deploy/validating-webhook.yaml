@@ -3,7 +3,7 @@ kind: ValidatingWebhookConfiguration
 metadata:
   name: admission.git.kube.ci
   labels:
-    app: kubeci
+    app: git-apiserver
 webhooks:
 - name: repository.admission.git.kube.ci
   clientConfig:
