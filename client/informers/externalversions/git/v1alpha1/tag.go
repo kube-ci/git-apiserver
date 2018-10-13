@@ -25,7 +25,7 @@ import (
 	runtime "k8s.io/apimachinery/pkg/runtime"
 	watch "k8s.io/apimachinery/pkg/watch"
 	cache "k8s.io/client-go/tools/cache"
-	git_v1alpha1 "kube.ci/git-apiserver/apis/git/v1alpha1"
+	gitv1alpha1 "kube.ci/git-apiserver/apis/git/v1alpha1"
 	versioned "kube.ci/git-apiserver/client/clientset/versioned"
 	internalinterfaces "kube.ci/git-apiserver/client/informers/externalversions/internalinterfaces"
 	v1alpha1 "kube.ci/git-apiserver/client/listers/git/v1alpha1"
@@ -70,7 +70,7 @@ func NewFilteredTagInformer(client versioned.Interface, namespace string, resync
 				return client.GitV1alpha1().Tags(namespace).Watch(options)
 			},
 		},
-		&git_v1alpha1.Tag{},
+		&gitv1alpha1.Tag{},
 		resyncPeriod,
 		indexers,
 	)
@@ -81,7 +81,7 @@ func (f *tagInformer) defaultInformer(client versioned.Interface, resyncPeriod t
 }
 
 func (f *tagInformer) Informer() cache.SharedIndexInformer {
-	return f.factory.InformerFor(&git_v1alpha1.Tag{}, f.defaultInformer)
+	return f.factory.InformerFor(&gitv1alpha1.Tag{}, f.defaultInformer)
 }
 
 func (f *tagInformer) Lister() v1alpha1.TagLister {

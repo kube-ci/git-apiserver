@@ -242,12 +242,8 @@ func (in *RepositorySpec) DeepCopyInto(out *RepositorySpec) {
 	*out = *in
 	if in.TokenFormSecret != nil {
 		in, out := &in.TokenFormSecret, &out.TokenFormSecret
-		if *in == nil {
-			*out = nil
-		} else {
-			*out = new(string)
-			**out = **in
-		}
+		*out = new(string)
+		**out = **in
 	}
 	return
 }
@@ -267,11 +263,7 @@ func (in *RepositoryStatus) DeepCopyInto(out *RepositoryStatus) {
 	*out = *in
 	if in.ObservedGeneration != nil {
 		in, out := &in.ObservedGeneration, &out.ObservedGeneration
-		if *in == nil {
-			*out = nil
-		} else {
-			*out = (*in).DeepCopy()
-		}
+		*out = (*in).DeepCopy()
 	}
 	return
 }
