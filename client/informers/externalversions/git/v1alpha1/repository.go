@@ -25,7 +25,7 @@ import (
 	runtime "k8s.io/apimachinery/pkg/runtime"
 	watch "k8s.io/apimachinery/pkg/watch"
 	cache "k8s.io/client-go/tools/cache"
-	git_v1alpha1 "kube.ci/git-apiserver/apis/git/v1alpha1"
+	gitv1alpha1 "kube.ci/git-apiserver/apis/git/v1alpha1"
 	versioned "kube.ci/git-apiserver/client/clientset/versioned"
 	internalinterfaces "kube.ci/git-apiserver/client/informers/externalversions/internalinterfaces"
 	v1alpha1 "kube.ci/git-apiserver/client/listers/git/v1alpha1"
@@ -70,7 +70,7 @@ func NewFilteredRepositoryInformer(client versioned.Interface, namespace string,
 				return client.GitV1alpha1().Repositories(namespace).Watch(options)
 			},
 		},
-		&git_v1alpha1.Repository{},
+		&gitv1alpha1.Repository{},
 		resyncPeriod,
 		indexers,
 	)
@@ -81,7 +81,7 @@ func (f *repositoryInformer) defaultInformer(client versioned.Interface, resyncP
 }
 
 func (f *repositoryInformer) Informer() cache.SharedIndexInformer {
-	return f.factory.InformerFor(&git_v1alpha1.Repository{}, f.defaultInformer)
+	return f.factory.InformerFor(&gitv1alpha1.Repository{}, f.defaultInformer)
 }
 
 func (f *repositoryInformer) Lister() v1alpha1.RepositoryLister {
