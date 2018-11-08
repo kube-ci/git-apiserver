@@ -12,7 +12,7 @@ import (
 
 	"github.com/appscode/go/runtime"
 	"github.com/spf13/cobra/doc"
-	"kube.ci/git-apiserver/pkg/cmds"
+	"github.com/kube-ci/git-apiserver/pkg/cmds"
 )
 
 const (
@@ -22,32 +22,32 @@ const (
 var (
 	tplFrontMatter = template.Must(template.New("index").Parse(`---
 title: Reference
-description: Kubeci CLI Reference
+description: git-apiserver CLI Reference
 menu:
-  product_kubeci_{{ .Version }}:
+  product_git_apiserver_{{ .Version }}:
     identifier: reference
     name: Reference
     weight: 1000
-menu_name: product_kubeci_{{ .Version }}
+menu_name: product_git_apiserver_{{ .Version }}
 ---
 `))
 
 	_ = template.Must(tplFrontMatter.New("cmd").Parse(`---
 title: {{ .Name }}
 menu:
-  product_kubeci_{{ .Version }}:
+  product_git_apiserver_{{ .Version }}:
     identifier: {{ .ID }}
     name: {{ .Name }}
     parent: reference
 {{- if .RootCmd }}
     weight: 0
 {{ end }}
-product_name: kubeci
-menu_name: product_kubeci_{{ .Version }}
+product_name: git-apiserver
+menu_name: product_git_apiserver_{{ .Version }}
 section_menu_id: reference
 {{- if .RootCmd }}
 aliases:
-  - products/kubeci/{{ .Version }}/reference/
+  - products/git-apiserver/{{ .Version }}/reference/
 {{ end }}
 ---
 `))
@@ -56,7 +56,7 @@ aliases:
 // ref: https://github.com/spf13/cobra/blob/master/doc/md_docs.md
 func main() {
 	rootCmd := cmds.NewRootCmd()
-	dir := runtime.GOPath() + "/src/kube.ci/git-apiserver/docs/reference"
+	dir := runtime.GOPath() + "/src/github.com/kube-ci/git-apiserver/docs/reference"
 	fmt.Printf("Generating cli markdown tree in: %v\n", dir)
 	err := os.RemoveAll(dir)
 	if err != nil {

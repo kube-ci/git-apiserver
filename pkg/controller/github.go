@@ -8,16 +8,16 @@ import (
 	"github.com/appscode/go/log"
 	"github.com/appscode/go/types"
 	"github.com/google/go-github/github"
+	api "github.com/kube-ci/git-apiserver/apis/git/v1alpha1"
+	repo_v1alpha1 "github.com/kube-ci/git-apiserver/apis/git/v1alpha1"
+	"github.com/kube-ci/git-apiserver/apis/webhook/v1alpha1"
+	"github.com/kube-ci/git-apiserver/client/clientset/versioned/typed/git/v1alpha1/util"
 	"golang.org/x/oauth2"
 	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
 	"k8s.io/apimachinery/pkg/labels"
 	"k8s.io/apimachinery/pkg/runtime"
 	"k8s.io/apimachinery/pkg/runtime/schema"
 	"k8s.io/apiserver/pkg/registry/rest"
-	api "kube.ci/git-apiserver/apis/git/v1alpha1"
-	repo_v1alpha1 "kube.ci/git-apiserver/apis/git/v1alpha1"
-	"kube.ci/git-apiserver/apis/webhook/v1alpha1"
-	"kube.ci/git-apiserver/client/clientset/versioned/typed/git/v1alpha1/util"
 )
 
 type GithubREST struct {

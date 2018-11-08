@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
 set -xe
 
-REPO=${GOPATH}/src/kube.ci/git-apiserver
+REPO=${GOPATH}/src/github.com/kube-ci/git-apiserver
 pushd ${REPO}
 
 export APPSCODE_ENV=dev

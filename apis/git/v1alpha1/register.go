@@ -1,10 +1,10 @@
 package v1alpha1
 
 import (
+	"github.com/kube-ci/git-apiserver/apis/git"
 	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
 	"k8s.io/apimachinery/pkg/runtime"
 	"k8s.io/apimachinery/pkg/runtime/schema"
-	"kube.ci/git-apiserver/apis/git"
 )
 
 var SchemeGroupVersion = schema.GroupVersion{Group: git.GroupName, Version: "v1alpha1"}

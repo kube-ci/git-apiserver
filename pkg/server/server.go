@@ -6,6 +6,10 @@ import (
 
 	hooks "github.com/appscode/kubernetes-webhook-util/admission/v1beta1"
 	admissionreview "github.com/appscode/kubernetes-webhook-util/registry/admissionreview/v1beta1"
+	"github.com/kube-ci/git-apiserver/apis/webhook"
+	"github.com/kube-ci/git-apiserver/apis/webhook/install"
+	"github.com/kube-ci/git-apiserver/apis/webhook/v1alpha1"
+	"github.com/kube-ci/git-apiserver/pkg/controller"
 	admission "k8s.io/api/admission/v1beta1"
 	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
 	"k8s.io/apimachinery/pkg/runtime"
@@ -14,10 +18,6 @@ import (
 	"k8s.io/apimachinery/pkg/version"
 	"k8s.io/apiserver/pkg/registry/rest"
 	genericapiserver "k8s.io/apiserver/pkg/server"
-	"kube.ci/git-apiserver/apis/webhook"
-	"kube.ci/git-apiserver/apis/webhook/install"
-	"kube.ci/git-apiserver/apis/webhook/v1alpha1"
-	"kube.ci/git-apiserver/pkg/controller"
 )
 
 var (

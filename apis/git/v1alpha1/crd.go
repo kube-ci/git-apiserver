@@ -30,7 +30,7 @@ func (c Repository) CustomResourceDefinition() *apiextensions.CustomResourceDefi
 		Labels: crdutils.Labels{
 			LabelsMap: map[string]string{"app": "kubeci"},
 		},
-		SpecDefinitionName:      "kube.ci/git-apiserver/apis/git/v1alpha1.Repository",
+		SpecDefinitionName:      "github.com/kube-ci/git-apiserver/apis/git/v1alpha1.Repository",
 		EnableValidation:        true,
 		GetOpenAPIDefinitions:   GetOpenAPIDefinitions,
 		EnableStatusSubresource: EnableStatusSubresource,
@@ -56,7 +56,7 @@ func (c Branch) CustomResourceDefinition() *apiextensions.CustomResourceDefiniti
 		Labels: crdutils.Labels{
 			LabelsMap: map[string]string{"app": "kubeci"},
 		},
-		SpecDefinitionName:      "kube.ci/git-apiserver/apis/git/v1alpha1.Branch",
+		SpecDefinitionName:      "github.com/kube-ci/git-apiserver/apis/git/v1alpha1.Branch",
 		EnableValidation:        true,
 		GetOpenAPIDefinitions:   GetOpenAPIDefinitions,
 		EnableStatusSubresource: EnableStatusSubresource,
@@ -82,7 +82,7 @@ func (c Tag) CustomResourceDefinition() *apiextensions.CustomResourceDefinition 
 		Labels: crdutils.Labels{
 			LabelsMap: map[string]string{"app": "kubeci"},
 		},
-		SpecDefinitionName:      "kube.ci/git-apiserver/apis/git/v1alpha1.Tag",
+		SpecDefinitionName:      "github.com/kube-ci/git-apiserver/apis/git/v1alpha1.Tag",
 		EnableValidation:        true,
 		GetOpenAPIDefinitions:   GetOpenAPIDefinitions,
 		EnableStatusSubresource: EnableStatusSubresource,
@@ -108,7 +108,7 @@ func (c PullRequest) CustomResourceDefinition() *apiextensions.CustomResourceDef
 		Labels: crdutils.Labels{
 			LabelsMap: map[string]string{"app": "kubeci"},
 		},
-		SpecDefinitionName:      "kube.ci/git-apiserver/apis/git/v1alpha1.PullRequest",
+		SpecDefinitionName:      "github.com/kube-ci/git-apiserver/apis/git/v1alpha1.PullRequest",
 		EnableValidation:        true,
 		GetOpenAPIDefinitions:   GetOpenAPIDefinitions,
 		EnableStatusSubresource: EnableStatusSubresource,

@@ -2,7 +2,7 @@
 set -xe
 
 GOPATH=$(go env GOPATH)
-REPO_ROOT="$GOPATH/src/kube.ci/git-apiserver"
+REPO_ROOT="$GOPATH/src/github.com/kube-ci/git-apiserver"
 
 pushd $REPO_ROOT
 

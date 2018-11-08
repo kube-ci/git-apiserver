@@ -19,10 +19,10 @@ limitations under the License.
 package v1alpha1
 
 import (
+	v1alpha1 "github.com/kube-ci/git-apiserver/apis/webhook/v1alpha1"
+	"github.com/kube-ci/git-apiserver/client/clientset/versioned/scheme"
 	serializer "k8s.io/apimachinery/pkg/runtime/serializer"
 	rest "k8s.io/client-go/rest"
-	v1alpha1 "kube.ci/git-apiserver/apis/webhook/v1alpha1"
-	"kube.ci/git-apiserver/client/clientset/versioned/scheme"
 )
 
 type WebhookV1alpha1Interface interface {

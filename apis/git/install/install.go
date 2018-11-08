@@ -17,9 +17,9 @@ limitations under the License.
 package install
 
 import (
+	"github.com/kube-ci/git-apiserver/apis/git/v1alpha1"
 	"k8s.io/apimachinery/pkg/runtime"
 	utilruntime "k8s.io/apimachinery/pkg/util/runtime"
-	"kube.ci/git-apiserver/apis/git/v1alpha1"
 )
 
 // Install registers the API group and adds types to a scheme
