@@ -128,7 +128,7 @@
           "200": {
             "description": "OK",
             "schema": {
-              "$ref": "#/definitions/ci.kube.git-apiserver.apis.git.v1alpha1.BranchList"
+              "$ref": "#/definitions/com.github.kube-ci.git-apiserver.apis.git.v1alpha1.BranchList"
             }
           }
         },
@@ -287,7 +287,7 @@
           "200": {
             "description": "OK",
             "schema": {
-              "$ref": "#/definitions/ci.kube.git-apiserver.apis.git.v1alpha1.BranchList"
+              "$ref": "#/definitions/com.github.kube-ci.git-apiserver.apis.git.v1alpha1.BranchList"
             }
           }
         },
@@ -321,7 +321,7 @@
             "in": "body",
             "required": true,
             "schema": {
-              "$ref": "#/definitions/ci.kube.git-apiserver.apis.git.v1alpha1.Branch"
+              "$ref": "#/definitions/com.github.kube-ci.git-apiserver.apis.git.v1alpha1.Branch"
             }
           }
         ],
@@ -329,19 +329,19 @@
           "200": {
             "description": "OK",
             "schema": {
-              "$ref": "#/definitions/ci.kube.git-apiserver.apis.git.v1alpha1.Branch"
+              "$ref": "#/definitions/com.github.kube-ci.git-apiserver.apis.git.v1alpha1.Branch"
             }
           },
           "201": {
             "description": "Created",
             "schema": {
-              "$ref": "#/definitions/ci.kube.git-apiserver.apis.git.v1alpha1.Branch"
+              "$ref": "#/definitions/com.github.kube-ci.git-apiserver.apis.git.v1alpha1.Branch"
             }
           },
           "202": {
             "description": "Accepted",
             "schema": {
-              "$ref": "#/definitions/ci.kube.git-apiserver.apis.git.v1alpha1.Branch"
+              "$ref": "#/definitions/com.github.kube-ci.git-apiserver.apis.git.v1alpha1.Branch"
             }
           }
         },
@@ -482,7 +482,7 @@
           "200": {
             "description": "OK",
             "schema": {
-              "$ref": "#/definitions/ci.kube.git-apiserver.apis.git.v1alpha1.Branch"
+              "$ref": "#/definitions/com.github.kube-ci.git-apiserver.apis.git.v1alpha1.Branch"
             }
           }
         },
@@ -516,7 +516,7 @@
             "in": "body",
             "required": true,
             "schema": {
-              "$ref": "#/definitions/ci.kube.git-apiserver.apis.git.v1alpha1.Branch"
+              "$ref": "#/definitions/com.github.kube-ci.git-apiserver.apis.git.v1alpha1.Branch"
             }
           }
         ],
@@ -524,13 +524,13 @@
           "200": {
             "description": "OK",
             "schema": {
-              "$ref": "#/definitions/ci.kube.git-apiserver.apis.git.v1alpha1.Branch"
+              "$ref": "#/definitions/com.github.kube-ci.git-apiserver.apis.git.v1alpha1.Branch"
             }
           },
           "201": {
             "description": "Created",
             "schema": {
-              "$ref": "#/definitions/ci.kube.git-apiserver.apis.git.v1alpha1.Branch"
+              "$ref": "#/definitions/com.github.kube-ci.git-apiserver.apis.git.v1alpha1.Branch"
             }
           }
         },
@@ -650,7 +650,7 @@
           "200": {
             "description": "OK",
             "schema": {
-              "$ref": "#/definitions/ci.kube.git-apiserver.apis.git.v1alpha1.Branch"
+              "$ref": "#/definitions/com.github.kube-ci.git-apiserver.apis.git.v1alpha1.Branch"
             }
           }
         },
@@ -769,7 +769,7 @@
           "200": {
             "description": "OK",
             "schema": {
-              "$ref": "#/definitions/ci.kube.git-apiserver.apis.git.v1alpha1.PullRequestList"
+              "$ref": "#/definitions/com.github.kube-ci.git-apiserver.apis.git.v1alpha1.PullRequestList"
             }
           }
         },
@@ -803,7 +803,7 @@
             "in": "body",
             "required": true,
             "schema": {
-              "$ref": "#/definitions/ci.kube.git-apiserver.apis.git.v1alpha1.PullRequest"
+              "$ref": "#/definitions/com.github.kube-ci.git-apiserver.apis.git.v1alpha1.PullRequest"
             }
           }
         ],
@@ -811,19 +811,19 @@
           "200": {
             "description": "OK",
             "schema": {
-              "$ref": "#/definitions/ci.kube.git-apiserver.apis.git.v1alpha1.PullRequest"
+              "$ref": "#/definitions/com.github.kube-ci.git-apiserver.apis.git.v1alpha1.PullRequest"
             }
           },
           "201": {
             "description": "Created",
             "schema": {
-              "$ref": "#/definitions/ci.kube.git-apiserver.apis.git.v1alpha1.PullRequest"
+              "$ref": "#/definitions/com.github.kube-ci.git-apiserver.apis.git.v1alpha1.PullRequest"
             }
           },
           "202": {
             "description": "Accepted",
             "schema": {
-              "$ref": "#/definitions/ci.kube.git-apiserver.apis.git.v1alpha1.PullRequest"
+              "$ref": "#/definitions/com.github.kube-ci.git-apiserver.apis.git.v1alpha1.PullRequest"
             }
           }
         },
@@ -964,7 +964,7 @@
           "200": {
             "description": "OK",
             "schema": {
-              "$ref": "#/definitions/ci.kube.git-apiserver.apis.git.v1alpha1.PullRequest"
+              "$ref": "#/definitions/com.github.kube-ci.git-apiserver.apis.git.v1alpha1.PullRequest"
             }
           }
         },
@@ -998,7 +998,7 @@
             "in": "body",
             "required": true,
             "schema": {
-              "$ref": "#/definitions/ci.kube.git-apiserver.apis.git.v1alpha1.PullRequest"
+              "$ref": "#/definitions/com.github.kube-ci.git-apiserver.apis.git.v1alpha1.PullRequest"
             }
           }
         ],
@@ -1006,13 +1006,13 @@
           "200": {
             "description": "OK",
             "schema": {
-              "$ref": "#/definitions/ci.kube.git-apiserver.apis.git.v1alpha1.PullRequest"
+              "$ref": "#/definitions/com.github.kube-ci.git-apiserver.apis.git.v1alpha1.PullRequest"
             }
           },
           "201": {
             "description": "Created",
             "schema": {
-              "$ref": "#/definitions/ci.kube.git-apiserver.apis.git.v1alpha1.PullRequest"
+              "$ref": "#/definitions/com.github.kube-ci.git-apiserver.apis.git.v1alpha1.PullRequest"
             }
           }
         },
@@ -1132,7 +1132,7 @@
           "200": {
             "description": "OK",
             "schema": {
-              "$ref": "#/definitions/ci.kube.git-apiserver.apis.git.v1alpha1.PullRequest"
+              "$ref": "#/definitions/com.github.kube-ci.git-apiserver.apis.git.v1alpha1.PullRequest"
             }
           }
         },
@@ -1251,7 +1251,7 @@
           "200": {
             "description": "OK",
             "schema": {
-              "$ref": "#/definitions/ci.kube.git-apiserver.apis.git.v1alpha1.RepositoryList"
+              "$ref": "#/definitions/com.github.kube-ci.git-apiserver.apis.git.v1alpha1.RepositoryList"
             }
           }
         },
@@ -1285,7 +1285,7 @@
             "in": "body",
             "required": true,
             "schema": {
-              "$ref": "#/definitions/ci.kube.git-apiserver.apis.git.v1alpha1.Repository"
+              "$ref": "#/definitions/com.github.kube-ci.git-apiserver.apis.git.v1alpha1.Repository"
             }
           }
         ],
@@ -1293,19 +1293,19 @@
           "200": {
             "description": "OK",
             "schema": {
-              "$ref": "#/definitions/ci.kube.git-apiserver.apis.git.v1alpha1.Repository"
+              "$ref": "#/definitions/com.github.kube-ci.git-apiserver.apis.git.v1alpha1.Repository"
             }
           },
           "201": {
             "description": "Created",
             "schema": {
-              "$ref": "#/definitions/ci.kube.git-apiserver.apis.git.v1alpha1.Repository"
+              "$ref": "#/definitions/com.github.kube-ci.git-apiserver.apis.git.v1alpha1.Repository"
             }
           },
           "202": {
             "description": "Accepted",
             "schema": {
-              "$ref": "#/definitions/ci.kube.git-apiserver.apis.git.v1alpha1.Repository"
+              "$ref": "#/definitions/com.github.kube-ci.git-apiserver.apis.git.v1alpha1.Repository"
             }
           }
         },
@@ -1446,7 +1446,7 @@
           "200": {
             "description": "OK",
             "schema": {
-              "$ref": "#/definitions/ci.kube.git-apiserver.apis.git.v1alpha1.Repository"
+              "$ref": "#/definitions/com.github.kube-ci.git-apiserver.apis.git.v1alpha1.Repository"
             }
           }
         },
@@ -1480,7 +1480,7 @@
             "in": "body",
             "required": true,
             "schema": {
-              "$ref": "#/definitions/ci.kube.git-apiserver.apis.git.v1alpha1.Repository"
+              "$ref": "#/definitions/com.github.kube-ci.git-apiserver.apis.git.v1alpha1.Repository"
             }
           }
         ],
@@ -1488,13 +1488,13 @@
           "200": {
             "description": "OK",
             "schema": {
-              "$ref": "#/definitions/ci.kube.git-apiserver.apis.git.v1alpha1.Repository"
+              "$ref": "#/definitions/com.github.kube-ci.git-apiserver.apis.git.v1alpha1.Repository"
             }
           },
           "201": {
             "description": "Created",
             "schema": {
-              "$ref": "#/definitions/ci.kube.git-apiserver.apis.git.v1alpha1.Repository"
+              "$ref": "#/definitions/com.github.kube-ci.git-apiserver.apis.git.v1alpha1.Repository"
             }
           }
         },
@@ -1614,7 +1614,7 @@
           "200": {
             "description": "OK",
             "schema": {
-              "$ref": "#/definitions/ci.kube.git-apiserver.apis.git.v1alpha1.Repository"
+              "$ref": "#/definitions/com.github.kube-ci.git-apiserver.apis.git.v1alpha1.Repository"
             }
           }
         },
@@ -1733,7 +1733,7 @@
           "200": {
             "description": "OK",
             "schema": {
-              "$ref": "#/definitions/ci.kube.git-apiserver.apis.git.v1alpha1.TagList"
+              "$ref": "#/definitions/com.github.kube-ci.git-apiserver.apis.git.v1alpha1.TagList"
             }
           }
         },
@@ -1767,7 +1767,7 @@
             "in": "body",
             "required": true,
             "schema": {
-              "$ref": "#/definitions/ci.kube.git-apiserver.apis.git.v1alpha1.Tag"
+              "$ref": "#/definitions/com.github.kube-ci.git-apiserver.apis.git.v1alpha1.Tag"
             }
           }
         ],
@@ -1775,19 +1775,19 @@
           "200": {
             "description": "OK",
             "schema": {
-              "$ref": "#/definitions/ci.kube.git-apiserver.apis.git.v1alpha1.Tag"
+              "$ref": "#/definitions/com.github.kube-ci.git-apiserver.apis.git.v1alpha1.Tag"
             }
           },
           "201": {
             "description": "Created",
             "schema": {
-              "$ref": "#/definitions/ci.kube.git-apiserver.apis.git.v1alpha1.Tag"
+              "$ref": "#/definitions/com.github.kube-ci.git-apiserver.apis.git.v1alpha1.Tag"
             }
           },
           "202": {
             "description": "Accepted",
             "schema": {
-              "$ref": "#/definitions/ci.kube.git-apiserver.apis.git.v1alpha1.Tag"
+              "$ref": "#/definitions/com.github.kube-ci.git-apiserver.apis.git.v1alpha1.Tag"
             }
           }
         },
@@ -1928,7 +1928,7 @@
           "200": {
             "description": "OK",
             "schema": {
-              "$ref": "#/definitions/ci.kube.git-apiserver.apis.git.v1alpha1.Tag"
+              "$ref": "#/definitions/com.github.kube-ci.git-apiserver.apis.git.v1alpha1.Tag"
             }
           }
         },
@@ -1962,7 +1962,7 @@
             "in": "body",
             "required": true,
             "schema": {
-              "$ref": "#/definitions/ci.kube.git-apiserver.apis.git.v1alpha1.Tag"
+              "$ref": "#/definitions/com.github.kube-ci.git-apiserver.apis.git.v1alpha1.Tag"
             }
           }
         ],
@@ -1970,13 +1970,13 @@
           "200": {
             "description": "OK",
             "schema": {
-              "$ref": "#/definitions/ci.kube.git-apiserver.apis.git.v1alpha1.Tag"
+              "$ref": "#/definitions/com.github.kube-ci.git-apiserver.apis.git.v1alpha1.Tag"
             }
           },
           "201": {
             "description": "Created",
             "schema": {
-              "$ref": "#/definitions/ci.kube.git-apiserver.apis.git.v1alpha1.Tag"
+              "$ref": "#/definitions/com.github.kube-ci.git-apiserver.apis.git.v1alpha1.Tag"
             }
           }
         },
@@ -2096,7 +2096,7 @@
           "200": {
             "description": "OK",
             "schema": {
-              "$ref": "#/definitions/ci.kube.git-apiserver.apis.git.v1alpha1.Tag"
+              "$ref": "#/definitions/com.github.kube-ci.git-apiserver.apis.git.v1alpha1.Tag"
             }
           }
         },
@@ -2157,7 +2157,7 @@
           "200": {
             "description": "OK",
             "schema": {
-              "$ref": "#/definitions/ci.kube.git-apiserver.apis.git.v1alpha1.PullRequestList"
+              "$ref": "#/definitions/com.github.kube-ci.git-apiserver.apis.git.v1alpha1.PullRequestList"
             }
           }
         },
@@ -2258,7 +2258,7 @@
           "200": {
             "description": "OK",
             "schema": {
-              "$ref": "#/definitions/ci.kube.git-apiserver.apis.git.v1alpha1.RepositoryList"
+              "$ref": "#/definitions/com.github.kube-ci.git-apiserver.apis.git.v1alpha1.RepositoryList"
             }
           }
         },
@@ -2359,7 +2359,7 @@
           "200": {
             "description": "OK",
             "schema": {
-              "$ref": "#/definitions/ci.kube.git-apiserver.apis.git.v1alpha1.TagList"
+              "$ref": "#/definitions/com.github.kube-ci.git-apiserver.apis.git.v1alpha1.TagList"
             }
           }
         },
@@ -3746,7 +3746,11 @@
     }
   },
   "definitions": {
-    "ci.kube.git-apiserver.apis.git.v1alpha1.Branch": {
+    "com.github.appscode.go.encoding.json.types.IntHash": {
+      "description": "IntHash represents as int64 Generation and string Hash. It is json serialized into \u003cint64\u003e$\u003chash_string\u003e.",
+      "type": "string"
+    },
+    "com.github.kube-ci.git-apiserver.apis.git.v1alpha1.Branch": {
       "properties": {
         "apiVersion": {
           "description": "APIVersion defines the versioned schema of this representation of an object. Servers should convert recognized schemas to the latest internal value, and may reject unrecognized values. More info: https://git.k8s.io/community/contributors/devel/api-conventions.md#resources",
@@ -3760,7 +3764,7 @@
           "$ref": "#/definitions/io.k8s.apimachinery.pkg.apis.meta.v1.ObjectMeta"
         },
         "spec": {
-          "$ref": "#/definitions/ci.kube.git-apiserver.apis.git.v1alpha1.BranchSpec"
+          "$ref": "#/definitions/com.github.kube-ci.git-apiserver.apis.git.v1alpha1.BranchSpec"
         }
       },
       "x-kubernetes-group-version-kind": [
@@ -3771,7 +3775,7 @@
         }
       ]
     },
-    "ci.kube.git-apiserver.apis.git.v1alpha1.BranchList": {
+    "com.github.kube-ci.git-apiserver.apis.git.v1alpha1.BranchList": {
       "properties": {
         "apiVersion": {
           "description": "APIVersion defines the versioned schema of this representation of an object. Servers should convert recognized schemas to the latest internal value, and may reject unrecognized values. More info: https://git.k8s.io/community/contributors/devel/api-conventions.md#resources",
@@ -3780,7 +3784,7 @@
         "items": {
           "type": "array",
           "items": {
-            "$ref": "#/definitions/ci.kube.git-apiserver.apis.git.v1alpha1.Branch"
+            "$ref": "#/definitions/com.github.kube-ci.git-apiserver.apis.git.v1alpha1.Branch"
           }
         },
         "kind": {
@@ -3799,14 +3803,14 @@
         }
       ]
     },
-    "ci.kube.git-apiserver.apis.git.v1alpha1.BranchSpec": {
+    "com.github.kube-ci.git-apiserver.apis.git.v1alpha1.BranchSpec": {
       "properties": {
         "lastCommitHash": {
           "type": "string"
         }
       }
     },
-    "ci.kube.git-apiserver.apis.git.v1alpha1.PullRequest": {
+    "com.github.kube-ci.git-apiserver.apis.git.v1alpha1.PullRequest": {
       "properties": {
         "apiVersion": {
           "description": "APIVersion defines the versioned schema of this representation of an object. Servers should convert recognized schemas to the latest internal value, and may reject unrecognized values. More info: https://git.k8s.io/community/contributors/devel/api-conventions.md#resources",
@@ -3820,7 +3824,7 @@
           "$ref": "#/definitions/io.k8s.apimachinery.pkg.apis.meta.v1.ObjectMeta"
         },
         "spec": {
-          "$ref": "#/definitions/ci.kube.git-apiserver.apis.git.v1alpha1.PullRequestSpec"
+          "$ref": "#/definitions/com.github.kube-ci.git-apiserver.apis.git.v1alpha1.PullRequestSpec"
         }
       },
       "x-kubernetes-group-version-kind": [
@@ -3831,7 +3835,7 @@
         }
       ]
     },
-    "ci.kube.git-apiserver.apis.git.v1alpha1.PullRequestList": {
+    "com.github.kube-ci.git-apiserver.apis.git.v1alpha1.PullRequestList": {
       "properties": {
         "apiVersion": {
           "description": "APIVersion defines the versioned schema of this representation of an object. Servers should convert recognized schemas to the latest internal value, and may reject unrecognized values. More info: https://git.k8s.io/community/contributors/devel/api-conventions.md#resources",
@@ -3840,7 +3844,7 @@
         "items": {
           "type": "array",
           "items": {
-            "$ref": "#/definitions/ci.kube.git-apiserver.apis.git.v1alpha1.PullRequest"
+            "$ref": "#/definitions/com.github.kube-ci.git-apiserver.apis.git.v1alpha1.PullRequest"
           }
         },
         "kind": {
@@ -3859,7 +3863,7 @@
         }
       ]
     },
-    "ci.kube.git-apiserver.apis.git.v1alpha1.PullRequestSpec": {
+    "com.github.kube-ci.git-apiserver.apis.git.v1alpha1.PullRequestSpec": {
       "properties": {
         "headRef": {
           "type": "string"
@@ -3873,7 +3877,7 @@
         }
       }
     },
-    "ci.kube.git-apiserver.apis.git.v1alpha1.Repository": {
+    "com.github.kube-ci.git-apiserver.apis.git.v1alpha1.Repository": {
       "properties": {
         "apiVersion": {
           "description": "APIVersion defines the versioned schema of this representation of an object. Servers should convert recognized schemas to the latest internal value, and may reject unrecognized values. More info: https://git.k8s.io/community/contributors/devel/api-conventions.md#resources",
@@ -3887,10 +3891,10 @@
           "$ref": "#/definitions/io.k8s.apimachinery.pkg.apis.meta.v1.ObjectMeta"
         },
         "spec": {
-          "$ref": "#/definitions/ci.kube.git-apiserver.apis.git.v1alpha1.RepositorySpec"
+          "$ref": "#/definitions/com.github.kube-ci.git-apiserver.apis.git.v1alpha1.RepositorySpec"
         },
         "status": {
-          "$ref": "#/definitions/ci.kube.git-apiserver.apis.git.v1alpha1.RepositoryStatus"
+          "$ref": "#/definitions/com.github.kube-ci.git-apiserver.apis.git.v1alpha1.RepositoryStatus"
         }
       },
       "x-kubernetes-group-version-kind": [
@@ -3901,7 +3905,7 @@
         }
       ]
     },
-    "ci.kube.git-apiserver.apis.git.v1alpha1.RepositoryList": {
+    "com.github.kube-ci.git-apiserver.apis.git.v1alpha1.RepositoryList": {
       "properties": {
         "apiVersion": {
           "description": "APIVersion defines the versioned schema of this representation of an object. Servers should convert recognized schemas to the latest internal value, and may reject unrecognized values. More info: https://git.k8s.io/community/contributors/devel/api-conventions.md#resources",
@@ -3910,7 +3914,7 @@
         "items": {
           "type": "array",
           "items": {
-            "$ref": "#/definitions/ci.kube.git-apiserver.apis.git.v1alpha1.Repository"
+            "$ref": "#/definitions/com.github.kube-ci.git-apiserver.apis.git.v1alpha1.Repository"
           }
         },
         "kind": {
@@ -3929,7 +3933,7 @@
         }
       ]
     },
-    "ci.kube.git-apiserver.apis.git.v1alpha1.RepositorySpec": {
+    "com.github.kube-ci.git-apiserver.apis.git.v1alpha1.RepositorySpec": {
       "properties": {
         "cloneUrl": {
           "type": "string"
@@ -3949,7 +3953,7 @@
         }
       }
     },
-    "ci.kube.git-apiserver.apis.git.v1alpha1.RepositoryStatus": {
+    "com.github.kube-ci.git-apiserver.apis.git.v1alpha1.RepositoryStatus": {
       "properties": {
         "observedGeneration": {
           "description": "observedGeneration is the most recent generation observed for this resource. It corresponds to the resource's generation, which is updated on mutation by the API Server.",
@@ -3957,7 +3961,7 @@
         }
       }
     },
-    "ci.kube.git-apiserver.apis.git.v1alpha1.Tag": {
+    "com.github.kube-ci.git-apiserver.apis.git.v1alpha1.Tag": {
       "properties": {
         "apiVersion": {
           "description": "APIVersion defines the versioned schema of this representation of an object. Servers should convert recognized schemas to the latest internal value, and may reject unrecognized values. More info: https://git.k8s.io/community/contributors/devel/api-conventions.md#resources",
@@ -3971,7 +3975,7 @@
           "$ref": "#/definitions/io.k8s.apimachinery.pkg.apis.meta.v1.ObjectMeta"
         },
         "spec": {
-          "$ref": "#/definitions/ci.kube.git-apiserver.apis.git.v1alpha1.TagSpec"
+          "$ref": "#/definitions/com.github.kube-ci.git-apiserver.apis.git.v1alpha1.TagSpec"
         }
       },
       "x-kubernetes-group-version-kind": [
@@ -3982,7 +3986,7 @@
         }
       ]
     },
-    "ci.kube.git-apiserver.apis.git.v1alpha1.TagList": {
+    "com.github.kube-ci.git-apiserver.apis.git.v1alpha1.TagList": {
       "properties": {
         "apiVersion": {
           "description": "APIVersion defines the versioned schema of this representation of an object. Servers should convert recognized schemas to the latest internal value, and may reject unrecognized values. More info: https://git.k8s.io/community/contributors/devel/api-conventions.md#resources",
@@ -3991,7 +3995,7 @@
         "items": {
           "type": "array",
           "items": {
-            "$ref": "#/definitions/ci.kube.git-apiserver.apis.git.v1alpha1.Tag"
+            "$ref": "#/definitions/com.github.kube-ci.git-apiserver.apis.git.v1alpha1.Tag"
           }
         },
         "kind": {
@@ -4010,16 +4014,12 @@
         }
       ]
     },
-    "ci.kube.git-apiserver.apis.git.v1alpha1.TagSpec": {
+    "com.github.kube-ci.git-apiserver.apis.git.v1alpha1.TagSpec": {
       "properties": {
         "lastCommitHash": {
           "type": "string"
         }
       }
-    },
-    "com.github.appscode.go.encoding.json.types.IntHash": {
-      "description": "IntHash represents as int64 Generation and string Hash. It is json serialized into \u003cint64\u003e$\u003chash_string\u003e.",
-      "type": "string"
     },
     "io.k8s.apimachinery.pkg.apis.meta.v1.APIGroup": {
       "description": "APIGroup contains the name, the supported versions, and the preferred version of a group.",

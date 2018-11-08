@@ -19,10 +19,10 @@ limitations under the License.
 package versioned
 
 import (
+	gitv1alpha1 "github.com/kube-ci/git-apiserver/client/clientset/versioned/typed/git/v1alpha1"
 	discovery "k8s.io/client-go/discovery"
 	rest "k8s.io/client-go/rest"
 	flowcontrol "k8s.io/client-go/util/flowcontrol"
-	gitv1alpha1 "kube.ci/git-apiserver/client/clientset/versioned/typed/git/v1alpha1"
 )
 
 type Interface interface {

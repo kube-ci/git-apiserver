@@ -6,6 +6,10 @@ import (
 	"github.com/appscode/go/log"
 	crdutils "github.com/appscode/kutil/apiextensions/v1beta1"
 	"github.com/appscode/kutil/tools/queue"
+	api "github.com/kube-ci/git-apiserver/apis/git/v1alpha1"
+	cs "github.com/kube-ci/git-apiserver/client/clientset/versioned"
+	git_apiserver_informers "github.com/kube-ci/git-apiserver/client/informers/externalversions"
+	git_apiserver_listers "github.com/kube-ci/git-apiserver/client/listers/git/v1alpha1"
 	crd_api "k8s.io/apiextensions-apiserver/pkg/apis/apiextensions/v1beta1"
 	crd_cs "k8s.io/apiextensions-apiserver/pkg/client/clientset/clientset/typed/apiextensions/v1beta1"
 	"k8s.io/apimachinery/pkg/util/runtime"
@@ -13,10 +17,6 @@ import (
 	"k8s.io/client-go/kubernetes"
 	"k8s.io/client-go/tools/cache"
 	"k8s.io/client-go/tools/record"
-	api "kube.ci/git-apiserver/apis/git/v1alpha1"
-	cs "kube.ci/git-apiserver/client/clientset/versioned"
-	git_apiserver_informers "kube.ci/git-apiserver/client/informers/externalversions"
-	git_apiserver_listers "kube.ci/git-apiserver/client/listers/git/v1alpha1"
 )
 
 type Controller struct {

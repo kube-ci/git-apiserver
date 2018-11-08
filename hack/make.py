@@ -35,7 +35,7 @@ import subprocess
 import sys
 from os.path import expandvars, join, dirname
 
-libbuild.REPO_ROOT = libbuild.GOPATH + '/src/kube.ci/git-apiserver'
+libbuild.REPO_ROOT = libbuild.GOPATH + '/src/github.com/kube-ci/git-apiserver'
 BUILD_METADATA = libbuild.metadata(libbuild.REPO_ROOT)
 libbuild.BIN_MATRIX = {
     'git-apiserver': {

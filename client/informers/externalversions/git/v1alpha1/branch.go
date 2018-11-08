@@ -21,14 +21,14 @@ package v1alpha1
 import (
 	time "time"
 
+	gitv1alpha1 "github.com/kube-ci/git-apiserver/apis/git/v1alpha1"
+	versioned "github.com/kube-ci/git-apiserver/client/clientset/versioned"
+	internalinterfaces "github.com/kube-ci/git-apiserver/client/informers/externalversions/internalinterfaces"
+	v1alpha1 "github.com/kube-ci/git-apiserver/client/listers/git/v1alpha1"
 	v1 "k8s.io/apimachinery/pkg/apis/meta/v1"
 	runtime "k8s.io/apimachinery/pkg/runtime"
 	watch "k8s.io/apimachinery/pkg/watch"
 	cache "k8s.io/client-go/tools/cache"
-	gitv1alpha1 "kube.ci/git-apiserver/apis/git/v1alpha1"
-	versioned "kube.ci/git-apiserver/client/clientset/versioned"
-	internalinterfaces "kube.ci/git-apiserver/client/informers/externalversions/internalinterfaces"
-	v1alpha1 "kube.ci/git-apiserver/client/listers/git/v1alpha1"
 )
 
 // BranchInformer provides access to a shared informer and lister for

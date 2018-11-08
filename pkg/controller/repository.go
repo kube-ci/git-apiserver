@@ -11,14 +11,14 @@ import (
 	webhook "github.com/appscode/kubernetes-webhook-util/admission/v1beta1/generic"
 	meta_util "github.com/appscode/kutil/meta"
 	"github.com/appscode/kutil/tools/queue"
+	"github.com/kube-ci/git-apiserver/apis/git"
+	api "github.com/kube-ci/git-apiserver/apis/git/v1alpha1"
+	"github.com/kube-ci/git-apiserver/client/clientset/versioned/typed/git/v1alpha1/util"
+	"github.com/kube-ci/git-apiserver/pkg/git-repo"
 	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
 	"k8s.io/apimachinery/pkg/labels"
 	"k8s.io/apimachinery/pkg/runtime"
 	"k8s.io/apimachinery/pkg/runtime/schema"
-	"kube.ci/git-apiserver/apis/git"
-	api "kube.ci/git-apiserver/apis/git/v1alpha1"
-	"kube.ci/git-apiserver/client/clientset/versioned/typed/git/v1alpha1/util"
-	"kube.ci/git-apiserver/pkg/git-repo"
 )
 
 func (c *Controller) NewRepositoryWebhook() hooks.AdmissionHook {

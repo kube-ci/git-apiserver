@@ -8,7 +8,7 @@ GOPATH=$(go env GOPATH)
 SRC=$GOPATH/src
 BIN=$GOPATH/bin
 ROOT=$GOPATH
-REPO_ROOT=$GOPATH/src/kube.ci/git-apiserver
+REPO_ROOT=$GOPATH/src/github.com/kube-ci/git-apiserver
 
 source "$REPO_ROOT/hack/libbuild/common/lib.sh"
 source "$REPO_ROOT/hack/libbuild/common/kubeci_image.sh"
@@ -16,20 +16,20 @@ source "$REPO_ROOT/hack/libbuild/common/kubeci_image.sh"
 APPSCODE_ENV=${APPSCODE_ENV:-dev}
 IMG=git-apiserver
 
-DIST=$GOPATH/src/kube.ci/git-apiserver/dist
+DIST=$GOPATH/src/github.com/kube-ci/git-apiserver/dist
 mkdir -p $DIST
 if [ -f "$DIST/.tag" ]; then
   export $(cat $DIST/.tag | xargs)
 fi
 
 clean() {
-  pushd $GOPATH/src/kube.ci/git-apiserver/hack/docker
+  pushd $GOPATH/src/github.com/kube-ci/git-apiserver/hack/docker
   rm git-apiserver Dockerfile
   popd
 }
 
 build_binary() {
-  pushd $GOPATH/src/kube.ci/git-apiserver
+  pushd $GOPATH/src/github.com/kube-ci/git-apiserver
   ./hack/builddeps.sh
   ./hack/make.py build git-apiserver
   detect_tag $DIST/.tag
@@ -37,7 +37,7 @@ build_binary() {
 }
 
 build_docker() {
-  pushd $GOPATH/src/kube.ci/git-apiserver/hack/docker
+  pushd $GOPATH/src/github.com/kube-ci/git-apiserver/hack/docker
   cp $DIST/git-apiserver/git-apiserver-alpine-amd64 git-apiserver
   chmod 755 git-apiserver
 

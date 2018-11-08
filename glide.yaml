@@ -1,4 +1,4 @@
-package: kube.ci/git-apiserver
+package: github.com/kube-ci/git-apiserver
 import:
 - package: github.com/appscode/go
   version: master

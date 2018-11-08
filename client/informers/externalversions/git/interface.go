@@ -19,8 +19,8 @@ limitations under the License.
 package git
 
 import (
-	v1alpha1 "kube.ci/git-apiserver/client/informers/externalversions/git/v1alpha1"
-	internalinterfaces "kube.ci/git-apiserver/client/informers/externalversions/internalinterfaces"
+	v1alpha1 "github.com/kube-ci/git-apiserver/client/informers/externalversions/git/v1alpha1"
+	internalinterfaces "github.com/kube-ci/git-apiserver/client/informers/externalversions/internalinterfaces"
 )
 
 // Interface provides access to each of this group's versions.
