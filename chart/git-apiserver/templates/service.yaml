@@ -1,0 +1,19 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: {{ template "git-apiserver.fullname" . }}
+  namespace: {{ .Release.Namespace }}
+  labels:
+    app: "{{ template "git-apiserver.name" . }}"
+    chart: "{{ .Chart.Name }}-{{ .Chart.Version }}"
+    release: "{{ .Release.Name }}"
+    heritage: "{{ .Release.Service }}"
+spec:
+  ports:
+  # Port used to expose admission webhook apiserver
+  - name: admission
+    port: 443
+    targetPort: 8443
+  selector:
+    app: "{{ template "git-apiserver.name" . }}"
+    release: "{{ .Release.Name }}"
