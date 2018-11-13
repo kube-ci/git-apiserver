@@ -1,0 +1,11 @@
+apiVersion: git.kube.ci/v1alpha1
+kind: Repository
+metadata:
+  name: private-test-repo
+  namespace: default
+spec:
+  host: github
+  owner: tamalsaha
+  repo: private-test-repo
+  cloneUrl: https://github.com/tamalsaha/private-test-repo.git
+  tokenFormSecret: github-credential
