@@ -18,6 +18,5 @@ type GithubEvent struct {
 	Repo   *github.Repository `json:"repository,omitempty"`
 	Sender *github.User       `json:"sender,omitempty"`
 
-	Issue       *github.Issue       `json:"issue,omitempty"`
 	PullRequest *github.PullRequest `json:"pull_request,omitempty"`
 }

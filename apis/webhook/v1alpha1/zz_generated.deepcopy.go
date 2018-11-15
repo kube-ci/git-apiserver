@@ -56,15 +56,6 @@ func (in *GithubEvent) DeepCopyInto(out *GithubEvent) {
 			**out = **in
 		}
 	}
-	if in.Issue != nil {
-		in, out := &in.Issue, &out.Issue
-		if *in == nil {
-			*out = nil
-		} else {
-			*out = new(github.Issue)
-			**out = **in
-		}
-	}
 	if in.PullRequest != nil {
 		in, out := &in.PullRequest, &out.PullRequest
 		if *in == nil {
