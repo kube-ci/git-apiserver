@@ -42,25 +42,7 @@ spec:
         volumeMounts:
         - mountPath: /var/serving-cert
           name: serving-cert
-      - name: pushgateway
-        args:
-        - --web.listen-address=:56789
-        - --persistence.file=/var/pv/pushgateway.dat
-        image: prom/pushgateway:v0.5.2
-        ports:
-        - containerPort: 56789
-          name: pushgateway
-          protocol: TCP
-        volumeMounts:
-        - mountPath: /var/pv
-          name: data-volume
-        - mountPath: /tmp
-          name: git-apiserver-scratchdir
       volumes:
-      - emptyDir: {}
-        name: data-volume
-      - emptyDir: {}
-        name: git-apiserver-scratchdir
       - name: serving-cert
         secret:
           defaultMode: 420
