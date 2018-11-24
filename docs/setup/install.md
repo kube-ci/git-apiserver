@@ -35,9 +35,9 @@ The installer script and associated yaml files can be found in the [/hack/deploy
 ```console
 $ curl -fsSL https://raw.githubusercontent.com/kube-ci/git-apiserver/0.1.0/hack/deploy/install.sh | bash -s -- -h
 git-apiserver.sh - install git-apiserver operator
- 
+
 git-apiserver.sh [options]
- 
+
 options:
 -h, --help                         show brief help
 -n, --namespace=NAMESPACE          specify namespace (default: kube-system)

@@ -1,5 +1,5 @@
 # Git API Server
-[Git API server by AppsCode](https://github.com/kube-ci/git-apiserver) - Sync git repositories as kubernetes resources.
+[Git API server by AppsCode](https://github.com/kube-ci/git-apiserver) - Sync git repositories as Kubernetes resources.
 
 ## TL;DR;
 
