@@ -2,7 +2,7 @@
 
 ## What is GithubEvent
 
-A `GithubEvent` is a representation of Github [webhook event](https://developer.github.com/webhooks/#events) as a kubernetes object with the help of [Aggregated API Servers](https://github.com/kubernetes/community/blob/master/contributors/design-proposals/api-machinery/aggregated-api-servers.md). Currently, only [pull request events](https://developer.github.com/v3/activity/events/types/#pullrequestevent) are handled.
+A `GithubEvent` is a representation of Github [webhook event](https://developer.github.com/webhooks/#events) as a Kubernetes object with the help of [Aggregated API Servers](https://github.com/kubernetes/community/blob/master/contributors/design-proposals/api-machinery/aggregated-api-servers.md). Currently, only [pull request events](https://developer.github.com/v3/activity/events/types/#pullrequestevent) are handled.
 
 ## GithubEvent structure
 
@@ -10,7 +10,7 @@ As with all other Kubernetes objects, a GithubEvent needs `apiVersion`, `kind`, 
 
 ### .action
 
-The action that was performed. 
+The action that was performed.
 
 ### .repository
 

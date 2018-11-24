@@ -29,11 +29,11 @@ Remote host for your Git repository. Currently, only `github` is supported.
 
 ### spec.owner
 
-Owner of your Github repository, required for calling Github [API](https://developer.github.com/v3/pulls/#list-pull-requests) to list pull-requests. 
+Owner of your Github repository, required for calling Github [API](https://developer.github.com/v3/pulls/#list-pull-requests) to list pull-requests.
 
 ### spec.repo
 
-Name of your Github repository, required for calling Github [API](https://developer.github.com/v3/pulls/#list-pull-requests) to list pull-requests. 
+Name of your Github repository, required for calling Github [API](https://developer.github.com/v3/pulls/#list-pull-requests) to list pull-requests.
 
 ### spec.cloneUrl
 
@@ -41,4 +41,4 @@ Clone URL of your remote git repository to fetch branches and tags using `$ git 
 
 ### spec.tokenFormSecret
 
-Name of the kubernetes secret in the same namespace containing token for accessing private repository.
+Name of the Kubernetes secret in the same namespace containing token for accessing private repository.

@@ -1,6 +1,6 @@
 # Git API Server
 
-Git API server by AppsCode is a Kubernetes operator for syncing Git repositories as kubernetes resources.
+Git API server by AppsCode is a Kubernetes operator for syncing Git repositories as Kubernetes resources.
 
 From here you can learn all about Git API server's architecture and how to deploy and use it.
 
