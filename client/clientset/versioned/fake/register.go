@@ -20,6 +20,7 @@ package fake
 
 import (
 	gitv1alpha1 "github.com/kube-ci/git-apiserver/apis/git/v1alpha1"
+	webhooksv1alpha1 "github.com/kube-ci/git-apiserver/apis/webhooks/v1alpha1"
 	v1 "k8s.io/apimachinery/pkg/apis/meta/v1"
 	runtime "k8s.io/apimachinery/pkg/runtime"
 	schema "k8s.io/apimachinery/pkg/runtime/schema"
@@ -32,6 +33,7 @@ var codecs = serializer.NewCodecFactory(scheme)
 var parameterCodec = runtime.NewParameterCodec(scheme)
 var localSchemeBuilder = runtime.SchemeBuilder{
 	gitv1alpha1.AddToScheme,
+	webhooksv1alpha1.AddToScheme,
 }
 
 // AddToScheme adds all types of this clientset into the given scheme. This allows composition

@@ -56,7 +56,7 @@ func (f *Framework) StartAPIServerAndOperator(kubeConfigPath string, extraOption
 func (f *Framework) EventuallyAPIServerReady() GomegaAsyncAssertion {
 	apiServices := []string{
 		"v1alpha1.admission.git.kube.ci",
-		"v1alpha1.webhook.git.kube.ci",
+		"v1alpha1.webhooks.git.kube.ci",
 	}
 
 	return Eventually(

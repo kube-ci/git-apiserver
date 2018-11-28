@@ -8,7 +8,7 @@ Before we start, you need to have a Kubernetes cluster, and the kubectl command-
 
 First, go to `Webhooks` from settings tab of your Github repository. Now, select `Add webhook` to create a new webhook for the repository. Then, set the followings:
 
-- Payload URL: `https://{master-ip}/apis/webhook.git.kube.ci/v1alpha1/githubevents`
+- Payload URL: `https://{master-ip}/apis/webhooks.git.kube.ci/v1alpha1/githubevents`
 - Content Type: `application/json`
 - SSL verification: Disable
 

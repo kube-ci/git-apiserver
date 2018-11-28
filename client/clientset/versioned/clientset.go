@@ -20,6 +20,7 @@ package versioned
 
 import (
 	gitv1alpha1 "github.com/kube-ci/git-apiserver/client/clientset/versioned/typed/git/v1alpha1"
+	webhooksv1alpha1 "github.com/kube-ci/git-apiserver/client/clientset/versioned/typed/webhooks/v1alpha1"
 	discovery "k8s.io/client-go/discovery"
 	rest "k8s.io/client-go/rest"
 	flowcontrol "k8s.io/client-go/util/flowcontrol"
@@ -30,13 +31,17 @@ type Interface interface {
 	GitV1alpha1() gitv1alpha1.GitV1alpha1Interface
 	// Deprecated: please explicitly pick a version if possible.
 	Git() gitv1alpha1.GitV1alpha1Interface
+	WebhooksV1alpha1() webhooksv1alpha1.WebhooksV1alpha1Interface
+	// Deprecated: please explicitly pick a version if possible.
+	Webhooks() webhooksv1alpha1.WebhooksV1alpha1Interface
 }
 
 // Clientset contains the clients for groups. Each group has exactly one
 // version included in a Clientset.
 type Clientset struct {
 	*discovery.DiscoveryClient
-	gitV1alpha1 *gitv1alpha1.GitV1alpha1Client
+	gitV1alpha1      *gitv1alpha1.GitV1alpha1Client
+	webhooksV1alpha1 *webhooksv1alpha1.WebhooksV1alpha1Client
 }
 
 // GitV1alpha1 retrieves the GitV1alpha1Client
@@ -48,6 +53,17 @@ func (c *Clientset) GitV1alpha1() gitv1alpha1.GitV1alpha1Interface {
 // Please explicitly pick a version.
 func (c *Clientset) Git() gitv1alpha1.GitV1alpha1Interface {
 	return c.gitV1alpha1
+}
+
+// WebhooksV1alpha1 retrieves the WebhooksV1alpha1Client
+func (c *Clientset) WebhooksV1alpha1() webhooksv1alpha1.WebhooksV1alpha1Interface {
+	return c.webhooksV1alpha1
+}
+
+// Deprecated: Webhooks retrieves the default version of WebhooksClient.
+// Please explicitly pick a version.
+func (c *Clientset) Webhooks() webhooksv1alpha1.WebhooksV1alpha1Interface {
+	return c.webhooksV1alpha1
 }
 
 // Discovery retrieves the DiscoveryClient
@@ -70,6 +86,10 @@ func NewForConfig(c *rest.Config) (*Clientset, error) {
 	if err != nil {
 		return nil, err
 	}
+	cs.webhooksV1alpha1, err = webhooksv1alpha1.NewForConfig(&configShallowCopy)
+	if err != nil {
+		return nil, err
+	}
 
 	cs.DiscoveryClient, err = discovery.NewDiscoveryClientForConfig(&configShallowCopy)
 	if err != nil {
@@ -83,6 +103,7 @@ func NewForConfig(c *rest.Config) (*Clientset, error) {
 func NewForConfigOrDie(c *rest.Config) *Clientset {
 	var cs Clientset
 	cs.gitV1alpha1 = gitv1alpha1.NewForConfigOrDie(c)
+	cs.webhooksV1alpha1 = webhooksv1alpha1.NewForConfigOrDie(c)
 
 	cs.DiscoveryClient = discovery.NewDiscoveryClientForConfigOrDie(c)
 	return &cs
@@ -92,6 +113,7 @@ func NewForConfigOrDie(c *rest.Config) *Clientset {
 func New(c rest.Interface) *Clientset {
 	var cs Clientset
 	cs.gitV1alpha1 = gitv1alpha1.New(c)
+	cs.webhooksV1alpha1 = webhooksv1alpha1.New(c)
 
 	cs.DiscoveryClient = discovery.NewDiscoveryClient(c)
 	return &cs

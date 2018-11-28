@@ -22,6 +22,8 @@ import (
 	clientset "github.com/kube-ci/git-apiserver/client/clientset/versioned"
 	gitv1alpha1 "github.com/kube-ci/git-apiserver/client/clientset/versioned/typed/git/v1alpha1"
 	fakegitv1alpha1 "github.com/kube-ci/git-apiserver/client/clientset/versioned/typed/git/v1alpha1/fake"
+	webhooksv1alpha1 "github.com/kube-ci/git-apiserver/client/clientset/versioned/typed/webhooks/v1alpha1"
+	fakewebhooksv1alpha1 "github.com/kube-ci/git-apiserver/client/clientset/versioned/typed/webhooks/v1alpha1/fake"
 	"k8s.io/apimachinery/pkg/runtime"
 	"k8s.io/apimachinery/pkg/watch"
 	"k8s.io/client-go/discovery"
@@ -79,4 +81,14 @@ func (c *Clientset) GitV1alpha1() gitv1alpha1.GitV1alpha1Interface {
 // Git retrieves the GitV1alpha1Client
 func (c *Clientset) Git() gitv1alpha1.GitV1alpha1Interface {
 	return &fakegitv1alpha1.FakeGitV1alpha1{Fake: &c.Fake}
+}
+
+// WebhooksV1alpha1 retrieves the WebhooksV1alpha1Client
+func (c *Clientset) WebhooksV1alpha1() webhooksv1alpha1.WebhooksV1alpha1Interface {
+	return &fakewebhooksv1alpha1.FakeWebhooksV1alpha1{Fake: &c.Fake}
+}
+
+// Webhooks retrieves the WebhooksV1alpha1Client
+func (c *Clientset) Webhooks() webhooksv1alpha1.WebhooksV1alpha1Interface {
+	return &fakewebhooksv1alpha1.FakeWebhooksV1alpha1{Fake: &c.Fake}
 }
