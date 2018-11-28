@@ -10,7 +10,7 @@ import (
 	"github.com/google/go-github/github"
 	api "github.com/kube-ci/git-apiserver/apis/git/v1alpha1"
 	repo_v1alpha1 "github.com/kube-ci/git-apiserver/apis/git/v1alpha1"
-	"github.com/kube-ci/git-apiserver/apis/webhook/v1alpha1"
+	"github.com/kube-ci/git-apiserver/apis/webhooks/v1alpha1"
 	"github.com/kube-ci/git-apiserver/client/clientset/versioned/typed/git/v1alpha1/util"
 	"golang.org/x/oauth2"
 	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
@@ -45,7 +45,7 @@ func (r *GithubREST) GroupVersionKind(containingGV schema.GroupVersion) schema.G
 	return v1alpha1.SchemeGroupVersion.WithKind(v1alpha1.ResourceKindGithubEvent)
 }
 
-// curl -k -H 'Content-Type: application/json' -d '{"action":"labeled"}' https://192.168.99.100:8443/apis/webhook.git.kube.ci/v1alpha1/githubpullrequests
+// curl -k -H 'Content-Type: application/json' -d '{"action":"labeled"}' https://192.168.99.100:8443/apis/webhooks.git.kube.ci/v1alpha1/githubpullrequests
 func (r *GithubREST) Create(ctx context.Context, obj runtime.Object, createValidation rest.ValidateObjectFunc, _ *metav1.CreateOptions) (runtime.Object, error) {
 	event := obj.(*v1alpha1.GithubEvent)
 	log.Info("Received github webhook event")

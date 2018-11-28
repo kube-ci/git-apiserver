@@ -101,7 +101,7 @@ var _ = AfterSuite(func() {
 		root.KubeClient.CoreV1().Endpoints(root.Namespace()).Delete("git-dev-apiserver", meta.DeleteInBackground())
 		root.KubeClient.CoreV1().Services(root.Namespace()).Delete("git-dev-apiserver", meta.DeleteInBackground())
 		root.KAClient.ApiregistrationV1beta1().APIServices().Delete("v1alpha1.admission.git.kube.ci", meta.DeleteInBackground())
-		root.KAClient.ApiregistrationV1beta1().APIServices().Delete("v1alpha1.webhook.git.kube.ci", meta.DeleteInBackground())
+		root.KAClient.ApiregistrationV1beta1().APIServices().Delete("v1alpha1.webhooks.git.kube.ci", meta.DeleteInBackground())
 	}
 	root.DeleteNamespace(root.Namespace())
 })

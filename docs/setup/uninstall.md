@@ -9,7 +9,7 @@ $ curl -fsSL https://raw.githubusercontent.com/kube-ci/git-apiserver/0.1.0/hack/
 validatingwebhookconfiguration.admissionregistration.k8s.io "admission.git.kube.ci" deleted
 No resources found
 apiservice.apiregistration.k8s.io "v1alpha1.admission.git.kube.ci" deleted
-apiservice.apiregistration.k8s.io "v1alpha1.webhook.git.kube.ci" deleted
+apiservice.apiregistration.k8s.io "v1alpha1.webhooks.git.kube.ci" deleted
 deployment.extensions "git-apiserver" deleted
 service "git-apiserver" deleted
 secret "git-apiserver-cert" deleted

@@ -6,9 +6,9 @@ import (
 
 	hooks "github.com/appscode/kubernetes-webhook-util/admission/v1beta1"
 	admissionreview "github.com/appscode/kubernetes-webhook-util/registry/admissionreview/v1beta1"
-	"github.com/kube-ci/git-apiserver/apis/webhook"
-	"github.com/kube-ci/git-apiserver/apis/webhook/install"
-	"github.com/kube-ci/git-apiserver/apis/webhook/v1alpha1"
+	"github.com/kube-ci/git-apiserver/apis/webhooks"
+	"github.com/kube-ci/git-apiserver/apis/webhooks/install"
+	"github.com/kube-ci/git-apiserver/apis/webhooks/v1alpha1"
 	"github.com/kube-ci/git-apiserver/pkg/controller"
 	admission "k8s.io/api/admission/v1beta1"
 	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
@@ -60,7 +60,7 @@ func (op *GitAPIServer) Run(stopCh <-chan struct{}) error {
 	op.Controller.RunInformers(stopCh)
 
 	// install web service
-	// wsPath := "/apis/webhook.git.kube.ci/v1alpha1"
+	// wsPath := "/apis/webhooks.git.kube.ci/v1alpha1"
 	// op.GenericAPIServer.Handler.GoRestfulContainer.Add(op.Controller.GetWebService(wsPath))
 
 	return op.GenericAPIServer.PrepareRun().Run(stopCh)
@@ -160,7 +160,7 @@ func (c completedConfig) New() (*GitAPIServer, error) {
 	}
 
 	{
-		apiGroupInfo := genericapiserver.NewDefaultAPIGroupInfo(webhook.GroupName, Scheme, metav1.ParameterCodec, Codecs)
+		apiGroupInfo := genericapiserver.NewDefaultAPIGroupInfo(webhooks.GroupName, Scheme, metav1.ParameterCodec, Codecs)
 		v1alpha1storage := map[string]rest.Storage{}
 		v1alpha1storage[v1alpha1.ResourceGithubEvents] = controller.NewGithubREST(ctrl)
 		apiGroupInfo.VersionedResourcesStorageMap["v1alpha1"] = v1alpha1storage

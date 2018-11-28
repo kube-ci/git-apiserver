@@ -17,7 +17,7 @@ limitations under the License.
 package install
 
 import (
-	"github.com/kube-ci/git-apiserver/apis/webhook/v1alpha1"
+	"github.com/kube-ci/git-apiserver/apis/webhooks/v1alpha1"
 	"k8s.io/apimachinery/pkg/runtime"
 	utilruntime "k8s.io/apimachinery/pkg/util/runtime"
 )
