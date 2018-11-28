@@ -25,17 +25,17 @@ import (
 	rest "k8s.io/client-go/rest"
 )
 
-type WebhookV1alpha1Interface interface {
+type WebhooksV1alpha1Interface interface {
 	RESTClient() rest.Interface
 }
 
-// WebhookV1alpha1Client is used to interact with features provided by the webhooks.git.kube.ci group.
-type WebhookV1alpha1Client struct {
+// WebhooksV1alpha1Client is used to interact with features provided by the webhooks.git.kube.ci group.
+type WebhooksV1alpha1Client struct {
 	restClient rest.Interface
 }
 
-// NewForConfig creates a new WebhookV1alpha1Client for the given config.
-func NewForConfig(c *rest.Config) (*WebhookV1alpha1Client, error) {
+// NewForConfig creates a new WebhooksV1alpha1Client for the given config.
+func NewForConfig(c *rest.Config) (*WebhooksV1alpha1Client, error) {
 	config := *c
 	if err := setConfigDefaults(&config); err != nil {
 		return nil, err
@@ -44,12 +44,12 @@ func NewForConfig(c *rest.Config) (*WebhookV1alpha1Client, error) {
 	if err != nil {
 		return nil, err
 	}
-	return &WebhookV1alpha1Client{client}, nil
+	return &WebhooksV1alpha1Client{client}, nil
 }
 
-// NewForConfigOrDie creates a new WebhookV1alpha1Client for the given config and
+// NewForConfigOrDie creates a new WebhooksV1alpha1Client for the given config and
 // panics if there is an error in the config.
-func NewForConfigOrDie(c *rest.Config) *WebhookV1alpha1Client {
+func NewForConfigOrDie(c *rest.Config) *WebhooksV1alpha1Client {
 	client, err := NewForConfig(c)
 	if err != nil {
 		panic(err)
@@ -57,9 +57,9 @@ func NewForConfigOrDie(c *rest.Config) *WebhookV1alpha1Client {
 	return client
 }
 
-// New creates a new WebhookV1alpha1Client for the given RESTClient.
-func New(c rest.Interface) *WebhookV1alpha1Client {
-	return &WebhookV1alpha1Client{c}
+// New creates a new WebhooksV1alpha1Client for the given RESTClient.
+func New(c rest.Interface) *WebhooksV1alpha1Client {
+	return &WebhooksV1alpha1Client{c}
 }
 
 func setConfigDefaults(config *rest.Config) error {
@@ -77,7 +77,7 @@ func setConfigDefaults(config *rest.Config) error {
 
 // RESTClient returns a RESTClient that is used to communicate
 // with API server by this client implementation.
-func (c *WebhookV1alpha1Client) RESTClient() rest.Interface {
+func (c *WebhooksV1alpha1Client) RESTClient() rest.Interface {
 	if c == nil {
 		return nil
 	}

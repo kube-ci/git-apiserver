@@ -7,11 +7,23 @@ PACKAGE_NAME=github.com/kube-ci/git-apiserver
 REPO_ROOT="$GOPATH/src/$PACKAGE_NAME"
 DOCKER_REPO_ROOT="/go/src/$PACKAGE_NAME"
 DOCKER_CODEGEN_PKG="/go/src/k8s.io/code-generator"
-apiGroups=(git/v1alpha1)
+apiGroups=(git/v1alpha1 webhooks/v1alpha1)
 
 pushd $REPO_ROOT
 
 mkdir -p "$REPO_ROOT"/api/api-rules
+
+# for EAS types
+# only deepcopy for webhook
+docker run --rm -ti -u $(id -u):$(id -g) \
+  -v "$REPO_ROOT":"$DOCKER_REPO_ROOT" \
+  -w "$DOCKER_REPO_ROOT" \
+  appscode/gengo:release-1.12 "$DOCKER_CODEGEN_PKG"/generate-internal-groups.sh "deepcopy,defaulter,conversion" \
+  github.com/kube-ci/git-apiserver/client \
+  github.com/kube-ci/git-apiserver/apis \
+  github.com/kube-ci/git-apiserver/apis \
+  webhooks:v1alpha1 \
+  --go-header-file "$DOCKER_REPO_ROOT/hack/gengo/boilerplate.go.txt"
 
 # for both CRD and EAS types
 docker run --rm -ti -u $(id -u):$(id -g) \
@@ -20,7 +32,7 @@ docker run --rm -ti -u $(id -u):$(id -g) \
   appscode/gengo:release-1.12 "$DOCKER_CODEGEN_PKG"/generate-groups.sh all \
   github.com/kube-ci/git-apiserver/client \
   github.com/kube-ci/git-apiserver/apis \
-  "git:v1alpha1" \
+  "git:v1alpha1 webhooks:v1alpha1" \
   --go-header-file "$DOCKER_REPO_ROOT/hack/gengo/boilerplate.go.txt"
 
 # Generate openapi
