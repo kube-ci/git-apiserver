@@ -16,9 +16,9 @@ metadata:
   namespace: default
 spec:
   host: github
-  owner: diptadas
+  owner: tamalsaha
   repo: kubeci-gpig
-  cloneUrl: https://github.com/diptadas/kubeci-gpig.git
+  cloneUrl: https://github.com/kube-ci/kubeci-gpig.git
 ```
 
 The `.spec` section has following parts:
@@ -41,4 +41,21 @@ Clone URL of your remote git repository to fetch branches and tags using `$ git 
 
 ### spec.tokenFormSecret
 
-Name of the Kubernetes secret in the same namespace containing token for accessing private repository.
+Name of the Kubernetes secret in the same namespace containing token for accessing private repository under key `token`.
+
+Example secret:
+
+```yaml
+apiVersion: v1
+kind: Secret
+metadata:
+  creationTimestamp: 2018-11-30T05:42:24Z
+  name: github-credential
+  namespace: default
+  resourceVersion: "866"
+  selfLink: /api/v1/namespaces/default/secrets/github-credential
+  uid: b67acf60-f462-11e8-b31f-0800271b8897
+type: Opaque
+data:
+  token: {API_TOKEN}
+```

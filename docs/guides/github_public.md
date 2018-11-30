@@ -23,9 +23,9 @@ metadata:
   namespace: default
 spec:
   host: github
-  owner: diptadas
+  owner: tamalsaha
   repo: kubeci-gpig
-  cloneUrl: https://github.com/diptadas/kubeci-gpig.git
+  cloneUrl: https://github.com/kube-ci/kubeci-gpig.git
 ```
 
 ## Get Synced Resources

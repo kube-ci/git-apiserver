@@ -7,7 +7,7 @@ import (
 )
 
 func TestListGithubPRs(t *testing.T) {
-	owner := "diptadas"
+	owner := "tamalsaha"
 	repo := "kubeci-gpig"
 	token := ""
 
