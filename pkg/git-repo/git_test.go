@@ -7,7 +7,7 @@ import (
 )
 
 func TestFetch(t *testing.T) {
-	url := "https://github.com/diptadas/kubeci-gpig.git"
+	url := "https://github.com/kube-ci/kubeci-gpig.git"
 	token := ""
 
 	repo, err := Fetch(url, token)
