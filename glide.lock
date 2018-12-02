@@ -1,5 +1,5 @@
 hash: 5f225f5d59fe8dbb73ff4fef148b66fc6e938cc7aef4871c31432f278b54a087
-updated: 2018-11-22T19:01:20.585398341-08:00
+updated: 2018-12-01T18:22:30.977356872-08:00
 imports:
 - name: bitbucket.org/ww/goautoneg
   version: 75cd24fc2f2c2a2088577d12123ddee5f54e0675
@@ -38,7 +38,7 @@ imports:
   - registry/admissionreview/v1beta1
   - runtime/serializer/versioning
 - name: github.com/appscode/kutil
-  version: 5e4dc08e9e6e00fcf397b7186a3918dc4dcb9426
+  version: 239838b6231b8a27a66426e25678351ce50c4cfd
   subpackages:
   - apiextensions/v1beta1
   - discovery
@@ -46,6 +46,7 @@ imports:
   - openapi
   - tools/analytics
   - tools/certstore
+  - tools/cli
   - tools/clientcmd
   - tools/queue
 - name: github.com/appscode/ocutil
@@ -567,7 +568,7 @@ imports:
   - osfs
   - util
 - name: gopkg.in/src-d/go-git.v4
-  version: f62cd8e3495579a8323455fa0c4e6c44bb0d5e09
+  version: 3dbfb89e0f5bce0008724e547b999fe3af9f60db
   subpackages:
   - config
   - internal/revision
