@@ -5,6 +5,7 @@ import (
 
 	"github.com/appscode/go/log"
 	v "github.com/appscode/go/version"
+	"github.com/appscode/kutil/tools/cli"
 	"github.com/kube-ci/git-apiserver/pkg/cmds/server"
 	"github.com/spf13/cobra"
 )
@@ -17,6 +18,9 @@ func NewCmdRun(out, errOut io.Writer, stopCh <-chan struct{}) *cobra.Command {
 		Short:             "Launch git apiserver",
 		Long:              "Launch git apiserver",
 		DisableAutoGenTag: true,
+		PreRun: func(c *cobra.Command, args []string) {
+			cli.SendPeriodicAnalytics(c, v.Version.Version)
+		},
 		RunE: func(cmd *cobra.Command, args []string) error {
 			log.Infof("Starting server version %s+%s ...", v.Version.Version, v.Version.CommitHash)
 
