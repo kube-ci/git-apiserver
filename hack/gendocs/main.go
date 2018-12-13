@@ -11,43 +11,44 @@ import (
 	"text/template"
 
 	"github.com/appscode/go/runtime"
-	"github.com/spf13/cobra/doc"
 	"github.com/kube-ci/git-apiserver/pkg/cmds"
+	"github.com/spf13/cobra/doc"
 )
 
 const (
-	version = "0.7.0"
+	version = "0.1.0"
 )
 
 var (
 	tplFrontMatter = template.Must(template.New("index").Parse(`---
-title: Reference
-description: git-apiserver CLI Reference
+title: Reference | Git API Server
+description: Git API Server CLI Reference
 menu:
-  product_git_apiserver_{{ .Version }}:
-    identifier: reference
-    name: Reference
-    weight: 1000
-menu_name: product_git_apiserver_{{ .Version }}
+  product_kubeci_{{ .Version }}:
+    identifier: reference-git-apiserver
+    name: Git API Server
+    weight: 20
+    parent: reference
+menu_name: product_kubeci_{{ .Version }}
 ---
 `))
 
 	_ = template.Must(tplFrontMatter.New("cmd").Parse(`---
 title: {{ .Name }}
 menu:
-  product_git_apiserver_{{ .Version }}:
+  product_kubeci_{{ .Version }}:
     identifier: {{ .ID }}
     name: {{ .Name }}
-    parent: reference
+    parent: reference-git-apiserver
 {{- if .RootCmd }}
     weight: 0
 {{ end }}
-product_name: git-apiserver
-menu_name: product_git_apiserver_{{ .Version }}
+product_name: kubeci
+menu_name: product_kubeci_{{ .Version }}
 section_menu_id: reference
 {{- if .RootCmd }}
 aliases:
-  - products/git-apiserver/{{ .Version }}/reference/
+  - products/kubeci/{{ .Version }}/reference/git-apiserver/
 {{ end }}
 ---
 `))
@@ -56,7 +57,7 @@ aliases:
 // ref: https://github.com/spf13/cobra/blob/master/doc/md_docs.md
 func main() {
 	rootCmd := cmds.NewRootCmd()
-	dir := runtime.GOPath() + "/src/github.com/kube-ci/git-apiserver/docs/reference"
+	dir := runtime.GOPath() + "/src/github.com/kube-ci/docs/docs/reference/git-apiserver"
 	fmt.Printf("Generating cli markdown tree in: %v\n", dir)
 	err := os.RemoveAll(dir)
 	if err != nil {
@@ -89,7 +90,7 @@ func main() {
 	}
 
 	linkHandler := func(name string) string {
-		return "/docs/reference/" + name
+		return "/docs/reference/git-apiserver/" + name
 	}
 	doc.GenMarkdownTreeCustom(rootCmd, dir, filePrepender, linkHandler)
 
