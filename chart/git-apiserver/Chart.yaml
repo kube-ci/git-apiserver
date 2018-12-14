@@ -4,7 +4,7 @@ name: git-apiserver
 version: 0.1.0
 appVersion: 0.1.0
 home: https://github.com/kube-ci/git-apiserver
-icon: https://cdn.appscode.com/images/icon/git-apiserver.png
+icon: https://cdn.appscode.com/images/icon/kubeci.png
 sources:
   - https://github.com/kube-ci/git-apiserver
 maintainers:

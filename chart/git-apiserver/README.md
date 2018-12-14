@@ -6,7 +6,7 @@
 ```console
 $ helm repo add appscode https://charts.appscode.com/stable/
 $ helm repo update
-$ helm install appscode/git-apiserver
+$ helm install appscode/git-apiserver --name git-apiserver --namespace kube-system
 ```
 
 ## Introduction
@@ -19,10 +19,10 @@ This chart bootstraps a [Git API server controller](https://github.com/kube-ci/g
 
 ## Installing the Chart
 
-To install the chart with the release name `my-release`:
+To install the chart with the release name `git-apiserver`:
 
 ```console
-$ helm install appscode/git-apiserver --name my-release
+$ helm install appscode/git-apiserver --name git-apiserver
 ```
 
 The command deploys Git API server operator on the Kubernetes cluster in the default configuration. The [configuration](#configuration) section lists the parameters that can be configured during installation.
@@ -31,10 +31,10 @@ The command deploys Git API server operator on the Kubernetes cluster in the def
 
 ## Uninstalling the Chart
 
-To uninstall/delete the `my-release`:
+To uninstall/delete the `git-apiserver`:
 
 ```console
-$ helm delete my-release
+$ helm delete git-apiserver
 ```
 
 The command removes all the Kubernetes components associated with the chart and deletes the release.
@@ -74,14 +74,14 @@ The following table lists the configurable parameters of the Git API server char
 Specify each parameter using the `--set key=value[,key=value]` argument to `helm install`. For example:
 
 ```console
-$ helm install --name my-release --set image.tag=v0.2.1 appscode/git-apiserver
+$ helm install --name git-apiserver --set image.tag=v0.2.1 appscode/git-apiserver
 ```
 
 Alternatively, a YAML file that specifies the values for the parameters can be provided while
 installing the chart. For example:
 
 ```console
-$ helm install --name my-release --values values.yaml appscode/git-apiserver
+$ helm install --name git-apiserver --values values.yaml appscode/git-apiserver
 ```
 
 ## RBAC
@@ -103,5 +103,5 @@ If the output contains "beta", you may install the chart with RBAC enabled (see 
 To enable the creation of RBAC resources (On clusters with RBAC). Do the following:
 
 ```console
-$ helm install --name my-release appscode/git-apiserver --set rbac.create=true
+$ helm install --name git-apiserver appscode/git-apiserver --set rbac.create=true
 ```
