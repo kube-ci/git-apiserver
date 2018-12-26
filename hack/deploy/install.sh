@@ -102,6 +102,7 @@ export GIT_APISERVER_IMAGE_TAG=0.7.0
 export GIT_APISERVER_IMAGE_PULL_SECRET=
 export GIT_APISERVER_IMAGE_PULL_POLICY=IfNotPresent
 export GIT_APISERVER_ENABLE_STATUS_SUBRESOURCE=false
+export GIT_APISERVER_USE_KUBEAPISERVER_FQDN_FOR_AKS=true
 export GIT_APISERVER_ENABLE_ANALYTICS=true
 export GIT_APISERVER_UNINSTALL=0
 export GIT_APISERVER_PURGE=0
@@ -128,18 +129,19 @@ show_help() {
   echo "git-apiserver.sh [options]"
   echo " "
   echo "options:"
-  echo "-h, --help                         show brief help"
-  echo "-n, --namespace=NAMESPACE          specify namespace (default: kube-system)"
-  echo "    --rbac                         create RBAC roles and bindings (default: true)"
-  echo "    --docker-registry              docker registry used to pull git-apiserver images (default: kubeci)"
-  echo "    --image-pull-secret            name of secret used to pull git-apiserver operator images"
-  echo "    --run-on-master                run git-apiserver operator on master"
-  echo "    --enable-validating-webhook    enable/disable validating webhooks for git-apiserver crds"
-  echo "    --enable-mutating-webhook      enable/disable mutating webhooks for Kubernetes workloads"
-  echo "    --enable-status-subresource    If enabled, uses status sub resource for crds"
-  echo "    --enable-analytics             send usage events to Google Analytics (default: true)"
-  echo "    --uninstall                    uninstall git-apiserver"
-  echo "    --purge                        purges git-apiserver crd objects and crds"
+  echo "-h, --help                             show brief help"
+  echo "-n, --namespace=NAMESPACE              specify namespace (default: kube-system)"
+  echo "    --rbac                             create RBAC roles and bindings (default: true)"
+  echo "    --docker-registry                  docker registry used to pull git-apiserver images (default: kubeci)"
+  echo "    --image-pull-secret                name of secret used to pull git-apiserver operator images"
+  echo "    --run-on-master                    run git-apiserver operator on master"
+  echo "    --enable-validating-webhook        enable/disable validating webhooks for git-apiserver crds"
+  echo "    --enable-mutating-webhook          enable/disable mutating webhooks for Kubernetes workloads"
+  echo "    --enable-status-subresource        if enabled, uses status sub resource for crds"
+  echo "    --use-kubeapiserver-fqdn-for-aks   if true, uses kube-apiserver FQDN for AKS cluster to workaround https://github.com/Azure/AKS/issues/522 (default true)"
+  echo "    --enable-analytics                 send usage events to Google Analytics (default: true)"
+  echo "    --uninstall                        uninstall git-apiserver"
+  echo "    --purge                            purges git-apiserver crd objects and crds"
 }
 
 while test $# -gt 0; do
@@ -189,6 +191,15 @@ while test $# -gt 0; do
       val=$(echo $1 | sed -e 's/^[^=]*=//g')
       if [ "$val" = "false" ]; then
         export GIT_APISERVER_ENABLE_STATUS_SUBRESOURCE=false
+      fi
+      shift
+      ;;
+    --use-kubeapiserver-fqdn-for-aks*)
+      val=$(echo $1 | sed -e 's/^[^=]*=//g')
+      if [ "$val" = "false" ]; then
+        export GIT_APISERVER_USE_KUBEAPISERVER_FQDN_FOR_AKS=false
+      else
+        export GIT_APISERVER_USE_KUBEAPISERVER_FQDN_FOR_AKS=true
       fi
       shift
       ;;
