@@ -7,7 +7,7 @@ import (
 )
 
 func TestListGithubPRs(t *testing.T) {
-	owner := "tamalsaha"
+	owner := "kube-ci"
 	repo := "kubeci-gpig"
 	token := ""
 
@@ -21,7 +21,7 @@ func TestListGithubPRs(t *testing.T) {
 	}
 }
 
-func TestListGithubPRsWithAuth(t *testing.T) {
+func testListGithubPRsWithAuth(t *testing.T) {
 	owner := "tamalsaha"
 	repo := "private-test-repo"
 	token := os.Getenv("github-access-token")
