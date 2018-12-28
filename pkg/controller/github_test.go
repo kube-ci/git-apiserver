@@ -6,7 +6,7 @@ import (
 	"testing"
 )
 
-func testListGithubPRs(t *testing.T) {
+func TestListGithubPRs(t *testing.T) {
 	owner := "kube-ci"
 	repo := "kubeci-gpig"
 	token := ""
