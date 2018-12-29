@@ -29,3 +29,10 @@ Create the name of the service account to use
     {{ default "default" .Values.serviceAccount.name }}
 {{- end -}}
 {{- end -}}
+
+{{- define "git-apiserver.labels" -}}
+chart: "{{ .Chart.Name }}-{{ .Chart.Version }}"
+app: "{{ template "git-apiserver.name" . }}"
+release: {{ .Release.Name | quote}}
+heritage: "{{ .Release.Service }}"
+{{- end -}}
