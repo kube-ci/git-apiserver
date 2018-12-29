@@ -9,10 +9,7 @@ kind: APIService
 metadata:
   name: v1alpha1.admission.git.kube.ci
   labels:
-    chart: "{{ .Chart.Name }}-{{ .Chart.Version }}"
-    app: "{{ template "git-apiserver.name" . }}"
-    heritage: "{{ .Release.Service }}"
-    release: "{{ .Release.Name }}"
+    {{- include "git-apiserver.labels" . | nindent 4 }}
 spec:
   group: admission.git.kube.ci
   version: v1alpha1
@@ -28,10 +25,7 @@ kind: APIService
 metadata:
   name: v1alpha1.webhooks.git.kube.ci
   labels:
-    chart: "{{ .Chart.Name }}-{{ .Chart.Version }}"
-    app: "{{ template "git-apiserver.name" . }}"
-    heritage: "{{ .Release.Service }}"
-    release: "{{ .Release.Name }}"
+    {{- include "git-apiserver.labels" . | nindent 4 }}
 spec:
   group: webhooks.git.kube.ci
   version: v1alpha1
@@ -49,10 +43,7 @@ metadata:
   name: {{ template "git-apiserver.fullname" . }}-apiserver-cert
   namespace: {{ .Release.Namespace }}
   labels:
-    chart: "{{ .Chart.Name }}-{{ .Chart.Version }}"
-    app: "{{ template "git-apiserver.name" . }}"
-    heritage: "{{ .Release.Service }}"
-    release: "{{ .Release.Name }}"
+    {{- include "git-apiserver.labels" . | nindent 4 }}
 type: kubernetes.io/tls
 data:
   tls.crt: {{ b64enc $cert.Cert }}
@@ -66,10 +57,7 @@ metadata:
   name: {{ template "git-apiserver.fullname" . }}-apiserver-extension-server-authentication-reader
   namespace: kube-system
   labels:
-    chart: "{{ .Chart.Name }}-{{ .Chart.Version }}"
-    app: "{{ template "git-apiserver.name" . }}"
-    heritage: "{{ .Release.Service }}"
-    release: "{{ .Release.Name }}"
+    {{- include "git-apiserver.labels" . | nindent 4 }}
 roleRef:
   kind: Role
   apiGroup: rbac.authorization.k8s.io
@@ -85,10 +73,7 @@ kind: ClusterRoleBinding
 metadata:
   name: {{ template "git-apiserver.fullname" . }}-apiserver-auth-delegator
   labels:
-    chart: "{{ .Chart.Name }}-{{ .Chart.Version }}"
-    app: "{{ template "git-apiserver.name" . }}"
-    heritage: "{{ .Release.Service }}"
-    release: "{{ .Release.Name }}"
+    {{- include "git-apiserver.labels" . | nindent 4 }}
 roleRef:
   kind: ClusterRole
   apiGroup: rbac.authorization.k8s.io
