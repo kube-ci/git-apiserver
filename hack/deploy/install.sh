@@ -123,6 +123,9 @@ $ONESSL semver --check='<1.9.0' $KUBE_APISERVER_VERSION || {
 }
 $ONESSL semver --check='<1.11.0' $KUBE_APISERVER_VERSION || { export GIT_APISERVER_ENABLE_STATUS_SUBRESOURCE=true; }
 
+export GIT_APISERVER_WEBHOOK_SIDE_EFFECTS=
+$ONESSL semver --check='<1.12.0' $KUBE_APISERVER_VERSION || { export GIT_APISERVER_WEBHOOK_SIDE_EFFECTS='sideEffects: None'; }
+
 show_help() {
   echo "git-apiserver.sh - install git-apiserver operator"
   echo " "
