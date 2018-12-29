@@ -26,7 +26,7 @@ func TestFetch(t *testing.T) {
 	}
 }
 
-func TestFetchPrivate(t *testing.T) {
+func testFetchPrivate(t *testing.T) {
 	url := "https://github.com/tamalsaha/private-test-repo.git"
 	token := os.Getenv("github-access-token")
 
