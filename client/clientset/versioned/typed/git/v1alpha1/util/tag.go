@@ -6,7 +6,7 @@ import (
 
 	"github.com/appscode/go/log"
 	"github.com/appscode/kutil"
-	"github.com/evanphx/json-patch"
+	jsonpatch "github.com/evanphx/json-patch"
 	api "github.com/kube-ci/git-apiserver/apis/git/v1alpha1"
 	cs "github.com/kube-ci/git-apiserver/client/clientset/versioned/typed/git/v1alpha1"
 	kerr "k8s.io/apimachinery/pkg/api/errors"
