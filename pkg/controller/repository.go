@@ -14,7 +14,7 @@ import (
 	"github.com/kube-ci/git-apiserver/apis/git"
 	api "github.com/kube-ci/git-apiserver/apis/git/v1alpha1"
 	"github.com/kube-ci/git-apiserver/client/clientset/versioned/typed/git/v1alpha1/util"
-	"github.com/kube-ci/git-apiserver/pkg/git-repo"
+	git_repo "github.com/kube-ci/git-apiserver/pkg/git-repo"
 	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
 	"k8s.io/apimachinery/pkg/labels"
 	"k8s.io/apimachinery/pkg/runtime"
