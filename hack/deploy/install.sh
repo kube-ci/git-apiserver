@@ -118,6 +118,7 @@ export GIT_APISERVER_USE_KUBEAPISERVER_FQDN_FOR_AKS=true
 export GIT_APISERVER_ENABLE_ANALYTICS=true
 export GIT_APISERVER_UNINSTALL=0
 export GIT_APISERVER_PURGE=0
+export GIT_APISERVER_PRIORITY_CLASS=system-cluster-critical
 
 export APPSCODE_ENV=${APPSCODE_ENV:-prod}
 export SCRIPT_LOCATION="curl -fsSL https://raw.githubusercontent.com/appscode/git-apiserver/0.7.0/"
@@ -251,6 +252,10 @@ while test $# -gt 0; do
       ;;
   esac
 done
+
+if [ "$GIT_APISERVER_NAMESPACE" != "kube-system" ]; then
+    export GIT_APISERVER_PRIORITY_CLASS=""
+fi
 
 if [ "$GIT_APISERVER_UNINSTALL" -eq 1 ]; then
   # delete webhooks and apiservices
