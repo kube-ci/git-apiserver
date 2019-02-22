@@ -24,31 +24,30 @@ var (
 title: Reference | Git API Server
 description: Git API Server CLI Reference
 menu:
-  product_kubeci_{{ .Version }}:
+  docs_{{ .Version }}:
     identifier: reference-git-apiserver
     name: Git API Server
     weight: 20
     parent: reference
-menu_name: product_kubeci_{{ .Version }}
+menu_name: docs_{{ .Version }}
 ---
 `))
 
 	_ = template.Must(tplFrontMatter.New("cmd").Parse(`---
 title: {{ .Name }}
 menu:
-  product_kubeci_{{ .Version }}:
+  docs_{{ .Version }}:
     identifier: {{ .ID }}
     name: {{ .Name }}
     parent: reference-git-apiserver
 {{- if .RootCmd }}
     weight: 0
 {{ end }}
-product_name: kubeci
-menu_name: product_kubeci_{{ .Version }}
+menu_name: docs_{{ .Version }}
 section_menu_id: reference
 {{- if .RootCmd }}
 aliases:
-  - products/kubeci/{{ .Version }}/reference/git-apiserver/
+  - /docs/{{ .Version }}/reference/git-apiserver/
 {{ end }}
 ---
 `))
