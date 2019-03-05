@@ -4,8 +4,6 @@ import (
 	"fmt"
 	"strings"
 
-	hooks "github.com/appscode/kubernetes-webhook-util/admission/v1beta1"
-	admissionreview "github.com/appscode/kubernetes-webhook-util/registry/admissionreview/v1beta1"
 	"github.com/kube-ci/git-apiserver/apis/webhooks"
 	"github.com/kube-ci/git-apiserver/apis/webhooks/install"
 	"github.com/kube-ci/git-apiserver/apis/webhooks/v1alpha1"
@@ -18,6 +16,8 @@ import (
 	"k8s.io/apimachinery/pkg/version"
 	"k8s.io/apiserver/pkg/registry/rest"
 	genericapiserver "k8s.io/apiserver/pkg/server"
+	hooks "kmodules.xyz/webhook-runtime/admission/v1beta1"
+	admissionreview "kmodules.xyz/webhook-runtime/registry/admissionreview/v1beta1"
 )
 
 var (

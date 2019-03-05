@@ -1,5 +1,5 @@
 /*
-Copyright 2018 The KubeCI Authors.
+Copyright 2019 The KubeCI Authors.
 
 Licensed under the Apache License, Version 2.0 (the "License");
 you may not use this file except in compliance with the License.
@@ -119,7 +119,7 @@ func (c *FakeBranches) DeleteCollection(options *v1.DeleteOptions, listOptions v
 // Patch applies the patch and returns the patched branch.
 func (c *FakeBranches) Patch(name string, pt types.PatchType, data []byte, subresources ...string) (result *v1alpha1.Branch, err error) {
 	obj, err := c.Fake.
-		Invokes(testing.NewPatchSubresourceAction(branchesResource, c.ns, name, data, subresources...), &v1alpha1.Branch{})
+		Invokes(testing.NewPatchSubresourceAction(branchesResource, c.ns, name, pt, data, subresources...), &v1alpha1.Branch{})
 
 	if obj == nil {
 		return nil, err
