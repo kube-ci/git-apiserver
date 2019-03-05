@@ -4,8 +4,6 @@ import (
 	"fmt"
 
 	"github.com/appscode/go/log"
-	crdutils "github.com/appscode/kutil/apiextensions/v1beta1"
-	"github.com/appscode/kutil/tools/queue"
 	api "github.com/kube-ci/git-apiserver/apis/git/v1alpha1"
 	cs "github.com/kube-ci/git-apiserver/client/clientset/versioned"
 	git_apiserver_informers "github.com/kube-ci/git-apiserver/client/informers/externalversions"
@@ -17,6 +15,8 @@ import (
 	"k8s.io/client-go/kubernetes"
 	"k8s.io/client-go/tools/cache"
 	"k8s.io/client-go/tools/record"
+	crdutils "kmodules.xyz/client-go/apiextensions/v1beta1"
+	"kmodules.xyz/client-go/tools/queue"
 )
 
 type Controller struct {

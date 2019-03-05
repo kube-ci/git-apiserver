@@ -6,11 +6,6 @@ import (
 	. "github.com/appscode/go/encoding/json/types"
 	"github.com/appscode/go/log"
 	"github.com/appscode/go/types"
-	"github.com/appscode/kubernetes-webhook-util/admission"
-	hooks "github.com/appscode/kubernetes-webhook-util/admission/v1beta1"
-	webhook "github.com/appscode/kubernetes-webhook-util/admission/v1beta1/generic"
-	meta_util "github.com/appscode/kutil/meta"
-	"github.com/appscode/kutil/tools/queue"
 	"github.com/kube-ci/git-apiserver/apis/git"
 	api "github.com/kube-ci/git-apiserver/apis/git/v1alpha1"
 	"github.com/kube-ci/git-apiserver/client/clientset/versioned/typed/git/v1alpha1/util"
@@ -19,6 +14,11 @@ import (
 	"k8s.io/apimachinery/pkg/labels"
 	"k8s.io/apimachinery/pkg/runtime"
 	"k8s.io/apimachinery/pkg/runtime/schema"
+	meta_util "kmodules.xyz/client-go/meta"
+	"kmodules.xyz/client-go/tools/queue"
+	"kmodules.xyz/webhook-runtime/admission"
+	hooks "kmodules.xyz/webhook-runtime/admission/v1beta1"
+	webhook "kmodules.xyz/webhook-runtime/admission/v1beta1/generic"
 )
 
 func (c *Controller) NewRepositoryWebhook() hooks.AdmissionHook {

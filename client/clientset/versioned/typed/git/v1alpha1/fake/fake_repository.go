@@ -1,5 +1,5 @@
 /*
-Copyright 2018 The KubeCI Authors.
+Copyright 2019 The KubeCI Authors.
 
 Licensed under the Apache License, Version 2.0 (the "License");
 you may not use this file except in compliance with the License.
@@ -131,7 +131,7 @@ func (c *FakeRepositories) DeleteCollection(options *v1.DeleteOptions, listOptio
 // Patch applies the patch and returns the patched repository.
 func (c *FakeRepositories) Patch(name string, pt types.PatchType, data []byte, subresources ...string) (result *v1alpha1.Repository, err error) {
 	obj, err := c.Fake.
-		Invokes(testing.NewPatchSubresourceAction(repositoriesResource, c.ns, name, data, subresources...), &v1alpha1.Repository{})
+		Invokes(testing.NewPatchSubresourceAction(repositoriesResource, c.ns, name, pt, data, subresources...), &v1alpha1.Repository{})
 
 	if obj == nil {
 		return nil, err
