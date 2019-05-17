@@ -78,17 +78,7 @@ func (c *Clientset) GitV1alpha1() gitv1alpha1.GitV1alpha1Interface {
 	return &fakegitv1alpha1.FakeGitV1alpha1{Fake: &c.Fake}
 }
 
-// Git retrieves the GitV1alpha1Client
-func (c *Clientset) Git() gitv1alpha1.GitV1alpha1Interface {
-	return &fakegitv1alpha1.FakeGitV1alpha1{Fake: &c.Fake}
-}
-
 // WebhooksV1alpha1 retrieves the WebhooksV1alpha1Client
 func (c *Clientset) WebhooksV1alpha1() webhooksv1alpha1.WebhooksV1alpha1Interface {
-	return &fakewebhooksv1alpha1.FakeWebhooksV1alpha1{Fake: &c.Fake}
-}
-
-// Webhooks retrieves the WebhooksV1alpha1Client
-func (c *Clientset) Webhooks() webhooksv1alpha1.WebhooksV1alpha1Interface {
 	return &fakewebhooksv1alpha1.FakeWebhooksV1alpha1{Fake: &c.Fake}
 }

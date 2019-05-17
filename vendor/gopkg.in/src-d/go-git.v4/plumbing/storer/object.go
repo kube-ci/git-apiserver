@@ -40,8 +40,6 @@ type EncodedObjectStorer interface {
 	// HasEncodedObject returns ErrObjNotFound if the object doesn't
 	// exist.  If the object does exist, it returns nil.
 	HasEncodedObject(plumbing.Hash) error
-	// EncodedObjectSize returns the plaintext size of the encoded object.
-	EncodedObjectSize(plumbing.Hash) (int64, error)
 }
 
 // DeltaObjectStorer is an EncodedObjectStorer that can return delta
@@ -222,7 +220,7 @@ type MultiEncodedObjectIter struct {
 }
 
 // NewMultiEncodedObjectIter returns an object iterator for the given slice of
-// EncodedObjectIters.
+// objects.
 func NewMultiEncodedObjectIter(iters []EncodedObjectIter) EncodedObjectIter {
 	return &MultiEncodedObjectIter{iters: iters}
 }

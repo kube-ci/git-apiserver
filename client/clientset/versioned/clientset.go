@@ -29,11 +29,7 @@ import (
 type Interface interface {
 	Discovery() discovery.DiscoveryInterface
 	GitV1alpha1() gitv1alpha1.GitV1alpha1Interface
-	// Deprecated: please explicitly pick a version if possible.
-	Git() gitv1alpha1.GitV1alpha1Interface
 	WebhooksV1alpha1() webhooksv1alpha1.WebhooksV1alpha1Interface
-	// Deprecated: please explicitly pick a version if possible.
-	Webhooks() webhooksv1alpha1.WebhooksV1alpha1Interface
 }
 
 // Clientset contains the clients for groups. Each group has exactly one
@@ -49,20 +45,8 @@ func (c *Clientset) GitV1alpha1() gitv1alpha1.GitV1alpha1Interface {
 	return c.gitV1alpha1
 }
 
-// Deprecated: Git retrieves the default version of GitClient.
-// Please explicitly pick a version.
-func (c *Clientset) Git() gitv1alpha1.GitV1alpha1Interface {
-	return c.gitV1alpha1
-}
-
 // WebhooksV1alpha1 retrieves the WebhooksV1alpha1Client
 func (c *Clientset) WebhooksV1alpha1() webhooksv1alpha1.WebhooksV1alpha1Interface {
-	return c.webhooksV1alpha1
-}
-
-// Deprecated: Webhooks retrieves the default version of WebhooksClient.
-// Please explicitly pick a version.
-func (c *Clientset) Webhooks() webhooksv1alpha1.WebhooksV1alpha1Interface {
 	return c.webhooksV1alpha1
 }
 

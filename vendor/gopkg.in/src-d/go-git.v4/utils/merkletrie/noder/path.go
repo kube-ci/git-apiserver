@@ -3,6 +3,8 @@ package noder
 import (
 	"bytes"
 	"strings"
+
+	"golang.org/x/text/unicode/norm"
 )
 
 // Path values represent a noder and its ancestors.  The root goes first
@@ -78,9 +80,11 @@ func (p Path) Compare(other Path) int {
 		case i == len(p):
 			return -1
 		default:
-			// We do *not* normalize Unicode here. CGit doesn't.
-			// https://github.com/src-d/go-git/issues/1057
-			cmp := strings.Compare(p[i].Name(), other[i].Name())
+			form := norm.Form(norm.NFC)
+			this := form.String(p[i].Name())
+			that := form.String(other[i].Name())
+
+			cmp := strings.Compare(this, that)
 			if cmp != 0 {
 				return cmp
 			}

@@ -25,11 +25,10 @@ import (
 )
 
 var (
-	ErrWorktreeNotClean     = errors.New("worktree is not clean")
-	ErrSubmoduleNotFound    = errors.New("submodule not found")
-	ErrUnstagedChanges      = errors.New("worktree contains unstaged changes")
-	ErrGitModulesSymlink    = errors.New(gitmodulesFile + " is a symlink")
-	ErrNonFastForwardUpdate = errors.New("non-fast-forward update")
+	ErrWorktreeNotClean  = errors.New("worktree is not clean")
+	ErrSubmoduleNotFound = errors.New("submodule not found")
+	ErrUnstagedChanges   = errors.New("worktree contains unstaged changes")
+	ErrGitModulesSymlink = errors.New(gitmodulesFile + " is a symlink")
 )
 
 // Worktree represents a git worktree.
@@ -102,7 +101,7 @@ func (w *Worktree) PullContext(ctx context.Context, o *PullOptions) error {
 		}
 
 		if !ff {
-			return ErrNonFastForwardUpdate
+			return fmt.Errorf("non-fast-forward update")
 		}
 	}
 

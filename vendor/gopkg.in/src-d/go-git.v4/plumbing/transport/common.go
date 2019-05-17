@@ -19,10 +19,10 @@ import (
 	"fmt"
 	"io"
 	"net/url"
+	"regexp"
 	"strconv"
 	"strings"
 
-	giturl "gopkg.in/src-d/go-git.v4/internal/url"
 	"gopkg.in/src-d/go-git.v4/plumbing"
 	"gopkg.in/src-d/go-git.v4/plumbing/protocol/packp"
 	"gopkg.in/src-d/go-git.v4/plumbing/protocol/packp/capability"
@@ -224,28 +224,34 @@ func getPath(u *url.URL) string {
 	return res
 }
 
+var (
+	isSchemeRegExp   = regexp.MustCompile(`^[^:]+://`)
+	scpLikeUrlRegExp = regexp.MustCompile(`^(?:(?P<user>[^@]+)@)?(?P<host>[^:\s]+):(?:(?P<port>[0-9]{1,5})/)?(?P<path>[^\\].*)$`)
+)
+
 func parseSCPLike(endpoint string) (*Endpoint, bool) {
-	if giturl.MatchesScheme(endpoint) || !giturl.MatchesScpLike(endpoint) {
+	if isSchemeRegExp.MatchString(endpoint) || !scpLikeUrlRegExp.MatchString(endpoint) {
 		return nil, false
 	}
 
-	user, host, portStr, path := giturl.FindScpLikeComponents(endpoint)
-	port, err := strconv.Atoi(portStr)
+	m := scpLikeUrlRegExp.FindStringSubmatch(endpoint)
+
+	port, err := strconv.Atoi(m[3])
 	if err != nil {
 		port = 22
 	}
 
 	return &Endpoint{
 		Protocol: "ssh",
-		User:     user,
-		Host:     host,
+		User:     m[1],
+		Host:     m[2],
 		Port:     port,
-		Path:     path,
+		Path:     m[4],
 	}, true
 }
 
 func parseFile(endpoint string) (*Endpoint, bool) {
-	if giturl.MatchesScheme(endpoint) {
+	if isSchemeRegExp.MatchString(endpoint) {
 		return nil, false
 	}
 

@@ -1,7 +1,7 @@
 package v1alpha1
 
 import (
-	"github.com/google/go-github/github"
+	"github.com/google/go-github/v25/github"
 	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
 )
 

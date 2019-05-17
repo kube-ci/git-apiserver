@@ -7,7 +7,7 @@ import (
 
 	"github.com/appscode/go/log"
 	"github.com/appscode/go/types"
-	"github.com/google/go-github/github"
+	"github.com/google/go-github/v25/github"
 	api "github.com/kube-ci/git-apiserver/apis/git/v1alpha1"
 	repo_v1alpha1 "github.com/kube-ci/git-apiserver/apis/git/v1alpha1"
 	"github.com/kube-ci/git-apiserver/apis/webhooks/v1alpha1"

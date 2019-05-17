@@ -14,7 +14,6 @@ import (
 
 	"gopkg.in/src-d/go-billy.v4/osfs"
 	"gopkg.in/src-d/go-git.v4/plumbing"
-	"gopkg.in/src-d/go-git.v4/storage"
 	"gopkg.in/src-d/go-git.v4/utils/ioutil"
 
 	"gopkg.in/src-d/go-billy.v4"
@@ -93,8 +92,8 @@ func New(fs billy.Filesystem) *DotGit {
 	return NewWithOptions(fs, Options{})
 }
 
-// NewWithOptions sets non default configuration options.
-// See New for complete help.
+// NewWithOptions creates a new DotGit and sets non default configuration
+// options. See New for complete help.
 func NewWithOptions(fs billy.Filesystem, o Options) *DotGit {
 	return &DotGit{
 		options: o,
@@ -597,7 +596,7 @@ func (d *DotGit) checkReferenceAndTruncate(f billy.File, old *plumbing.Reference
 		return err
 	}
 	if ref.Hash() != old.Hash() {
-		return storage.ErrReferenceHasChanged
+		return fmt.Errorf("reference has changed concurrently")
 	}
 	_, err = f.Seek(0, io.SeekStart)
 	if err != nil {
